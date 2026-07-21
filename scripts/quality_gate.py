@@ -81,7 +81,15 @@ def configured_checks(root: Path) -> list[Check]:
             ("bandit", "-c", "pyproject.toml", "-r", *source_roots) if source_roots else (),
         )
     )
-    checks.append(Check("dependencies", ("pip-audit",)))
+    # Ignored advisories (no fixed release available yet; re-evaluate on dependency bumps):
+    # - PYSEC-2026-2447: diskcache 5.6.3 (transitive). No fix published.
+    # - PYSEC-2026-3046: ragas 0.4.3. No fix published; ragas is pinned by the eval harness.
+    checks.append(
+        Check(
+            "dependencies",
+            ("pip-audit", "--ignore-vuln", "PYSEC-2026-2447", "--ignore-vuln", "PYSEC-2026-3046"),
+        )
+    )
     return checks
 
 

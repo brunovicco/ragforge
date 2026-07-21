@@ -1,4 +1,4 @@
-# Architecture Decision Records — RAGForge
+# Architecture Decision Records - RAGForge
 
 Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; changes supersede via a new ADR.
 
