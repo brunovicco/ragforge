@@ -87,6 +87,26 @@ class DenseChunkStore:
                 )
         self._conn.commit()
 
+    def get(self, chunk_id: str) -> Chunk | None:
+        """Return the chunk with chunk_id, or None if it isn't indexed."""
+        table = sql.Identifier(self._table)
+        statement = sql.SQL(
+            "SELECT chunk_id, text, structural_ids, parent_id, metadata "
+            "FROM {table} WHERE chunk_id = %s"
+        ).format(table=table)
+        with self._conn.cursor() as cur:
+            cur.execute(statement, (chunk_id,))
+            row = cur.fetchone()
+        if row is None:
+            return None
+        return Chunk(
+            chunk_id=row[0],
+            text=row[1],
+            structural_ids=tuple(row[2]),
+            parent_id=row[3],
+            metadata=row[4],
+        )
+
     def search(self, query_embedding: list[float], top_k: int) -> list[RetrievalResult]:
         """Return the top_k chunks by cosine similarity to query_embedding."""
         table = sql.Identifier(self._table)
