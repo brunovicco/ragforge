@@ -113,8 +113,13 @@ disallow_untyped_decorators = false
 module = ["langfuse"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# pymupdf ships no py.typed marker / stubs under its "fitz" import name.
+module = ["fitz"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
-addopts = "--strict-config --strict-markers --cov=src/ragforge --cov-report=term-missing"
+addopts = "--strict-config --strict-markers --cov=src/ragforge --cov-report=term-missing -m \"not integration\""
 testpaths = ["tests"]
 markers = [
     "integration: tests that require real infrastructure",

@@ -13,7 +13,7 @@ import re
 from dataclasses import dataclass, field
 from enum import StrEnum
 
-_ARTICLE_RE = re.compile(r"^Art(?:igo)?\.?\s+(\d+)\s*[ºo°]?\s*(-?[A-Z])?[\s.\-–]")
+_ARTICLE_RE = re.compile(r"^Art(?:igo)?\.?\s+(\d+)\s*[ºo°]?\s*(-[A-Z])?[\s.\-–]")
 _PARAGRAPH_RE = re.compile(r"^§\s*(\d+)\s*[ºo°]?")
 _PARAGRAPH_UNICO_RE = re.compile(r"^Par[áa]grafo\s+[úu]nico", re.IGNORECASE)
 _INCISO_RE = re.compile(r"^([IVXLCDM]+)\s*[-–—]\s+")
