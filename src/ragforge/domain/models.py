@@ -72,3 +72,32 @@ class Query:
 
     text: str
     query_class: QueryClass | None = None
+
+
+class RelevanceGrade(StrEnum):
+    """Graded relevance of a structural unit to a judged question (ADR-0002)."""
+
+    RELEVANT = "relevant"
+    PARTIALLY_RELEVANT = "partially_relevant"
+
+
+@dataclass(frozen=True, slots=True)
+class JudgedRef:
+    """One structural unit judged relevant (or partially) to a question."""
+
+    ref: StructuralRef
+    grade: RelevanceGrade
+
+
+@dataclass(frozen=True, slots=True)
+class Judgment:
+    """Golden-set relevance judgment: the structural units that answer a question (ADR-0002).
+
+    Annotated at the norm's stable structural unit, not at the chunk level, so
+    the judgment survives chunking changes and stays comparable across
+    strategies whose result granularity differs.
+    """
+
+    question_id: str
+    query: Query
+    relevant_refs: tuple[JudgedRef, ...]
