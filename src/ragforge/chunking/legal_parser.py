@@ -19,6 +19,8 @@ _PARAGRAPH_UNICO_RE = re.compile(r"^Par[áa]grafo\s+[úu]nico", re.IGNORECASE)
 _INCISO_RE = re.compile(r"^([IVXLCDM]+)\s*[-–—]\s+")
 _ALINEA_RE = re.compile(r"^([a-z])\)\s+")
 _HEADING_RE = re.compile(r"^(T[ÍI]TULO|CAP[ÍI]TULO|Se[çc][ãa]o|Subse[çc][ãa]o|ANEXO)\b")
+_ANEXO_RE = re.compile(r"^ANEXO\b\s*(.*)$", re.IGNORECASE)
+_NON_SLUG_RE = re.compile(r"[^a-z0-9]+")
 
 
 class NodeKind(StrEnum):
@@ -93,16 +95,42 @@ def _roman_label(numeral: str) -> str:
     return f"inc-{numeral.lower()}"
 
 
+def _annex_slug(remainder: str, counter: int) -> str:
+    """Build a stable scope slug from the text following "ANEXO" on its line.
+
+    Falls back to the heading's ordinal position (1st ANEXO seen, 2nd, ...) when
+    the heading carries no usable identifier (e.g. a bare "ANEXO").
+    """
+    slug = _NON_SLUG_RE.sub("-", remainder.strip().lower()).strip("-")
+    return slug or str(counter)
+
+
 def parse_norm(norm_id: str, text: str) -> NormTree:
     """Parse the plain text of a norm into its structural tree.
 
     Lines before the first article go to the preamble. TÍTULO/CAPÍTULO/Seção
     heading lines are not nodes; they accumulate as ``heading_context`` stamped
     on subsequent articles. Text lines attach to the innermost open node.
+
+    A repeated ``Art. N`` (the same label already seen) is not a new article:
+    Brazilian legal-portal "texto compilado" pages commonly restate an article's
+    superseded wording inline as amendment-history annotations, immediately
+    after its current text. That restatement reopens the existing article node
+    instead of appending a duplicate, since a norm's own articles are always
+    numbered once, monotonically.
+
+    An "ANEXO" heading opens its own article-numbering scope: annexes commonly
+    restart at "Art. 1º" for their own text, which is a different document from
+    the main body and must not collide with (or merge into) its real Art. 1.
+    Subsequent article labels are prefixed with the annex's slug until another
+    ANEXO heading changes the scope.
     """
     preamble = StructuralNode(kind=NodeKind.PREAMBLE, label="preamble")
     articles: list[StructuralNode] = []
+    articles_by_label: dict[str, StructuralNode] = {}
     headings: list[str] = []
+    current_annex: str | None = None
+    annex_count = 0
 
     article: StructuralNode | None = None
     paragraph: StructuralNode | None = None
@@ -116,18 +144,27 @@ def parse_norm(norm_id: str, text: str) -> NormTree:
 
         if _HEADING_RE.match(line):
             headings.append(line)
+            if anexo_match := _ANEXO_RE.match(line):
+                annex_count += 1
+                current_annex = f"anexo-{_annex_slug(anexo_match.group(1), annex_count)}"
             continue
 
         if match := _ARTICLE_RE.match(line):
             suffix = (match.group(2) or "").replace("-", "").lower()
-            label = f"art-{match.group(1)}{f'-{suffix}' if suffix else ''}"
-            article = StructuralNode(
-                kind=NodeKind.ARTICLE,
-                label=label,
-                lines=[line],
-                heading_context=tuple(headings),
-            )
-            articles.append(article)
+            base_label = f"art-{match.group(1)}{f'-{suffix}' if suffix else ''}"
+            label = f"{current_annex}-{base_label}" if current_annex else base_label
+            if existing := articles_by_label.get(label):
+                article = existing
+                article.lines.append(line)
+            else:
+                article = StructuralNode(
+                    kind=NodeKind.ARTICLE,
+                    label=label,
+                    lines=[line],
+                    heading_context=tuple(headings),
+                )
+                articles.append(article)
+                articles_by_label[label] = article
             paragraph = inciso = alinea = None
             continue
 

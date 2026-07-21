@@ -115,3 +115,33 @@ def test_full_text_includes_node_and_descendants_in_document_order() -> None:
     article = tree.articles[1]
     assert "primeira alínea do inciso II;" in article.full_text
     assert article.full_text.index("§ 1º") < article.full_text.index("I - primeiro inciso")
+
+
+def test_repeated_article_number_merges_into_existing_node_instead_of_duplicating() -> None:
+    """A restated Art. N (e.g. an amendment-history annotation) merges into the same node."""
+    text = """
+Art. 1º Primeira redação do artigo.
+Art. 1º Segunda redação (histórico de emenda) do mesmo artigo.
+Art. 2º Segundo artigo.
+"""
+    tree = parse_norm(NORM_ID, text)
+    assert [a.label for a in tree.articles] == ["art-1", "art-2"]
+    assert "Primeira redação" in tree.articles[0].text
+    assert "Segunda redação" in tree.articles[0].text
+
+
+def test_anexo_heading_scopes_article_numbering_separately() -> None:
+    """An ANEXO heading's own "Art. 1º" gets a distinct, annex-scoped label."""
+    text = """
+Art. 1º Artigo do corpo principal.
+Art. 2º Segundo artigo do corpo principal.
+
+ANEXO I
+
+Art. 1º Primeiro artigo do anexo.
+"""
+    tree = parse_norm(NORM_ID, text)
+    labels = [a.label for a in tree.articles]
+    assert labels == ["art-1", "art-2", "anexo-i-art-1"]
+    assert "corpo principal" in tree.articles[0].text
+    assert "anexo" in tree.articles[2].text.lower()
