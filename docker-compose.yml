@@ -1,0 +1,44 @@
+# RAGForge infrastructure. Profiles:
+#   core   -> Postgres 16 + pgvector (dense retrieval, catalog, experiments)
+#   search -> OpenSearch (BM25 with brazilian analyzer, hybrid)
+#   graph  -> reserved: LightRAG uses embedded storage in v0.1 (Neo4j is backlog)
+# Usage: docker compose --profile core --profile search up -d
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    profiles: ["core"]
+    environment:
+      POSTGRES_USER: ragforge
+      POSTGRES_PASSWORD: ragforge
+      POSTGRES_DB: ragforge
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ragforge"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  opensearch:
+    image: opensearchproject/opensearch:2.19.0
+    profiles: ["search"]
+    environment:
+      discovery.type: single-node
+      plugins.security.disabled: "true"
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "RagForge!Dev1"
+    ports:
+      - "9200:9200"
+    volumes:
+      - osdata:/usr/share/opensearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:9200 >/dev/null"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+volumes:
+  pgdata:
+  osdata:

@@ -1,0 +1,29 @@
+# RAGForge v0.1 main benchmark. Every README number is born from this file (ADR-0004).
+run_id: null  # assigned at run time; results land in experiments/<run-id>/
+corpus:
+  snapshot: datasets/corpus/
+  hash: null  # set by the snapshot script
+dataset:
+  path: datasets/regrag-br/
+  split: test  # dev split is reserved for router few-shot examples (ADR-0003)
+strategies:
+  - dense
+  - sparse_bm25
+  - hybrid_rrf
+  - reranked
+  - contextual
+  - parent_child
+  - raptor
+  - graphrag
+embedding:
+  model: null  # frozen winner of the embeddings-ptbr experiment (ADR-0005)
+generation:
+  model: null  # pin exact model version, e.g. provider snapshot date
+  temperature: 0
+judge:
+  model: null  # pinned; calibration reported per ADR-0007
+retrieval:
+  top_k: 5
+  rerank_pool: 50
+llm_cache:
+  mode: cache  # cache | live (ADR-0004)
