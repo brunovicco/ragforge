@@ -9,11 +9,13 @@ paragraph, and inciso (each their own ``<p>`` in these documents) lands on its o
 line for `chunking.legal_parser`.
 """
 
+import re
 from html.parser import HTMLParser
 from pathlib import Path
 
 from ragforge.ingestion.errors import ExtractionError
 
+_WHITESPACE_RE = re.compile(r"\s+")
 _ENCODINGS = ("utf-8", "cp1252")
 _SKIP_TAGS = frozenset({"script", "style"})
 _BLOCK_TAGS = frozenset({"p", "div", "br", "li", "tr", "table", "h1", "h2", "h3", "h4", "h5", "h6"})
@@ -27,7 +29,7 @@ class _TextCollector(HTMLParser):
         self._chunks: list[str] = []
         self._skip_depth = 0
 
-    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+    def handle_starttag(self, tag: str, _attrs: list[tuple[str, str | None]]) -> None:
         """Track skip-tag nesting and insert a line break before block-level tags."""
         if tag in _SKIP_TAGS:
             self._skip_depth += 1
@@ -42,9 +44,16 @@ class _TextCollector(HTMLParser):
             self._chunks.append("\n")
 
     def handle_data(self, data: str) -> None:
-        """Collect text data, dropping content inside script/style tags."""
+        """Collect text data, dropping content inside script/style tags.
+
+        Collapses internal whitespace (including source line-wraps) to a single
+        space, the way a browser would render it: line breaks in the output come
+        only from the explicit block-tag markers above, not from incidental
+        newlines inside the source HTML's own hand-wrapped text nodes (some norm
+        pages break a line right after "Art. N", before its body text).
+        """
         if not self._skip_depth:
-            self._chunks.append(data)
+            self._chunks.append(_WHITESPACE_RE.sub(" ", data))
 
     def text(self) -> str:
         """Return the collected text."""
