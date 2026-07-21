@@ -85,3 +85,21 @@ def test_search_returns_structural_ids_and_metadata(store: DenseChunkStore) -> N
     assert result.chunk.structural_ids == ("art-2", "art-2::par-1")
     assert result.chunk.parent_id == "art-2"
     assert result.chunk.metadata == {"norm": "NORM-1", "role": "fragment"}
+
+
+@pytest.mark.integration
+def test_get_returns_a_chunk_by_id(store: DenseChunkStore) -> None:
+    """get() fetches a chunk directly by chunk_id, used to expand to a parent article."""
+    chunk = Chunk(chunk_id="art-2", text="full article", structural_ids=("art-2",))
+    store.upsert_chunks([chunk], [[1.0, 0.0, 0.0]])
+
+    result = store.get("art-2")
+
+    assert result is not None
+    assert result.text == "full article"
+
+
+@pytest.mark.integration
+def test_get_returns_none_for_an_unindexed_chunk_id(store: DenseChunkStore) -> None:
+    """get() returns None rather than raising when the chunk_id isn't indexed."""
+    assert store.get("does-not-exist") is None
