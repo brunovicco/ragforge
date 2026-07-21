@@ -80,6 +80,10 @@ ignore = [
 # Suppressed here (not with an inline noqa) because an inline noqa becomes an
 # unused-directive RUF100 error on 3.12/3.13, where UP037 never fires.
 "scripts/_vendor_loop_schemas/models.py" = ["UP037"]
+# legal_parser.py's marker regexes intentionally match en-dash/em-dash inciso
+# separators ("I – ...") found in real CMN/BCB/CVM norm text (ADR-0006), not
+# accidental confusables.
+"src/ragforge/chunking/legal_parser.py" = ["RUF001"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
@@ -144,7 +148,7 @@ clean-architecture = true
 # are only allowed at the edges: adapters/, generation/, routing/adapters, apps/.
 [[tool.engineering-harness.architecture.boundaries]]
 path = "src/ragforge/chunking"
-allowed-imports = ["stdlib", "ragforge.domain"]
+allowed-imports = ["stdlib", "ragforge.domain", "ragforge.chunking"]
 
 [[tool.engineering-harness.architecture.boundaries]]
 path = "src/ragforge/evaluation/metrics"
