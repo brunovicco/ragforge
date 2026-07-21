@@ -1,0 +1,170 @@
+{
+  "version": "0.1-seed",
+  "note": "Starter golden set (~20 questions), hand-curated and verified against the real parsed text of 4 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018). Not the full 210-question RegRAG-BR benchmark - a seed demonstrating the judgment format end-to-end. Every structural ID here is checked by tests/unit/test_judgments.py against parse_norm output of the real documents.",
+  "judgments": [
+    {
+      "question_id": "q001",
+      "text": "Qual é a pena prevista para quem realiza quebra de sigilo bancário fora das hipóteses autorizadas pela Lei Complementar 105/2001?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-10", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q002",
+      "text": "Quais entidades são consideradas 'instituições financeiras' para os fins da Lei Complementar 105/2001?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-1::par-1", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q003",
+      "text": "Em que hipóteses a quebra do sigilo bancário pode ser decretada, segundo a LC 105/2001?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-1::par-4", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q004",
+      "text": "O Banco Central pode acessar informações sigilosas de bancos sob investigação especial?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-2::par-1", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q005",
+      "text": "A troca de informações entre instituições financeiras para fins cadastrais constitui violação do dever de sigilo bancário?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-1::par-3", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q006",
+      "text": "Quem deve aprovar a política de segurança cibernética das instituições financeiras, segundo a Resolução CMN 4.893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-9", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q007",
+      "text": "A partir de quando entrou em vigor a Resolução CMN nº 4.893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-28", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q008",
+      "text": "Por quantos anos as instituições devem manter à disposição do Banco Central os documentos relativos à política de segurança cibernética?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-23", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q009",
+      "text": "O que uma instituição financeira precisa observar antes de contratar um provedor de computação em nuvem no exterior?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-16", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q010",
+      "text": "Quais informações devem constar na comunicação ao Banco Central sobre a contratação de serviços relevantes de processamento de dados e computação em nuvem?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-15::par-1", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q011",
+      "text": "Quais são os principais eixos temáticos tratados pela Resolução CMN nº 4.893/2021?",
+      "query_class": "global",
+      "relevant_refs": [
+        {"ref": "RES-CMN-4893/2021::art-1", "grade": "partially_relevant"},
+        {"ref": "RES-CMN-4893/2021::art-2", "grade": "partially_relevant"},
+        {"ref": "RES-CMN-4893/2021::art-11", "grade": "partially_relevant"},
+        {"ref": "RES-CMN-4893/2021::art-19", "grade": "partially_relevant"}
+      ]
+    },
+    {
+      "question_id": "q012",
+      "text": "O que a Resolução CMN nº 5.274/2025 alterou na Resolução CMN nº 4.893/2021 em relação aos controles mínimos de segurança cibernética?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {"ref": "RES-CMN-5274/2025::art-1", "grade": "relevant"},
+        {"ref": "RES-CMN-4893/2021::art-3", "grade": "partially_relevant"}
+      ]
+    },
+    {
+      "question_id": "q013",
+      "text": "Qual o prazo estabelecido pela Resolução CMN nº 5.274/2025 para as instituições se adequarem aos novos requisitos de segurança cibernética?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "RES-CMN-5274/2025::art-2", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q014",
+      "text": "Quais são as bases legais que autorizam o tratamento de dados pessoais segundo a LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "LEI-13709/2018::art-7", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q015",
+      "text": "Quais direitos a LGPD garante ao titular dos dados em relação à correção e eliminação de dados incompletos ou desnecessários?",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {"ref": "LEI-13709/2018::art-18", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q016",
+      "text": "Qual é o valor máximo da multa simples que a autoridade nacional pode aplicar por infração à LGPD?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {"ref": "LEI-13709/2018::art-52", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q017",
+      "text": "Que medidas de segurança a LGPD exige dos agentes de tratamento de dados pessoais para proteger contra acessos não autorizados?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {"ref": "LEI-13709/2018::art-46", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q018",
+      "text": "Compare os direitos do titular dos dados garantidos pelo art. 18 da LGPD com as sanções administrativas do art. 52 aplicáveis ao controlador em caso de descumprimento.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {"ref": "LEI-13709/2018::art-18", "grade": "relevant"},
+        {"ref": "LEI-13709/2018::art-52", "grade": "relevant"}
+      ]
+    },
+    {
+      "question_id": "q019",
+      "text": "A troca de informações cadastrais entre instituições financeiras, permitida pela LC 105/2001, encontra amparo em alguma base legal de tratamento de dados pessoais da LGPD?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {"ref": "LC-105/2001::art-1::par-3", "grade": "relevant"},
+        {"ref": "LEI-13709/2018::art-7", "grade": "partially_relevant"}
+      ]
+    },
+    {
+      "question_id": "q020",
+      "text": "Qual é o valor da multa prevista na Resolução CMN nº 4.893/2021 para instituições que descumprirem a política de segurança cibernética?",
+      "query_class": "unanswerable",
+      "relevant_refs": []
+    }
+  ]
+}
