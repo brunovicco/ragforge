@@ -30,6 +30,26 @@ be excluded from the build context.
 
 Copy `.env.example` only when the application supports local dotenv loading. Never commit `.env` or real credentials.
 
+## Local infrastructure (retrieval indexing)
+
+`docker-compose.yml` provides the two stores the retrieval strategies index into (ADR-0005):
+Postgres + pgvector for dense retrieval, and OpenSearch for BM25/hybrid. Both are opt-in via
+Compose profiles so a plain `docker compose up` starts nothing.
+
+```bash
+docker compose --profile core --profile search up -d   # postgres+pgvector, opensearch
+docker compose ps                                       # wait for both healthy
+docker compose down                                     # stop; add -v to also drop data volumes
+```
+
+Credentials are dev-only defaults baked into `docker-compose.yml` (not secrets); the matching
+`DATABASE_URL`/`OPENSEARCH_URL` are in `.env.example`. OpenSearch runs with its security plugin
+disabled (`plugins.security.disabled: "true"`) for local dev only - plain HTTP, no auth. Never
+run it this way outside a local machine.
+
+Bring up only what the current task needs: `--profile core` alone for pgvector/dense work,
+`--profile search` alone for OpenSearch/BM25 work.
+
 ## Claude Code
 
 - Run `/memory` to confirm loaded instructions.
