@@ -123,6 +123,11 @@ ignore_missing_imports = true
 module = ["fitz"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# lightrag-hku ships no py.typed marker / stubs.
+module = ["lightrag", "lightrag.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers --cov=src/ragforge --cov-report=term-missing -m \"not integration\""
 testpaths = ["tests"]

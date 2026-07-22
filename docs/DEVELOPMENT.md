@@ -30,7 +30,7 @@ be excluded from the build context.
 
 Copy `.env.example` only when the application supports local dotenv loading. Never commit `.env` or real credentials.
 
-`gemini-embedding-001` is the frozen embedding model (ADR-0005, `configs/experiments/benchmark-v01.yaml`); `GeminiContextualizer` generates per-chunk context for Contextual Retrieval; `GeminiSummarizer` generates per-group summaries for the RAPTOR tree - so `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) is required for `make bench-live` and any other live run through any of the three adapters, not for `make bench`, which replays the versioned LLM cache (ADR-0004).
+`gemini-embedding-001` is the frozen embedding model (ADR-0005, `configs/experiments/benchmark-v01.yaml`); `GeminiContextualizer` generates per-chunk context for Contextual Retrieval; `GeminiSummarizer` generates per-group summaries for the RAPTOR tree; the LightRAG GraphRAG adapter (`retrieval.graph.lightrag_gemini`, ADR-0010) uses Gemini for both embeddings and entity/relation extraction - so `GEMINI_API_KEY` (or `GOOGLE_API_KEY`) is required for `make bench-live` and any other live run through any of these adapters, not for `make bench`, which replays the versioned LLM cache (ADR-0004).
 
 ## Local infrastructure (retrieval indexing)
 
