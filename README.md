@@ -18,7 +18,7 @@ Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG str
 | 2 | Sparse BM25 | OpenSearch, `brazilian` analyzer | Implemented |
 | 3 | Hybrid + RRF | BM25 + dense + Reciprocal Rank Fusion | Implemented |
 | 4 | Reranked | Hybrid top-50 → cross-encoder → top-5 | Implemented |
-| 5 | Contextual Retrieval | Per-chunk LLM context + prompt caching | Planned |
+| 5 | Contextual Retrieval | Per-chunk LLM context + prompt caching | Implemented |
 | 6 | Parent-child / multi-vector | Search small chunks, deliver the section | Implemented |
 | 7 | RAPTOR | Recursive summary tree (minimal impl.) | Planned |
 | 8 | GraphRAG | LightRAG adapter (local + global) | Planned |
@@ -34,10 +34,10 @@ is actually running today versus what the design targets - see the [PR history](
 |---|---|
 | Legal structural chunker (ADR-0006) | Implemented |
 | Ingestion pipeline (extraction, snapshot hashing) | Implemented |
-| Dense / Sparse / Hybrid / Parent-child / Reranked retrieval | Implemented |
+| Dense / Sparse / Hybrid / Parent-child / Reranked / Contextual retrieval | Implemented |
 | Evaluation harness + structural-coverage judgments (ADR-0002) | Implemented |
 | Observability (Langfuse, metadata-only) | Implemented |
-| Contextual, RAPTOR, GraphRAG strategies | Planned |
+| RAPTOR, GraphRAG strategies | Planned |
 | Adaptive Router, Corrective workflow, Governance | Planned |
 | RegRAG-BR golden set | In progress - 20 questions published, 210 targeted |
 | API / dashboard apps | Planned (scaffolding only) |
