@@ -2,28 +2,45 @@
 
 **Adaptive RAG benchmarking platform for Brazilian financial and regulatory documents.**
 
-Routes queries across sparse, dense, hybrid, contextual, hierarchical (RAPTOR), graph (GraphRAG) and corrective strategies - measuring answer quality, retrieval precision, latency and cost on **RegRAG-BR**, a curated golden dataset of 210 questions over CMN/BCB and CVM norms.
+RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarchical (RAPTOR), graph (GraphRAG) and corrective strategies - measuring answer quality, retrieval precision, latency and cost on **RegRAG-BR**, a golden dataset targeting 210 questions over CMN/BCB and CVM norms.
 
-> 🚧 v0.1 in progress - 4-week sprint. Weekly publishable checkpoints; results table lands here as runs complete.
+> 🚧 v0.1 in progress. See [Status](#status) for what is implemented today versus planned.
 
 ## Why this exists
 
-Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 8 strategies × 7 query classes, an adaptive router evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache.
+Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 8 targeted strategies × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache. See [Status](#status) for what is built so far.
 
 ## Benchmarked strategies
 
-| # | Strategy | Approach |
-|---|----------|----------|
-| 1 | Dense (baseline) | pgvector, fixed top-k |
-| 2 | Sparse BM25 | OpenSearch, `brazilian` analyzer |
-| 3 | Hybrid + RRF | BM25 + dense + Reciprocal Rank Fusion |
-| 4 | Reranked | Hybrid top-50 → cross-encoder → top-5 |
-| 5 | Contextual Retrieval | Per-chunk LLM context + prompt caching |
-| 6 | Parent-child / multi-vector | Search small chunks, deliver the section |
-| 7 | RAPTOR | Recursive summary tree (minimal impl.) |
-| 8 | GraphRAG | LightRAG adapter (local + global) |
+| # | Strategy | Approach | Status |
+|---|----------|----------|--------|
+| 1 | Dense (baseline) | pgvector, fixed top-k | Implemented |
+| 2 | Sparse BM25 | OpenSearch, `brazilian` analyzer | Implemented |
+| 3 | Hybrid + RRF | BM25 + dense + Reciprocal Rank Fusion | Implemented |
+| 4 | Reranked | Hybrid top-50 → cross-encoder → top-5 | Planned |
+| 5 | Contextual Retrieval | Per-chunk LLM context + prompt caching | Planned |
+| 6 | Parent-child / multi-vector | Search small chunks, deliver the section | Implemented |
+| 7 | RAPTOR | Recursive summary tree (minimal impl.) | Planned |
+| 8 | GraphRAG | LightRAG adapter (local + global) | Planned |
 
-Cross-cutting: **Adaptive Router** (rules + few-shot), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph), **governance** (answer → chunk → article citation tracing), **observability** (Langfuse + OpenTelemetry).
+Cross-cutting: **Adaptive Router** (rules + few-shot, planned), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph, planned), **governance** (answer → chunk → article citation tracing, planned), **observability** (Langfuse metadata-only tracing implemented; OpenTelemetry planned).
+
+## Status
+
+RAGForge is under active development (v0.1, see the checkpoint note above). This section tracks what
+is actually running today versus what the design targets - see the [PR history](../../pulls?q=is%3Apr) for how each row landed.
+
+| Component | Status |
+|---|---|
+| Legal structural chunker (ADR-0006) | Implemented |
+| Ingestion pipeline (extraction, snapshot hashing) | Implemented |
+| Dense / Sparse / Hybrid / Parent-child retrieval | Implemented |
+| Evaluation harness + structural-coverage judgments (ADR-0002) | Implemented |
+| Observability (Langfuse, metadata-only) | Implemented |
+| Reranking, Contextual, RAPTOR, GraphRAG strategies | Planned |
+| Adaptive Router, Corrective workflow, Governance | Planned |
+| RegRAG-BR golden set | In progress - 20 questions published, 210 targeted |
+| API / dashboard apps | Planned (scaffolding only) |
 
 ## Quick start
 
@@ -62,7 +79,9 @@ The core is framework-free: `RetrievalStrategy` is a Protocol; LLM SDKs are bann
 
 ## Dataset - RegRAG-BR
 
-210 questions (7 classes × 30) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM rules, with article-level relevance judgments and reference answers. Published under CC-BY-4.0 with a datasheet. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
+Targeting 210 questions (7 classes × 30) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM rules, with article-level relevance judgments and reference answers, published under CC-BY-4.0 with a datasheet. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
+
+Today, 20 questions are published (`datasets/regrag-br/judgments.json`) - a hand-curated starter set verified against the real parsed text of 4 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018), demonstrating the judgment format end-to-end. The remaining 190 are in progress.
 
 ## Development
 
