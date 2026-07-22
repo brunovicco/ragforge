@@ -13,3 +13,4 @@ Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; 
 | [0007](0007-llm-judge-calibration-ptbr.md) | LLM judge (RAGAS) calibration against human evaluation in PT-BR | Accepted |
 | [0008](0008-streamlit-comparison-frontend.md) | Comparison frontend in Streamlit (dashboard + arena) | Accepted |
 | [0009](0009-scaffold-via-engineering-harness.md) | Scaffold and quality gates via claude-python-engineering-harness | Accepted |
+| [0010](0010-graphrag-evaluation-scope.md) | GraphRAG (LightRAG) evaluation scope and provenance recovery | Accepted |
