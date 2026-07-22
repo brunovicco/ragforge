@@ -54,6 +54,9 @@ retrieval:
 # Full metrics per run: experiments/embeddings-ptbr/runs.jsonl. Headline
 # dense recall@5 on the real golden set (2026-07-22, 465 chunks, n=19
 # judged queries): BAAI/bge-m3=0.789, gemini-embedding-001=0.947,
-# gemini-embedding-2=0.763. All candidates evaluated; ADR-0005 winner is
-# a cost/latency/quality decision left to the user, not decided here.
-winner: null # set once every candidate above is evaluated
+# gemini-embedding-2=0.763.
+#
+# Decision (2026-07-22): gemini-embedding-001, on retrieval quality
+# (dense/hybrid recall@5=0.947, clearly ahead of both other candidates).
+# Frozen into configs/experiments/benchmark-v01.yaml per ADR-0005.
+winner: gemini-embedding-001
