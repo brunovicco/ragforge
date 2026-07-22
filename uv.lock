@@ -2814,6 +2814,7 @@ source = { editable = "." }
 dependencies = [
     { name = "docling" },
     { name = "fastapi" },
+    { name = "google-genai" },
     { name = "langgraph" },
     { name = "lightrag-hku" },
     { name = "opensearch-py" },
@@ -2848,6 +2849,7 @@ dev = [
 requires-dist = [
     { name = "docling", specifier = ">=2.15" },
     { name = "fastapi", specifier = ">=0.115" },
+    { name = "google-genai", specifier = ">=1.0" },
     { name = "langfuse", marker = "extra == 'tracing'", specifier = ">=3.0" },
     { name = "langgraph", specifier = ">=0.4" },
     { name = "lightrag-hku", specifier = ">=1.0" },
