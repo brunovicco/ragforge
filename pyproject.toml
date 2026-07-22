@@ -20,6 +20,7 @@ dependencies = [
     "sentence-transformers>=3.0",
     "lightrag-hku>=1.0",
     "streamlit>=1.40",
+    "google-genai>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -84,6 +85,10 @@ ignore = [
 # separators ("I – ...") found in real CMN/BCB/CVM norm text (ADR-0006), not
 # accidental confusables.
 "src/ragforge/chunking/legal_parser.py" = ["RUF001"]
+# Standalone experiment runner outside the src/ package: it inserts src/ onto
+# sys.path before importing ragforge modules, so those imports can't be at
+# the physical top of the file.
+"configs/experiments/run_embeddings_ptbr.py" = ["E402", "D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"

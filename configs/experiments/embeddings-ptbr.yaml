@@ -1,0 +1,59 @@
+# ADR-0005: embedding comparison scope. Dense + Hybrid only, over the real
+# golden set (datasets/regrag-br/judgments.json), not the full 8-strategy
+# matrix. The winner is frozen for configs/experiments/benchmark-v01.yaml.
+#
+# Run with: uv run python configs/experiments/run_embeddings_ptbr.py --model <name>
+candidates:
+  - name: BAAI/bge-m3
+    kind: open
+    provider: sentence-transformers
+    status: evaluated
+    dimensions: 1024
+    notes: >
+      Multilingual, PT-BR capable. Ran on CPU (device=cpu) - the MPS
+      (Apple GPU) backend ran out of memory encoding the corpus with this
+      model on a 24GB M2 and crashed the process, taking Docker Desktop
+      down with it. CPU is slower (~minutes for ~465 chunks) but stable.
+  - name: gemini-embedding-001
+    kind: proprietary
+    provider: gemini
+    status: evaluated
+    dimensions: 1536
+    notes: >
+      Requires GEMINI_API_KEY or GOOGLE_API_KEY in the environment - never
+      committed. Real, metered API calls (small cost at this corpus scale).
+      Native output is 3072-dim; requested output_dimensionality=1536
+      (Matryoshka truncation) because pgvector's HNSW index rejects columns
+      over 2000 dimensions. Batches up to 100 texts per request.
+  - name: gemini-embedding-2
+    kind: proprietary
+    provider: gemini
+    status: evaluated
+    dimensions: 1536
+    notes: >
+      Google's first natively multimodal embedding model (GA name; the
+      preview alias was gemini-embedding-2-preview). Pricier than
+      gemini-embedding-001 per token. Same credential and dimension-
+      truncation requirement as gemini-embedding-001. Verified quirk
+      (2026-07-22): unlike gemini-embedding-001, this model silently
+      collapses a multi-text embed_content request down to a single
+      embedding instead of batching - GoogleGeminiEmbedder sends it one
+      text per request, so indexing the corpus took ~465 sequential calls.
+
+dataset:
+  path: datasets/regrag-br/judgments.json
+  documents:
+    - LC-105/2001
+    - RES-CMN-4893/2021
+    - RES-CMN-5274/2025
+    - LEI-13709/2018
+
+retrieval:
+  top_k: 5
+
+# Full metrics per run: experiments/embeddings-ptbr/runs.jsonl. Headline
+# dense recall@5 on the real golden set (2026-07-22, 465 chunks, n=19
+# judged queries): BAAI/bge-m3=0.789, gemini-embedding-001=0.947,
+# gemini-embedding-2=0.763. All candidates evaluated; ADR-0005 winner is
+# a cost/latency/quality decision left to the user, not decided here.
+winner: null # set once every candidate above is evaluated
