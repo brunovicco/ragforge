@@ -37,20 +37,22 @@ is actually running today versus what the design targets - see the [PR history](
 | All 8 benchmarked retrieval strategies (Dense through GraphRAG) | Implemented |
 | Evaluation harness + structural-coverage judgments (ADR-0002) | Implemented |
 | Observability (Langfuse, metadata-only) | Implemented |
+| Main benchmark runner (`make bench-live`, all 8 strategies) | Implemented - live mode only |
 | Adaptive Router, Corrective workflow, Governance | Planned |
 | RegRAG-BR golden set | In progress - 20 questions published, 210 targeted |
 | API / dashboard apps | Planned (scaffolding only) |
+| `make bench` (cached, bit-for-bit replay, ADR-0004) | Planned - needs a versioned LLM call cache, not built yet |
 
 ## Quick start
 
 ```bash
 uv sync --all-groups
 make infra-up                  # Postgres+pgvector, OpenSearch (docker compose profiles)
-make bench                     # deterministic replay from the versioned LLM cache - no API key needed
-make dashboard                 # benchmark view + side-by-side strategy Arena
+GEMINI_API_KEY=... make bench-live   # real run, all 8 strategies, real API cost
+make dashboard                       # benchmark view + side-by-side strategy Arena
 ```
 
-`make bench-live` re-runs against providers (see [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) for the reproducibility policy).
+`make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). `make bench` (deterministic, zero-cost replay from a versioned LLM cache) is the target design per [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), but that cache layer doesn't exist yet - only live mode is implemented.
 
 ## Key design decisions
 

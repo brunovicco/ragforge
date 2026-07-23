@@ -76,13 +76,31 @@ def mrr(results: list[RetrievalResult], judgment: Judgment) -> float:
 def ndcg_at_k(results: list[RetrievalResult], judgment: Judgment, k: int) -> float:
     """Normalized Discounted Cumulative Gain over the top-k results.
 
+    Coverage-aware like recall_at_k: a judged-relevant ID already credited by
+    an earlier, higher-ranked result contributes no further gain at a later
+    rank. Without this, a strategy whose results legitimately overlap in
+    structural coverage - e.g. RAPTOR, where a leaf's structural_ids
+    propagate into every ancestor summary node - could count the same
+    relevant ID's gain once per covering result and push nDCG above the
+    theoretical maximum of 1.0, since IDCG assumes each distinct relevant ID
+    contributes at most once.
+
     0.0 when the judgment has no relevant refs (nothing to normalize against).
     """
     gains = _gains_by_canonical(judgment)
-    dcg = sum(
-        result_gain(result, judgment) / math.log2(rank + 1)
-        for rank, result in enumerate(results[:k], start=1)
-    )
+    covered_ids: set[str] = set()
+    dcg = 0.0
+    for rank, result in enumerate(results[:k], start=1):
+        new_ids = [
+            ref_id
+            for ref_id in result.chunk.structural_ids
+            if ref_id in gains and ref_id not in covered_ids
+        ]
+        if not new_ids:
+            continue
+        dcg += max(gains[ref_id] for ref_id in new_ids) / math.log2(rank + 1)
+        covered_ids.update(new_ids)
+
     ideal_gains = sorted(gains.values(), reverse=True)[:k]
     idcg = sum(gain / math.log2(rank + 1) for rank, gain in enumerate(ideal_gains, start=1))
     return dcg / idcg if idcg > 0 else 0.0

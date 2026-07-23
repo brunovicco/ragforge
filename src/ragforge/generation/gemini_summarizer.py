@@ -6,25 +6,19 @@ GOOGLE_API_KEY) in the environment - the same credential GoogleGeminiEmbedder
 and GeminiContextualizer use. Real, metered API calls: one generation call per
 group, per tree level.
 
-The free tier's generate_content quota is tight, and Google's own error
-response includes a retry-after hint, so a 429 is exactly the transient,
-repeatable case AGENTS.md asks for bounded exponential backoff on - this
-adapter retries those, and only those, before giving up.
+Retries 429s and transient transport errors via
+ragforge.adapters.gemini_retry, shared with every other Gemini-calling
+adapter in this project.
 """
 
 import os
-import random
-import time
 
 from google import genai
-from google.genai import errors, types
+from google.genai import types
 
+from ragforge.adapters.gemini_retry import call_with_retry
 from ragforge.generation.errors import GenerationError
 
-_RATE_LIMIT_STATUS_CODE = 429
-_MAX_RETRIES = 5
-_BASE_DELAY_SECONDS = 2.0
-_MAX_DELAY_SECONDS = 60.0
 _TEMPERATURE = 0.0
 _MAX_OUTPUT_TOKENS = 400
 
@@ -66,36 +60,25 @@ class GeminiSummarizer:
         """Return a single summary covering every text in ``texts``.
 
         Raises:
-            GenerationError: If the call fails, rate limiting persists past
-                every retry, or the model returns no text.
+            GenerationError: If the call fails, retries are exhausted, or the
+                model returns no text.
         """
         prompt = _PROMPT_TEMPLATE.format(texts="\n\n---\n\n".join(texts))
         config = types.GenerateContentConfig(
             temperature=_TEMPERATURE, max_output_tokens=_MAX_OUTPUT_TOKENS
         )
 
-        for attempt in range(_MAX_RETRIES):
-            try:
-                response = self._client.models.generate_content(
+        try:
+            response = call_with_retry(
+                lambda: self._client.models.generate_content(
                     model=self.name, contents=prompt, config=config
                 )
-            except errors.ClientError as exc:
-                is_last_attempt = attempt == _MAX_RETRIES - 1
-                if exc.code != _RATE_LIMIT_STATUS_CODE or is_last_attempt:
-                    raise GenerationError(
-                        f"Gemini generate_content failed for {self.name!r}: {exc}"
-                    ) from exc
-                delay = min(_BASE_DELAY_SECONDS * (2**attempt), _MAX_DELAY_SECONDS)
-                # Retry-backoff jitter, not a security use of randomness.
-                time.sleep(delay + random.uniform(0, delay * 0.1))  # noqa: S311  # nosec B311
-                continue
-            except Exception as exc:
-                raise GenerationError(
-                    f"Gemini generate_content failed for {self.name!r}: {exc}"
-                ) from exc
+            )
+        except Exception as exc:
+            raise GenerationError(
+                f"Gemini generate_content failed for {self.name!r}: {exc}"
+            ) from exc
 
-            if not response.text:
-                raise GenerationError(f"Gemini returned no text for {self.name!r}")
-            return response.text.strip()
-
-        raise GenerationError(f"Gemini generate_content retries exhausted for {self.name!r}")
+        if not response.text:
+            raise GenerationError(f"Gemini returned no text for {self.name!r}")
+        return response.text.strip()
