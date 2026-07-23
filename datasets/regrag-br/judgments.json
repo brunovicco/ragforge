@@ -1,170 +1,2959 @@
 {
-  "version": "0.1-seed",
-  "note": "Starter golden set (~20 questions), hand-curated and verified against the real parsed text of 4 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018). Not the full 210-question RegRAG-BR benchmark - a seed demonstrating the judgment format end-to-end. Every structural ID here is checked by tests/unit/test_judgments.py against parse_norm output of the real documents.",
+  "version": "0.2",
+  "note": "RegRAG-BR golden set: 230 questions with reference answers, hand-curated and verified against the real parsed text of 5 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018-LGPD, ICVM-607/2019). Covers 7 query classes (exact_factual, semantic, multi_hop, global, section_comparative, numeric_tabular, unanswerable). Every structural ID is checked by tests/unit/test_judgments.py against parse_norm/chunk_norm output of the real documents; refs known to collide with a different real text under the same structural ID (amendment-history artifacts in LEI-13709/2018 and RES-CMN-5274/2025, and the annex penalty table merged into ICVM-607/2019::art-113's incisos) were excluded from citation. LEI-6385/1976 is present in the corpus but not yet curated and is out of scope for this golden set.",
   "judgments": [
     {
       "question_id": "q001",
-      "text": "Qual é a pena prevista para quem realiza quebra de sigilo bancário fora das hipóteses autorizadas pela Lei Complementar 105/2001?",
+      "text": "O que a Lei Complementar 105/2001 estabelece como regra geral para as instituições financeiras em relação às suas operações?",
       "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-10", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "As instituições financeiras conservarão sigilo em suas operações ativas e passivas e serviços prestados (art. 1º, caput, da LC 105/2001)."
     },
     {
       "question_id": "q002",
-      "text": "Quais entidades são consideradas 'instituições financeiras' para os fins da Lei Complementar 105/2001?",
+      "text": "Segundo a LC 105/2001, a que órgão o dever de sigilo bancário também se estende, além das instituições financeiras?",
       "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-1::par-1", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O dever de sigilo é extensivo ao Banco Central do Brasil, em relação às operações que realizar e às informações que obtiver no exercício de suas atribuições (art. 2º, caput)."
     },
     {
       "question_id": "q003",
-      "text": "Em que hipóteses a quebra do sigilo bancário pode ser decretada, segundo a LC 105/2001?",
+      "text": "Qual é a pena prevista para quem realiza quebra de sigilo bancário fora das hipóteses autorizadas pela Lei Complementar 105/2001?",
       "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-1::par-4", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-10",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A quebra de sigilo, fora das hipóteses autorizadas na LC 105/2001, constitui crime e sujeita os responsáveis à pena de reclusão de um a quatro anos e multa (art. 10)."
     },
     {
       "question_id": "q004",
-      "text": "O Banco Central pode acessar informações sigilosas de bancos sob investigação especial?",
-      "query_class": "semantic",
+      "text": "A quem compete disciplinar os critérios segundo os quais as instituições financeiras informarão operações financeiras à administração tributária da União?",
+      "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-2::par-1", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Compete ao Poder Executivo disciplinar, inclusive quanto à periodicidade e aos limites de valor, os critérios para que as instituições financeiras informem à administração tributária da União as operações financeiras de seus usuários (art. 5º, caput)."
     },
     {
       "question_id": "q005",
-      "text": "A troca de informações entre instituições financeiras para fins cadastrais constitui violação do dever de sigilo bancário?",
-      "query_class": "semantic",
+      "text": "Sob quais condições as autoridades e os agentes fiscais tributários podem examinar documentos, livros e registros de instituições financeiras, segundo o art. 6º da LC 105/2001?",
+      "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-1::par-3", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-6",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Somente quando houver processo administrativo instaurado ou procedimento fiscal em curso e tais exames forem considerados indispensáveis pela autoridade administrativa competente (art. 6º, caput)."
     },
     {
       "question_id": "q006",
-      "text": "Quem deve aprovar a política de segurança cibernética das instituições financeiras, segundo a Resolução CMN 4.893/2021?",
+      "text": "O que dispõe o art. 11 da LC 105/2001 sobre a responsabilidade do servidor público que utiliza indevidamente informação obtida por quebra de sigilo?",
       "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-9", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-11",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O servidor público que utilizar ou viabilizar a utilização de informação obtida em decorrência da quebra de sigilo responde pessoal e diretamente pelos danos decorrentes, sem prejuízo da responsabilidade objetiva da entidade pública quando comprovado que agiu de acordo com orientação oficial (art. 11)."
     },
     {
       "question_id": "q007",
-      "text": "A partir de quando entrou em vigor a Resolução CMN nº 4.893/2021?",
-      "query_class": "exact_factual",
+      "text": "Em que situações a revelação de informações sigilosas pelas instituições financeiras não configura violação do dever de sigilo, segundo a LC 105/2001?",
+      "query_class": "semantic",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-28", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-1::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não constitui violação do dever de sigilo, entre outras hipóteses: a troca de informações cadastrais entre instituições financeiras, a comunicação de ilícitos penais ou administrativos às autoridades competentes, a revelação com consentimento expresso do interessado, e o fornecimento de informações nos termos previstos na própria LC 105/2001 (art. 1º, § 3º)."
     },
     {
       "question_id": "q008",
-      "text": "Por quantos anos as instituições devem manter à disposição do Banco Central os documentos relativos à política de segurança cibernética?",
-      "query_class": "numeric_tabular",
+      "text": "Como a LC 105/2001 protege as informações fiscais obtidas pela administração tributária sobre as operações financeiras dos contribuintes?",
+      "query_class": "semantic",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-23", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-5::par-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "As informações a que se refere o art. 5º são conservadas sob sigilo fiscal, na forma da legislação em vigor (art. 5º, § 5º)."
     },
     {
       "question_id": "q009",
-      "text": "O que uma instituição financeira precisa observar antes de contratar um provedor de computação em nuvem no exterior?",
-      "query_class": "semantic",
+      "text": "Em quantos dias, no máximo, deve ser efetuada a comunicação ao Ministério Público de indícios de crime de ação pública verificados pelo Banco Central ou pela CVM?",
+      "query_class": "numeric_tabular",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-16", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-9::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo máximo de quinze dias, a contar do recebimento do processo, com manifestação dos respectivos serviços jurídicos (art. 9º, § 1º)."
     },
     {
       "question_id": "q010",
-      "text": "Quais informações devem constar na comunicação ao Banco Central sobre a contratação de serviços relevantes de processamento de dados e computação em nuvem?",
-      "query_class": "exact_factual",
+      "text": "Quais dispositivos da LC 105/2001 tratam da possibilidade de a Comissão de Valores Mobiliários obter o levantamento de sigilo bancário junto a instituições financeiras?",
+      "query_class": "multi_hop",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-15::par-1", "grade": "relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-2::par-3",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-7",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 2º, § 3º, equipara a CVM ao Banco Central do Brasil para fins de fiscalização de operações no mercado de valores mobiliários; com base nisso, o art. 7º permite que a CVM, em inquérito administrativo, solicite à autoridade judiciária competente o levantamento do sigilo junto às instituições financeiras."
     },
     {
       "question_id": "q011",
-      "text": "Quais são os principais eixos temáticos tratados pela Resolução CMN nº 4.893/2021?",
-      "query_class": "global",
+      "text": "Compare as regras de fornecimento de informações sigilosas ao Poder Judiciário (art. 3º) e ao Poder Legislativo Federal (art. 4º) na LC 105/2001.",
+      "query_class": "section_comparative",
       "relevant_refs": [
-        {"ref": "RES-CMN-4893/2021::art-1", "grade": "partially_relevant"},
-        {"ref": "RES-CMN-4893/2021::art-2", "grade": "partially_relevant"},
-        {"ref": "RES-CMN-4893/2021::art-11", "grade": "partially_relevant"},
-        {"ref": "RES-CMN-4893/2021::art-19", "grade": "partially_relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-3",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Ao Poder Judiciário, as informações ordenadas são prestadas preservando o caráter sigiloso mediante acesso restrito às partes do processo (art. 3º). Ao Poder Legislativo Federal, as informações e documentos sigilosos são fornecidos quando fundamentadamente necessários ao exercício de competências constitucionais e legais, sendo que, no caso de comissões parlamentares de inquérito, as solicitações devem ser previamente aprovadas pelo plenário da respectiva Casa ou comissão (art. 4º)."
     },
     {
       "question_id": "q012",
-      "text": "O que a Resolução CMN nº 5.274/2025 alterou na Resolução CMN nº 4.893/2021 em relação aos controles mínimos de segurança cibernética?",
-      "query_class": "multi_hop",
+      "text": "De modo geral, quais mecanismos a LC 105/2001 estabelece para equilibrar o sigilo bancário com o interesse público de investigação e fiscalização?",
+      "query_class": "global",
       "relevant_refs": [
-        {"ref": "RES-CMN-5274/2025::art-1", "grade": "relevant"},
-        {"ref": "RES-CMN-4893/2021::art-3", "grade": "partially_relevant"}
-      ]
+        {
+          "ref": "LC-105/2001::art-1::par-3",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-2",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-3",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-4",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LC-105/2001::art-9",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A lei mantém o sigilo como regra (art. 1º), mas prevê exceções: comunicação de ilícitos e outras hipóteses que não violam o sigilo (art. 1º, § 3º); extensão do dever de sigilo ao Banco Central e equiparação da CVM, com poderes de fiscalização (art. 2º); fornecimento de informações ao Poder Judiciário mediante acesso restrito (art. 3º); ao Poder Legislativo Federal em investigações (art. 4º); e comunicação ao Ministério Público quando há indícios de crime de ação pública (art. 9º)."
     },
     {
       "question_id": "q013",
-      "text": "Qual o prazo estabelecido pela Resolução CMN nº 5.274/2025 para as instituições se adequarem aos novos requisitos de segurança cibernética?",
-      "query_class": "exact_factual",
-      "relevant_refs": [
-        {"ref": "RES-CMN-5274/2025::art-2", "grade": "relevant"}
-      ]
+      "text": "Qual é o valor da multa administrativa aplicável pelo Banco Central às instituições financeiras que descumprirem os prazos de comunicação previstos no art. 9º da LC 105/2001?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A LC 105/2001 não estabelece um valor de multa administrativa para o descumprimento dos prazos do art. 9º; o texto da lei não trata dessa questão."
     },
     {
       "question_id": "q014",
-      "text": "Quais são as bases legais que autorizam o tratamento de dados pessoais segundo a LGPD?",
+      "text": "Até quando as instituições em funcionamento devem promover as adaptações necessárias para se adequar à Resolução CMN nº 5.274/2025?",
       "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LEI-13709/2018::art-7", "grade": "relevant"}
-      ]
+        {
+          "ref": "RES-CMN-5274/2025::art-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "As instituições em funcionamento na data de entrada em vigor da Resolução devem promover as adaptações necessárias até 1º de março de 2026 (art. 2º)."
     },
     {
       "question_id": "q015",
-      "text": "Quais direitos a LGPD garante ao titular dos dados em relação à correção e eliminação de dados incompletos ou desnecessários?",
-      "query_class": "section_comparative",
+      "text": "O que os mecanismos de rastreabilidade de transações e operações devem abranger, segundo as alterações promovidas pela RES-CMN-5274/2025?",
+      "query_class": "semantic",
       "relevant_refs": [
-        {"ref": "LEI-13709/2018::art-18", "grade": "relevant"}
-      ]
+        {
+          "ref": "RES-CMN-5274/2025::art-1::par-7",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem abranger, no mínimo: trilhas de auditoria do processamento fim a fim dos dados e informações, incluindo logs para identificar falhas ou comportamentos atípicos; definição de tempo de retenção das informações de acordo com o tipo de processamento; e retenção segura das trilhas de auditoria (art. 1º, § 7º)."
     },
     {
       "question_id": "q016",
-      "text": "Qual é o valor máximo da multa simples que a autoridade nacional pode aplicar por infração à LGPD?",
-      "query_class": "numeric_tabular",
+      "text": "O que os mecanismos de proteção da rede devem contemplar, segundo as alterações promovidas pela RES-CMN-5274/2025?",
+      "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LEI-13709/2018::art-52", "grade": "relevant"}
-      ]
+        {
+          "ref": "RES-CMN-5274/2025::art-1::par-11",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem contemplar, no mínimo: segmentação de rede resguardando o ambiente de produção; regras de firewall e monitoramento de conexões; critérios para monitoramento de conexões com ambientes externos; medidas para identificar e prevenir conexões indevidas; processos para identificação e tratamento de eventos atípicos; e medidas para restringir o acesso a dispositivos autorizados (art. 1º, § 11)."
     },
     {
       "question_id": "q017",
-      "text": "Que medidas de segurança a LGPD exige dos agentes de tratamento de dados pessoais para proteger contra acessos não autorizados?",
-      "query_class": "exact_factual",
-      "relevant_refs": [
-        {"ref": "LEI-13709/2018::art-46", "grade": "relevant"}
-      ]
+      "text": "Qual é o valor da multa pecuniária prevista na RES-CMN-5274/2025 para o descumprimento do prazo de adaptação até março de 2026?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A RES-CMN-5274/2025 não estabelece um valor de multa pecuniária para o descumprimento desse prazo; o texto da resolução não trata dessa questão."
     },
     {
       "question_id": "q018",
-      "text": "Compare os direitos do titular dos dados garantidos pelo art. 18 da LGPD com as sanções administrativas do art. 52 aplicáveis ao controlador em caso de descumprimento.",
-      "query_class": "section_comparative",
+      "text": "Quais instituições não estão sujeitas à Resolução CMN nº 4.893/2021, segundo seu art. 1º?",
+      "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LEI-13709/2018::art-18", "grade": "relevant"},
-        {"ref": "LEI-13709/2018::art-52", "grade": "relevant"}
-      ]
+        {
+          "ref": "RES-CMN-4893/2021::art-1::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O disposto na Resolução não se aplica às instituições de pagamento, que devem observar a regulamentação emanada do Banco Central do Brasil no exercício de suas atribuições legais (art. 1º, parágrafo único)."
     },
     {
       "question_id": "q019",
-      "text": "A troca de informações cadastrais entre instituições financeiras, permitida pela LC 105/2001, encontra amparo em alguma base legal de tratamento de dados pessoais da LGPD?",
-      "query_class": "multi_hop",
+      "text": "O que a política de segurança cibernética deve buscar assegurar, segundo o art. 2º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
       "relevant_refs": [
-        {"ref": "LC-105/2001::art-1::par-3", "grade": "relevant"},
-        {"ref": "LEI-13709/2018::art-7", "grade": "partially_relevant"}
-      ]
+        {
+          "ref": "RES-CMN-4893/2021::art-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve assegurar a confidencialidade, a integridade e a disponibilidade dos dados e dos sistemas de informação utilizados pela instituição (art. 2º, caput)."
     },
     {
       "question_id": "q020",
-      "text": "Qual é o valor da multa prevista na Resolução CMN nº 4.893/2021 para instituições que descumprirem a política de segurança cibernética?",
+      "text": "Quem pode adotar uma política de segurança cibernética única, segundo o art. 2º, § 2º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-2::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Admite-se a adoção de política de segurança cibernética única por conglomerado prudencial e por sistema cooperativo de crédito (art. 2º, § 2º)."
+    },
+    {
+      "question_id": "q021",
+      "text": "A quem a política de segurança cibernética deve ser divulgada, segundo o art. 4º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve ser divulgada aos funcionários da instituição e às empresas prestadoras de serviços a terceiros, mediante linguagem clara, acessível e em nível de detalhamento compatível com as funções desempenhadas (art. 4º)."
+    },
+    {
+      "question_id": "q022",
+      "text": "O que as instituições devem divulgar ao público, segundo o art. 5º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem divulgar ao público um resumo contendo as linhas gerais da política de segurança cibernética (art. 5º)."
+    },
+    {
+      "question_id": "q023",
+      "text": "Quem deve designar o diretor responsável pela política de segurança cibernética, segundo o art. 7º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-7",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "As instituições referidas no art. 1º devem designar diretor responsável pela política de segurança cibernética e pela execução do plano de ação e de resposta a incidentes (art. 7º)."
+    },
+    {
+      "question_id": "q024",
+      "text": "Quem deve aprovar a política de segurança cibernética e o plano de ação e resposta a incidentes, segundo o art. 9º da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-9",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem ser aprovados pelo conselho de administração ou, na sua inexistência, pela diretoria da instituição (art. 9º)."
+    },
+    {
+      "question_id": "q025",
+      "text": "O que compõe os serviços de computação em nuvem para os fins da RES-CMN-4893/2021, segundo o art. 13?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-13",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Abrangem, no mínimo, um dos seguintes: processamento/armazenamento de dados e infraestrutura para a instituição executar softwares; implantação ou execução de aplicativos da instituição usando recursos do prestador; ou execução via internet de aplicativos do prestador (art. 13)."
+    },
+    {
+      "question_id": "q026",
+      "text": "Quem é responsável pela confiabilidade, integridade, disponibilidade, segurança e sigilo dos serviços contratados, segundo o art. 14 da RES-CMN-4893/2021?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-14",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A instituição contratante dos serviços é responsável pela confiabilidade, integridade, disponibilidade, segurança e sigilo em relação aos serviços contratados, bem como pelo cumprimento da legislação e regulamentação em vigor (art. 14)."
+    },
+    {
+      "question_id": "q027",
+      "text": "A quais contratações não se aplica o disposto nos arts. 11 a 17 da RES-CMN-4893/2021, segundo o art. 18?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-18",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não se aplica à contratação de sistemas operados por câmaras, por prestadores de serviços de compensação e liquidação, ou por entidades que exerçam atividades de registro ou depósito centralizado (art. 18)."
+    },
+    {
+      "question_id": "q028",
+      "text": "O que o Banco Central pode fazer quando constatar inobservância da RES-CMN-4893/2021 na contratação de serviços, segundo o art. 26?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-26",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Pode vetar ou impor restrições para a contratação de serviços de processamento, armazenamento de dados e computação em nuvem, estabelecendo prazo para adequação (art. 26)."
+    },
+    {
+      "question_id": "q029",
+      "text": "Quais resoluções são revogadas pela RES-CMN-4893/2021, segundo seu art. 27?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-27",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "São revogadas a Resolução nº 4.658, de 26 de abril de 2018, e a Resolução nº 4.752, de 26 de setembro de 2019 (art. 27)."
+    },
+    {
+      "question_id": "q030",
+      "text": "O que deve ser levado em conta na avaliação da relevância de um serviço a ser contratado, segundo o art. 12, § 1º da RES-CMN-4893/2021?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-12::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A instituição contratante deve considerar a criticidade do serviço e a sensibilidade dos dados e informações a serem processados, armazenados e gerenciados pelo contratado, levando em conta a classificação feita nos termos do art. 3º, inciso V, alínea 'c' (art. 12, § 1º)."
+    },
+    {
+      "question_id": "q031",
+      "text": "Que garantias a instituição contratante deve verificar quanto à capacidade do potencial prestador de serviços, segundo o art. 12, inciso II da RES-CMN-4893/2021?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-12::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve verificar a capacidade do prestador de assegurar cumprimento da legislação, acesso da instituição aos dados, confidencialidade/integridade/disponibilidade/recuperação dos dados, aderência a certificações exigidas, acesso a relatórios de auditoria independente, provimento de informações e recursos de gestão, segregação dos dados de clientes, e qualidade dos controles de acesso (art. 12, inciso II)."
+    },
+    {
+      "question_id": "q032",
+      "text": "Quais requisitos devem ser observados na contratação de serviços relevantes prestados no exterior, segundo o art. 16 da RES-CMN-4893/2021?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-16",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve observar: existência de convênio de troca de informações entre o BC e as autoridades supervisoras dos países envolvidos; garantia de que a prestação não prejudique o funcionamento da instituição nem embarace a atuação do BC; definição prévia dos países e regiões onde os dados serão tratados; e previsão de alternativas para continuidade dos negócios (art. 16)."
+    },
+    {
+      "question_id": "q033",
+      "text": "O que os contratos de prestação de serviços relevantes devem prever em caso de decretação de regime de resolução da instituição contratante, segundo o art. 17, parágrafo único da RES-CMN-4893/2021?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-17::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem prever a obrigação de a empresa contratada conceder pleno e irrestrito acesso ao responsável pelo regime de resolução, e a obrigação de notificação prévia, com pelo menos trinta dias de antecedência, da intenção de interromper a prestação de serviços (art. 17, parágrafo único)."
+    },
+    {
+      "question_id": "q034",
+      "text": "Em quantos dias após a contratação a comunicação ao Banco Central deve ser realizada, segundo o art. 15, § 2º da RES-CMN-4893/2021?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-15::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A comunicação deve ser realizada até dez dias após a contratação dos serviços (art. 15, § 2º)."
+    },
+    {
+      "question_id": "q035",
+      "text": "Por quanto tempo devem ficar à disposição do Banco Central os documentos relacionados à política de segurança cibernética, segundo o art. 23 da RES-CMN-4893/2021?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-23",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem ficar à disposição do Banco Central do Brasil pelo prazo de cinco anos (art. 23, caput)."
+    },
+    {
+      "question_id": "q036",
+      "text": "Qual o prazo máximo para as instituições adequarem contratos já vigentes em 26/4/2018 às novas regras, segundo o art. 25, parágrafo único da RES-CMN-4893/2021?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-25::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O prazo previsto para a adequação não pode ultrapassar 31 de dezembro de 2021 (art. 25, parágrafo único)."
+    },
+    {
+      "question_id": "q037",
+      "text": "Qual a relação entre o plano de ação e resposta a incidentes (art. 6º) e o relatório anual sobre sua implementação (art. 8º) na RES-CMN-4893/2021?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-6",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-8",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 6º exige que as instituições estabeleçam um plano de ação e de resposta a incidentes; o art. 8º, com base nesse plano, exige a elaboração de relatório anual sobre sua implementação, com data-base de 31 de dezembro."
+    },
+    {
+      "question_id": "q038",
+      "text": "Como a classificação de dados prevista no art. 3º, inciso V, alínea 'c', se relaciona com a avaliação de relevância de serviços contratados no art. 12, § 1º da RES-CMN-4893/2021?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-3::inc-v-ali-c",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-12::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 3º, V, 'c', exige diretrizes para a classificação dos dados quanto à relevância; o art. 12, § 1º, determina que essa classificação seja levada em conta na avaliação da relevância de um serviço a ser contratado."
+    },
+    {
+      "question_id": "q039",
+      "text": "Quais artigos da RES-CMN-4893/2021 tratam conjuntamente do prazo para reinício das atividades após interrupção de serviços relevantes?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-20::inc-ii",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-24::inc-iii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 20, inciso II, exige a definição de prazo estipulado para reinício ou normalização das atividades ou serviços interrompidos; o art. 24, inciso III, autoriza o Banco Central a estabelecer os prazos máximos referidos nesse dispositivo."
+    },
+    {
+      "question_id": "q040",
+      "text": "Compare os requisitos de contratação de serviços relevantes de processamento e armazenamento de dados no País (art. 12) e no exterior (art. 16) da RES-CMN-4893/2021.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-12",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-16",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No País (art. 12), exige-se governança proporcional ao risco e verificação da capacidade do prestador quanto a legislação, acesso, confidencialidade e auditoria. No exterior (art. 16), soma-se a exigência de convênio de troca de informações com autoridades supervisoras estrangeiras, garantia de não embaraço à atuação do Banco Central, definição prévia de países/regiões e plano de continuidade de negócios."
+    },
+    {
+      "question_id": "q041",
+      "text": "Compare os prazos de comunicação ao Banco Central previstos no art. 15 (contratação de serviços) e no art. 16, § 1º (autorização quando não há convênio) da RES-CMN-4893/2021.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-15::par-2",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-16::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 15, § 2º, exige comunicação ao Banco Central em até dez dias após a contratação. Já o art. 16, § 1º, exige que, na ausência de convênio, a instituição solicite autorização prévia do Banco Central com prazo mínimo de sessenta dias antes da contratação ou alteração contratual."
+    },
+    {
+      "question_id": "q042",
+      "text": "Compare as obrigações do art. 3º (política de segurança cibernética) e do art. 19 (continuidade de negócios) quanto ao tratamento de incidentes relevantes na RES-CMN-4893/2021.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-3::inc-iv",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-19::inc-i",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 3º, IV, exige que a política de segurança cibernética contemple o registro, a análise da causa e do impacto, e o controle dos efeitos de incidentes relevantes. O art. 19, I, exige que as políticas de gerenciamento de risco para continuidade de negócios disponham sobre o tratamento desses mesmos incidentes relevantes."
+    },
+    {
+      "question_id": "q043",
+      "text": "De modo geral, como a RES-CMN-4893/2021 estrutura as obrigações das instituições financeiras em relação à segurança cibernética e à contratação de serviços em nuvem?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "RES-CMN-4893/2021::art-2",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-6",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-11",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-12",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-15",
+          "grade": "relevant"
+        },
+        {
+          "ref": "RES-CMN-4893/2021::art-21",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A Resolução exige que as instituições implementem uma política de segurança cibernética (art. 2º) e um plano de ação e resposta a incidentes (art. 6º); regula a contratação de serviços relevantes de processamento e computação em nuvem, exigindo que ela seja contemplada nas estratégias de gerenciamento de risco (art. 11) e precedida de procedimentos de verificação do prestador (art. 12); exige comunicação dessas contratações ao Banco Central (art. 15); e estabelece mecanismos de acompanhamento e controle da efetividade de tudo isso (art. 21)."
+    },
+    {
+      "question_id": "q044",
+      "text": "Qual é o valor da multa administrativa aplicável às instituições que descumprirem os prazos de comunicação previstos na RES-CMN-4893/2021?",
       "query_class": "unanswerable",
-      "relevant_refs": []
+      "relevant_refs": [],
+      "reference_answer": "A RES-CMN-4893/2021 não estabelece valores de multa administrativa para o descumprimento dos prazos de comunicação; o texto da resolução não trata dessa questão."
+    },
+    {
+      "question_id": "q045",
+      "text": "Qual é o objetivo da Lei Geral de Proteção de Dados (LGPD), segundo seu art. 1º?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A LGPD dispõe sobre o tratamento de dados pessoais, inclusive nos meios digitais, com o objetivo de proteger os direitos fundamentais de liberdade e de privacidade e o livre desenvolvimento da personalidade da pessoa natural (art. 1º)."
+    },
+    {
+      "question_id": "q046",
+      "text": "Quais são os fundamentos da disciplina de proteção de dados pessoais, segundo o art. 2º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "São fundamentos: o respeito à privacidade; a autodeterminação informativa; a liberdade de expressão, informação, comunicação e opinião; a inviolabilidade da intimidade, honra e imagem; o desenvolvimento econômico, tecnológico e a inovação; a livre iniciativa, livre concorrência e defesa do consumidor; e os direitos humanos, o livre desenvolvimento da personalidade, a dignidade e a cidadania (art. 2º)."
+    },
+    {
+      "question_id": "q047",
+      "text": "A quais operações de tratamento de dados a LGPD se aplica, segundo o art. 3º?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Aplica-se a qualquer operação de tratamento realizada por pessoa natural ou jurídica, de direito público ou privado, desde que a operação seja realizada no território nacional, tenha por objetivo ofertar bens/serviços a indivíduos no território nacional, ou os dados tratados tenham sido coletados no território nacional (art. 3º)."
+    },
+    {
+      "question_id": "q048",
+      "text": "A que hipótese de tratamento de dados a LGPD não se aplica, segundo o art. 4º, inciso I?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-4::inc-i",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A LGPD não se aplica ao tratamento de dados pessoais realizado por pessoa natural para fins exclusivamente particulares e não econômicos (art. 4º, inciso I)."
+    },
+    {
+      "question_id": "q049",
+      "text": "O que a LGPD define como 'dado pessoal sensível', segundo o art. 5º, inciso II?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-5::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É o dado pessoal sobre origem racial ou étnica, convicção religiosa, opinião política, filiação a sindicato ou a organização de caráter religioso, filosófico ou político, dado referente à saúde ou à vida sexual, dado genético ou biométrico, quando vinculado a uma pessoa natural (art. 5º, II)."
+    },
+    {
+      "question_id": "q050",
+      "text": "O que a LGPD define como 'titular', segundo o art. 5º, inciso V?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-5::inc-v",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Titular é a pessoa natural a quem se referem os dados pessoais que são objeto de tratamento (art. 5º, V)."
+    },
+    {
+      "question_id": "q051",
+      "text": "Qual a diferença entre 'controlador' e 'operador' segundo a LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-5::inc-vi",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-5::inc-vii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Controlador é a pessoa natural ou jurídica a quem competem as decisões referentes ao tratamento de dados pessoais; operador é a pessoa natural ou jurídica que realiza o tratamento de dados pessoais em nome do controlador (art. 5º, VI e VII)."
+    },
+    {
+      "question_id": "q052",
+      "text": "Quais são os princípios que devem orientar as atividades de tratamento de dados pessoais, segundo o art. 6º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-6",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "São os princípios de finalidade, adequação, necessidade, livre acesso, qualidade dos dados, transparência, segurança, prevenção, não discriminação, e responsabilização e prestação de contas (art. 6º)."
+    },
+    {
+      "question_id": "q053",
+      "text": "O que caracteriza o princípio da necessidade no tratamento de dados pessoais, segundo o art. 6º, inciso III da LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-6::inc-iii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É a limitação do tratamento ao mínimo necessário para a realização de suas finalidades, com abrangência dos dados pertinentes, proporcionais e não excessivos em relação às finalidades do tratamento (art. 6º, III)."
+    },
+    {
+      "question_id": "q054",
+      "text": "Em quais hipóteses o tratamento de dados pessoais pode ser realizado, segundo o art. 7º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-7",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Entre outras hipóteses: mediante consentimento do titular, para cumprimento de obrigação legal, pela administração pública para execução de políticas públicas, para estudos por órgão de pesquisa, para execução de contrato, para exercício de direitos em processo judicial, para proteção da vida, para tutela da saúde, por interesse legítimo do controlador, ou para proteção do crédito (art. 7º, caput)."
+    },
+    {
+      "question_id": "q055",
+      "text": "Como deve ser fornecido o consentimento do titular para o tratamento de seus dados, segundo o art. 8º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-8",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O consentimento deverá ser fornecido por escrito ou por outro meio que demonstre a manifestação de vontade do titular (art. 8º, caput)."
+    },
+    {
+      "question_id": "q056",
+      "text": "O consentimento do titular para tratamento de dados pode ser revogado, segundo o art. 8º, § 5º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-8::par-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o consentimento pode ser revogado a qualquer momento mediante manifestação expressa do titular, por procedimento gratuito e facilitado (art. 8º, § 5º)."
+    },
+    {
+      "question_id": "q057",
+      "text": "Quais informações sobre o tratamento de dados devem ser disponibilizadas ao titular de forma clara e ostensiva, segundo o art. 9º da LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-9",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem ser disponibilizadas informações sobre a finalidade específica do tratamento, a forma e duração do tratamento, a identificação do controlador, informações de contato, uso compartilhado de dados, responsabilidades dos agentes, e os direitos do titular (art. 9º, caput)."
+    },
+    {
+      "question_id": "q058",
+      "text": "Quando o legítimo interesse do controlador pode fundamentar o tratamento de dados pessoais, segundo o art. 10 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-10",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Somente para finalidades legítimas, consideradas a partir de situações concretas, que incluem, mas não se limitam a, apoio e promoção de atividades do controlador, e proteção do exercício regular de direitos do titular (art. 10, caput)."
+    },
+    {
+      "question_id": "q059",
+      "text": "Qual a relação entre o consentimento previsto no art. 7º, inciso I, e a forma exigida pelo art. 8º da LGPD?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-7",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-8",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 7º, I, permite o tratamento de dados mediante o fornecimento de consentimento pelo titular; o art. 8º detalha a forma desse consentimento, exigindo que seja fornecido por escrito ou por outro meio que demonstre manifestação de vontade."
+    },
+    {
+      "question_id": "q060",
+      "text": "Compare os fundamentos que legitimam o tratamento de dados pessoais mediante consentimento (art. 7º, I) e por legítimo interesse do controlador (art. 10) na LGPD.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-7",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-10",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O tratamento mediante consentimento (art. 7º, I) depende de manifestação livre, informada e inequívoca do titular. O tratamento por legítimo interesse (art. 10) dispensa o consentimento, mas exige que a finalidade seja legítima e concreta, e que apenas dados estritamente necessários sejam tratados, respeitando os direitos e liberdades fundamentais do titular."
+    },
+    {
+      "question_id": "q061",
+      "text": "De modo geral, quais requisitos a LGPD estabelece para que o tratamento de dados pessoais seja considerado lícito?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-6",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-7",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-8",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-9",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-10",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O tratamento deve observar os princípios do art. 6º (finalidade, necessidade, transparência etc.), enquadrar-se em uma das hipóteses legitimadoras do art. 7º, seguir os requisitos formais de consentimento do art. 8º quando aplicável, garantir o acesso às informações do art. 9º, e, quando fundamentado em legítimo interesse, observar os limites do art. 10."
+    },
+    {
+      "question_id": "q062",
+      "text": "Qual é o valor da multa aplicável a uma pessoa física que trata dados pessoais para fins exclusivamente particulares e não econômicos sem consentimento, segundo os artigos 1º a 10 da LGPD?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "Não se aplica: o art. 4º, inciso I, exclui expressamente do âmbito da LGPD o tratamento de dados por pessoa natural para fins exclusivamente particulares e não econômicos, e os artigos 1º a 10 não tratam de valores de multa para essa hipótese."
+    },
+    {
+      "question_id": "q063",
+      "text": "O tratamento de dados pessoais sensíveis pode ocorrer sem o consentimento do titular, segundo o art. 11 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-11",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, em hipóteses específicas em que for indispensável, como cumprimento de obrigação legal, tratamento compartilhado pela administração pública, estudos por órgão de pesquisa, exercício regular de direitos, proteção da vida, tutela da saúde ou prevenção à fraude (art. 11, caput)."
+    },
+    {
+      "question_id": "q064",
+      "text": "Os dados anonimizados são considerados dados pessoais para os fins da LGPD, segundo o art. 12?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-12",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, salvo quando o processo de anonimização puder ser revertido utilizando meios próprios ou com esforços razoáveis (art. 12, caput)."
+    },
+    {
+      "question_id": "q065",
+      "text": "Em quais condições órgãos de pesquisa podem acessar bases de dados pessoais para estudos em saúde pública, segundo o art. 13 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-13",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Os dados devem ser tratados exclusivamente dentro do órgão de pesquisa, estritamente para a finalidade de estudos, mantidos em ambiente controlado e seguro, incluindo, sempre que possível, anonimização ou pseudonimização (art. 13, caput)."
+    },
+    {
+      "question_id": "q066",
+      "text": "Como deve ser realizado o tratamento de dados pessoais de crianças, segundo o art. 14 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-14",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve ser realizado em seu melhor interesse; o tratamento de dados de crianças deve ter o consentimento específico e em destaque dado por pelo menos um dos pais ou pelo responsável legal (art. 14, caput e § 1º)."
+    },
+    {
+      "question_id": "q067",
+      "text": "Em quantos dias o controlador deve fornecer declaração completa sobre a origem e o tratamento dos dados pessoais, segundo o art. 19, inciso II da LGPD?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-19::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de até 15 (quinze) dias, contado da data do requerimento do titular (art. 19, inciso II)."
+    },
+    {
+      "question_id": "q068",
+      "text": "Em quais hipóteses ocorre o término do tratamento de dados pessoais, segundo o art. 15 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-15",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Ocorre quando a finalidade for alcançada ou os dados deixarem de ser necessários; ao fim do período de tratamento; por comunicação do titular, incluindo revogação do consentimento; ou por determinação da autoridade nacional em caso de violação da lei (art. 15)."
+    },
+    {
+      "question_id": "q069",
+      "text": "Para quais finalidades os dados pessoais podem ser conservados após o término do tratamento, segundo o art. 16 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-16",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Podem ser conservados para cumprimento de obrigação legal ou regulatória, estudo por órgão de pesquisa com anonimização quando possível, transferência a terceiro respeitando os requisitos legais, ou uso exclusivo do controlador com dados anonimizados e vedado o acesso por terceiro (art. 16)."
+    },
+    {
+      "question_id": "q070",
+      "text": "Quais direitos o titular tem em relação aos dados tratados pelo controlador, segundo o art. 18 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-18",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O titular tem direito a obter, entre outros: confirmação da existência de tratamento, acesso aos dados, correção de dados incompletos ou desatualizados, anonimização ou eliminação de dados irregulares, portabilidade, eliminação de dados tratados com consentimento, informação sobre o compartilhamento de dados, e revogação do consentimento (art. 18, caput)."
+    },
+    {
+      "question_id": "q071",
+      "text": "O titular pode se opor ao tratamento de seus dados realizado com base em uma hipótese de dispensa de consentimento, segundo o art. 18, § 2º da LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-18::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o titular pode opor-se ao tratamento realizado com fundamento em uma das hipóteses de dispensa de consentimento, em caso de descumprimento ao disposto na LGPD (art. 18, § 2º)."
+    },
+    {
+      "question_id": "q072",
+      "text": "O titular dos dados tem direito a solicitar revisão de decisões tomadas unicamente com base em tratamento automatizado de dados pessoais, segundo o art. 20 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-20",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o titular tem direito a solicitar revisão de decisões tomadas unicamente com base em tratamento automatizado de dados pessoais que afetem seus interesses, incluindo decisões que definam seu perfil pessoal, profissional, de consumo ou de crédito (art. 20, caput)."
+    },
+    {
+      "question_id": "q073",
+      "text": "Os dados pessoais referentes ao exercício regular de direitos pelo titular podem ser usados em seu prejuízo, segundo o art. 21 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-21",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, os dados pessoais referentes ao exercício regular de direitos pelo titular não podem ser utilizados em seu prejuízo (art. 21)."
+    },
+    {
+      "question_id": "q074",
+      "text": "Como a revogação do consentimento prevista no art. 8º, § 5º, se conecta ao direito do titular previsto no art. 18, inciso IX, da LGPD?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-8::par-5",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-18",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 8º, § 5º, estabelece que o consentimento pode ser revogado a qualquer momento por manifestação expressa do titular; o art. 18, inciso IX, positiva esse mesmo direito de revogação como um dos direitos do titular exercíveis perante o controlador."
+    },
+    {
+      "question_id": "q075",
+      "text": "Compare o tratamento de dados sensíveis (art. 11) com o tratamento de dados de crianças (art. 14) na LGPD quanto à exigência de consentimento.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-11",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-14",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Para dados sensíveis, o consentimento do próprio titular (ou responsável legal) deve ser específico e destacado, mas há diversas hipóteses de dispensa (art. 11). Para dados de crianças, o consentimento deve ser dado especificamente por pelo menos um dos pais ou responsável legal, com hipóteses de dispensa mais restritas, como contato com os pais ou proteção da criança (art. 14)."
+    },
+    {
+      "question_id": "q076",
+      "text": "Qual é o prazo que a LGPD estabelece para que os pais consintam com o tratamento de dados de adolescentes maiores de 16 anos sem supervisão, segundo os artigos 11 a 22?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "Os artigos 11 a 22 da LGPD não estabelecem um prazo específico ou uma regra diferenciada para adolescentes maiores de 16 anos; o art. 14 trata do tratamento de dados de crianças, exigindo consentimento dos pais ou responsável legal, sem fixar tal prazo etário diferenciado."
+    },
+    {
+      "question_id": "q077",
+      "text": "Qual deve ser a finalidade do tratamento de dados pessoais pelas pessoas jurídicas de direito público, segundo o art. 23 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-23",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve ser realizado para o atendimento de sua finalidade pública, na persecução do interesse público, com o objetivo de executar as competências legais ou cumprir as atribuições legais do serviço público (art. 23, caput)."
+    },
+    {
+      "question_id": "q078",
+      "text": "É permitido ao Poder Público transferir a entidades privadas dados pessoais constantes de suas bases de dados, segundo o art. 26, § 1º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-26::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Em regra, é vedado ao Poder Público transferir a entidades privadas dados pessoais constantes de bases de dados a que tenha acesso, exceto em hipóteses específicas previstas na lei (art. 26, § 1º)."
+    },
+    {
+      "question_id": "q079",
+      "text": "Em quais casos a transferência internacional de dados pessoais é permitida, segundo o art. 33 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-33",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Entre outros casos: para países com grau de proteção adequado; quando o controlador comprovar garantias de cumprimento da lei; para cooperação jurídica internacional; para proteção da vida; quando a autoridade nacional autorizar; ou quando o titular fornecer consentimento específico para a transferência internacional (art. 33)."
+    },
+    {
+      "question_id": "q080",
+      "text": "O que a autoridade nacional deve considerar para avaliar o nível de proteção de dados de um país estrangeiro, segundo o art. 34 da LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-34",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve considerar as normas gerais e setoriais da legislação do país de destino, a natureza dos dados, a observância dos princípios de proteção de dados desta Lei, a adoção de medidas de segurança, a existência de garantias judiciais e institucionais, e outras circunstâncias relativas à transferência (art. 34)."
+    },
+    {
+      "question_id": "q081",
+      "text": "Quem deve manter registro das operações de tratamento de dados pessoais, segundo o art. 37 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-37",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O controlador e o operador devem manter registro das operações de tratamento de dados pessoais que realizarem, especialmente quando baseado no legítimo interesse (art. 37)."
+    },
+    {
+      "question_id": "q082",
+      "text": "Quais são as atividades do encarregado pelo tratamento de dados pessoais, segundo o art. 41, § 2º da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-41::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Consistem em aceitar reclamações e comunicações dos titulares, receber comunicações da autoridade nacional, orientar funcionários e contratados sobre práticas de proteção de dados, e executar demais atribuições determinadas pelo controlador (art. 41, § 2º)."
+    },
+    {
+      "question_id": "q083",
+      "text": "Em quais hipóteses os agentes de tratamento não serão responsabilizados por danos ao titular, segundo o art. 43 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-43",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Quando provarem que não realizaram o tratamento que lhes é atribuído, que não houve violação à legislação de proteção de dados, ou que o dano decorre de culpa exclusiva do titular ou de terceiro (art. 43)."
+    },
+    {
+      "question_id": "q084",
+      "text": "O que caracteriza o tratamento de dados pessoais como irregular, segundo o art. 44 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-44",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É irregular quando deixar de observar a legislação ou quando não fornecer a segurança que o titular pode esperar, consideradas circunstâncias como o modo de realização, os riscos esperados e as técnicas disponíveis à época (art. 44, caput)."
+    },
+    {
+      "question_id": "q085",
+      "text": "A quem o controlador deve comunicar a ocorrência de incidente de segurança que possa acarretar risco ou dano relevante, segundo o art. 48 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-48",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O controlador deverá comunicar à autoridade nacional e ao titular a ocorrência de incidente de segurança que possa acarretar risco ou dano relevante aos titulares (art. 48, caput)."
+    },
+    {
+      "question_id": "q086",
+      "text": "Qual é o valor máximo da multa simples prevista no art. 52, inciso II, da LGPD, por infração?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-52::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Multa simples de até 2% do faturamento da pessoa jurídica de direito privado, grupo ou conglomerado no Brasil no último exercício, excluídos os tributos, limitada, no total, a R$ 50.000.000,00 (cinquenta milhões de reais) por infração (art. 52, II)."
+    },
+    {
+      "question_id": "q087",
+      "text": "Em que consiste a sanção de bloqueio de dados prevista no art. 52, inciso V, da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-52::inc-v",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Consiste no bloqueio dos dados pessoais a que se refere a infração até a sua regularização (art. 52, V)."
+    },
+    {
+      "question_id": "q088",
+      "text": "Como a comunicação de incidente de segurança prevista no art. 48 se relaciona com as sanções administrativas do art. 52 da LGPD?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-48",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-52::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 48 exige que o controlador comunique incidentes de segurança relevantes à autoridade nacional e ao titular; caso o incidente decorra de infração à LGPD, o controlador fica sujeito às sanções administrativas do art. 52, incluindo multa simples de até 2% do faturamento."
+    },
+    {
+      "question_id": "q089",
+      "text": "Compare as sanções de advertência (art. 52, I) e de multa simples (art. 52, II) previstas na LGPD.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-52::inc-i",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-52::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A advertência (art. 52, I) é uma sanção mais branda, que apenas indica um prazo para adoção de medidas corretivas, sem penalidade financeira imediata. A multa simples (art. 52, II) é uma sanção pecuniária de até 2% do faturamento, limitada a R$ 50 milhões por infração."
+    },
+    {
+      "question_id": "q090",
+      "text": "De modo geral, como a LGPD estrutura o regime de responsabilidade e sanções para infrações no tratamento de dados pessoais?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-42",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-44",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-48",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-52",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-53",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O controlador ou operador que causar dano em violação à LGPD é obrigado a repará-lo (art. 42); o tratamento é irregular quando não observar a lei ou a segurança esperada (art. 44); incidentes de segurança relevantes devem ser comunicados à autoridade nacional (art. 48); e as infrações sujeitam os agentes a sanções administrativas graduais, de advertência a multas de até 2% do faturamento (art. 52), calculadas conforme metodologia própria da autoridade nacional (art. 53)."
+    },
+    {
+      "question_id": "q091",
+      "text": "Qual é o valor mínimo da multa diária prevista no art. 52, inciso III, da LGPD?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "O art. 52, III, não estabelece um valor mínimo para a multa diária; apenas determina que ela observe o limite total do inciso II (até R$ 50 milhões por infração), sem fixar piso mínimo."
+    },
+    {
+      "question_id": "q092",
+      "text": "O que os controladores e operadores podem formular no âmbito de suas competências, segundo o art. 50 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-50",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Podem formular regras de boas práticas e de governança que estabeleçam condições de organização, procedimentos, normas de segurança e outros aspectos relacionados ao tratamento de dados pessoais, individualmente ou por meio de associações (art. 50, caput)."
+    },
+    {
+      "question_id": "q093",
+      "text": "O que o controlador deve levar em consideração ao estabelecer regras de boas práticas, segundo o art. 50, § 1º da LGPD?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-50::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve levar em consideração, em relação ao tratamento e aos dados, a natureza, o escopo, a finalidade e a probabilidade e a gravidade dos riscos e dos benefícios decorrentes do tratamento de dados do titular (art. 50, § 1º)."
+    },
+    {
+      "question_id": "q094",
+      "text": "O que a autoridade nacional estimulará, segundo o art. 51 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-51",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A autoridade nacional estimulará a adoção de padrões técnicos que facilitem o controle pelos titulares dos seus dados pessoais (art. 51)."
+    },
+    {
+      "question_id": "q095",
+      "text": "Compete exclusivamente a quem a aplicação das sanções previstas na LGPD, segundo o art. 55-K?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-55-k",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A aplicação das sanções previstas na LGPD compete exclusivamente à ANPD, cujas demais competências prevalecerão sobre as competências correlatas de outras entidades ou órgãos da administração pública (art. 55-K)."
+    },
+    {
+      "question_id": "q096",
+      "text": "Quais são algumas das receitas da ANPD, segundo o art. 55-L da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-55-l",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Incluem dotações orçamentárias, créditos especiais e adicionais, doações, legados e subvenções, valores apurados na venda ou aluguel de bens próprios, recursos de acordos e convênios, e o produto da venda de publicações e material técnico (art. 55-L)."
+    },
+    {
+      "question_id": "q097",
+      "text": "Como será notificada a empresa estrangeira nos atos processuais previstos na LGPD, segundo o art. 61?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-61",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Será notificada e intimada na pessoa do agente ou representante ou pessoa responsável por sua filial, agência, sucursal, estabelecimento ou escritório instalado no Brasil, independentemente de procuração (art. 61)."
+    },
+    {
+      "question_id": "q098",
+      "text": "A autoridade nacional deve estabelecer normas sobre o quê em relação a bancos de dados já constituídos, segundo o art. 63 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-63",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve estabelecer normas sobre a adequação progressiva de bancos de dados constituídos até a data de entrada em vigor da Lei, consideradas a complexidade das operações de tratamento e a natureza dos dados (art. 63)."
+    },
+    {
+      "question_id": "q099",
+      "text": "Os direitos e princípios expressos na LGPD excluem outros previstos no ordenamento jurídico brasileiro, segundo o art. 64?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-64",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não. Os direitos e princípios expressos na LGPD não excluem outros previstos no ordenamento jurídico pátrio ou em tratados internacionais dos quais o Brasil seja parte (art. 64)."
+    },
+    {
+      "question_id": "q100",
+      "text": "Quantos meses após a publicação a LGPD entrou em vigor quanto aos artigos que não tratam da estrutura da ANPD, segundo o art. 65, inciso II?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-65::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Vinte e quatro meses após a data de sua publicação, quanto aos demais artigos que não tratam da estrutura da ANPD (art. 65, II)."
+    },
+    {
+      "question_id": "q101",
+      "text": "Como as regras de boas práticas do art. 50 se relacionam com os parâmetros para aplicação de sanções do art. 52, § 1º, da LGPD?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-50",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-52::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 50 permite que controladores e operadores formulem regras de boas práticas e governança; o art. 52, § 1º, elenca a adoção de política de boas práticas e governança como um dos parâmetros e critérios que a autoridade nacional deve considerar na dosimetria das sanções administrativas."
+    },
+    {
+      "question_id": "q102",
+      "text": "Compare as competências do encarregado pelo tratamento de dados (art. 41) e as competências da ANPD relacionadas a sanções (art. 55-K) na LGPD.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-41",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-55-k",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O encarregado (art. 41) atua internamente na organização do controlador, recebendo reclamações de titulares e orientando funcionários. A ANPD (art. 55-K), por sua vez, é o órgão público com competência exclusiva para aplicar sanções administrativas por infrações à LGPD, prevalecendo sobre outras entidades no que se refere à proteção de dados."
+    },
+    {
+      "question_id": "q103",
+      "text": "De modo geral, qual a estrutura institucional criada pela LGPD para a fiscalização da proteção de dados pessoais no Brasil?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-48",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-52",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-55-k",
+          "grade": "relevant"
+        },
+        {
+          "ref": "LEI-13709/2018::art-55-l",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A LGPD exige a comunicação de incidentes de segurança relevantes (art. 48); estabelece um regime de sanções administrativas graduais para infrações (art. 52); atribui competência exclusiva de fiscalização e sanção à ANPD (art. 55-K); e prevê fontes de receita próprias para o funcionamento dessa autoridade (art. 55-L)."
+    },
+    {
+      "question_id": "q104",
+      "text": "Em que data exata a ANPD publicou seu primeiro relatório anual de atividades, segundo a LGPD?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A LGPD não especifica datas de publicação de relatórios anuais de atividades da ANPD; essa informação não consta do texto da lei."
+    },
+    {
+      "question_id": "q105",
+      "text": "Quais medidas de segurança os agentes de tratamento devem adotar, segundo o art. 46 da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-46",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem adotar medidas de segurança, técnicas e administrativas aptas a proteger os dados pessoais de acessos não autorizados e de situações acidentais ou ilícitas de destruição, perda, alteração, comunicação ou tratamento inadequado (art. 46, caput)."
+    },
+    {
+      "question_id": "q106",
+      "text": "Quando as medidas de segurança de que trata o art. 46 da LGPD devem ser observadas, segundo o art. 46, § 2º?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-46::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem ser observadas desde a fase de concepção do produto ou do serviço até a sua execução (art. 46, § 2º)."
+    },
+    {
+      "question_id": "q107",
+      "text": "O que é considerado 'dado anonimizado' para os fins da LGPD, segundo o art. 5º, inciso III?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-5::inc-iii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É o dado relativo a um titular que não possa ser identificado, considerando a utilização de meios técnicos razoáveis e disponíveis na ocasião de seu tratamento (art. 5º, III)."
+    },
+    {
+      "question_id": "q108",
+      "text": "O que caracteriza a 'anonimização' de um dado, segundo o art. 5º, inciso XI da LGPD?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "LEI-13709/2018::art-5::inc-xi",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É a utilização de meios técnicos razoáveis e disponíveis no momento do tratamento, por meio dos quais um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo (art. 5º, XI)."
+    },
+    {
+      "question_id": "q109",
+      "text": "Sobre o que dispõe a Instrução CVM 607/2019, segundo seu art. 1º?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Dispõe sobre a apuração de infrações administrativas, o rito dos processos administrativos sancionadores, a aplicação de penalidades, o termo de compromisso e o acordo administrativo em processo de supervisão no âmbito da CVM (art. 1º)."
+    },
+    {
+      "question_id": "q110",
+      "text": "Quais princípios a CVM deve observar nos procedimentos de apuração de infrações, segundo o art. 2º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve observar os princípios da legalidade, finalidade, motivação, razoabilidade, proporcionalidade, moralidade, ampla defesa, contraditório, segurança jurídica, devido processo legal, presunção de inocência, celeridade processual, interesse público, impessoalidade, eficiência e publicidade (art. 2º)."
+    },
+    {
+      "question_id": "q111",
+      "text": "A quem cabe a investigação de infrações administrativas e a instauração de processo administrativo sancionador, segundo o art. 3º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Caberá às superintendências a investigação de infrações administrativas, a instrução processual e a instauração de processo administrativo sancionador (art. 3º)."
+    },
+    {
+      "question_id": "q112",
+      "text": "Quais providências as superintendências podem tomar diante das informações obtidas na investigação de infrações, segundo o art. 4º, caput?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Podem deixar de lavrar termo de acusação em certos casos, lavrar termo de acusação, ou propor inquérito administrativo para aprofundar a coleta de elementos (art. 4º, caput)."
+    },
+    {
+      "question_id": "q113",
+      "text": "Quais parâmetros podem ser usados para avaliar a relevância da conduta ou a expressividade da ameaça ao bem jurídico, segundo o art. 4º, § 1º da ICVM 607/2019?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-4::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Entre outros: o grau de reprovabilidade da conduta, a expressividade de valores e prejuízos envolvidos, o impacto na credibilidade do mercado de capitais, os antecedentes e a boa-fé das pessoas envolvidas, a regularização da infração e o ressarcimento dos investidores lesados (art. 4º, § 1º)."
+    },
+    {
+      "question_id": "q114",
+      "text": "Em quantos dias a Procuradoria Federal Especializada (PFE) deve emitir parecer sobre o termo de acusação, segundo o art. 7º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-7",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 30 (trinta) dias contados da data de recebimento do termo de acusação (art. 7º, caput)."
+    },
+    {
+      "question_id": "q115",
+      "text": "Quem deve conduzir o inquérito administrativo, segundo o art. 9º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-9",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O inquérito administrativo deverá ser conduzido pela Superintendência de Processos Sancionadores (SPS) (art. 9º)."
+    },
+    {
+      "question_id": "q116",
+      "text": "Em quantos dias devem ser concluídos os trabalhos de investigação do inquérito administrativo, segundo o art. 10 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-10",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Devem ser concluídos em 120 (cento e vinte) dias contados da data de instauração do inquérito, prazo prorrogável mediante pedido motivado (art. 10, caput)."
+    },
+    {
+      "question_id": "q117",
+      "text": "Quando se considera instaurado o processo administrativo sancionador, segundo o art. 21 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-21",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Considera-se instaurado com a citação dos acusados para apresentação de defesa (art. 21, caput)."
+    },
+    {
+      "question_id": "q118",
+      "text": "Por quais meios pode ser efetuada a citação dos acusados, segundo o art. 22 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-22",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A citação poderá ser efetuada por ciência no processo, por meio eletrônico ou por via postal (art. 22)."
+    },
+    {
+      "question_id": "q119",
+      "text": "Como são contados os prazos mencionados na Instrução CVM 607/2019, segundo o art. 25?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-25",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Serão contados em dias úteis, excluído o dia de início e incluído o dia de vencimento, salvo disposição expressa em sentido contrário (art. 25, caput)."
+    },
+    {
+      "question_id": "q120",
+      "text": "Qual o prazo mínimo que o interessado tem para se manifestar na ausência de prazo específico definido na ICVM 607/2019, segundo o art. 25, § 4º?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-25::par-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O prazo não poderá ser inferior a 10 (dez) dias (art. 25, § 4º)."
+    },
+    {
+      "question_id": "q121",
+      "text": "O que a revelia importa no processo administrativo sancionador, segundo o art. 28 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-28",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A revelia não importa em confissão quanto à matéria de fato nem torna incontroversas as alegações da acusação, podendo o revel intervir em qualquer fase (art. 28)."
+    },
+    {
+      "question_id": "q122",
+      "text": "Em quantos dias o acusado deve apresentar sua defesa por escrito após a citação, segundo o art. 29 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-29",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 30 (trinta) dias após a citação (art. 29, caput)."
+    },
+    {
+      "question_id": "q123",
+      "text": "Em quantos dias o instrumento de mandato de um procurador não constituído nos autos deve ser apresentado à CVM, segundo o art. 30, § 1º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-30::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Nos 15 (quinze) dias subsequentes à apresentação da defesa (art. 30, § 1º)."
+    },
+    {
+      "question_id": "q124",
+      "text": "Como é feita a designação do Relator do processo administrativo sancionador, segundo o art. 31 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-31",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Os autos são encaminhados ao Colegiado para designação do Relator por sorteio, após a apresentação da defesa ou decorrido o prazo previsto (art. 31, caput)."
+    },
+    {
+      "question_id": "q125",
+      "text": "Em quais hipóteses o membro do Colegiado estará impedido de participar de um processo, segundo o art. 32 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-32",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Estará impedido quando for acusado, tiver interesse direto ou indireto na matéria, tiver participado como perito ou testemunha, for parente de interessado até o terceiro grau, ou estiver litigando com o interessado, entre outras hipóteses legais (art. 32)."
+    },
+    {
+      "question_id": "q126",
+      "text": "Quando os processos administrativos sancionadores serão distribuídos por conexão, segundo o art. 36 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-36",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Quando a prova de uma infração influir na prova de outra, ou quando as condutas avaliadas nos respectivos processos estiverem ligadas por circunstâncias fáticas (art. 36)."
+    },
+    {
+      "question_id": "q127",
+      "text": "Como o prazo de defesa do art. 29 se relaciona com a manifestação de intenção de celebrar termo de compromisso, segundo o art. 29, § 1º da ICVM 607/2019?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-29",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-29::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 29 exige que a defesa seja apresentada em até 30 dias após a citação; o art. 29, § 1º, exige que a intenção de celebrar termo de compromisso seja manifestada até o término desse mesmo prazo, sem prejuízo do dever de apresentar a defesa."
+    },
+    {
+      "question_id": "q128",
+      "text": "Compare o prazo para conclusão do inquérito administrativo (art. 10) com o prazo para apresentação de defesa (art. 29) na ICVM 607/2019.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-10",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-29",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O inquérito administrativo deve ser concluído em 120 dias, prorrogáveis mediante pedido motivado (art. 10); já a apresentação de defesa pelo acusado, após a citação no processo sancionador, tem prazo de apenas 30 dias (art. 29) - um prazo bem mais curto, pois já parte de acusação formalizada."
+    },
+    {
+      "question_id": "q129",
+      "text": "De modo geral, quais são as etapas do rito processual sancionador estabelecido pela ICVM 607/2019 até a apresentação de defesa?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-6",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-8",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-21",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-29",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-31",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O processo se inicia com a lavratura de termo de acusação (art. 6º), podendo ser precedido de inquérito administrativo (art. 8º); instaura-se com a citação dos acusados (art. 21); o acusado apresenta defesa em até 30 dias (art. 29); e após a defesa, é designado Relator por sorteio (art. 31)."
+    },
+    {
+      "question_id": "q130",
+      "text": "Qual é o valor da taxa cobrada pela CVM para o processamento de um recurso ao Colegiado, segundo os artigos 1º a 36 da ICVM 607/2019?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "Os artigos 1º a 36 da ICVM 607/2019 não estabelecem nenhuma taxa para o processamento de recursos ao Colegiado; essa matéria não é tratada nesses dispositivos."
+    },
+    {
+      "question_id": "q131",
+      "text": "O acesso de terceiros aos autos do processo administrativo sancionador pode ser restringido, segundo o art. 15 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-15",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o acesso de terceiros será restringido em virtude de sigilo decorrente de lei ou por constituir informação empresarial cuja divulgação possa representar vantagem competitiva a outros agentes econômicos (art. 15)."
+    },
+    {
+      "question_id": "q132",
+      "text": "As comunicações da Superintendência Geral ao Ministério Público podem ser feitas em caráter de sigilo, segundo o art. 13, § 3º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-13::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, as comunicações poderão ser feitas em caráter de sigilo, sempre que necessário para assegurar a efetividade das investigações (art. 13, § 3º)."
+    },
+    {
+      "question_id": "q133",
+      "text": "O que se considera tratamento sigiloso conferido aos autos no interesse das investigações, segundo o art. 14 da ICVM 607/2019?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-14",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "É o tratamento sigiloso conferido aos autos, documentos, objetos ou informações e atos processuais, dentro do estritamente necessário à elucidação dos fatos (art. 14, caput)."
+    },
+    {
+      "question_id": "q134",
+      "text": "Quem deve efetuar a citação dos acusados para apresentação de defesa, segundo o art. 16 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-16",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A Coordenação de Controle de Processos Administrativos (CCP) efetuará a citação dos acusados, após as superintendências encaminharem os autos por despacho (art. 16, caput)."
+    },
+    {
+      "question_id": "q135",
+      "text": "O parecer da PFE é obrigatório em todos os processos administrativos sancionadores, segundo o art. 7º, § 3º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-7::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, o parecer da PFE não será obrigatório nos processos administrativos sancionadores submetidos ao rito simplificado de que trata o art. 73 (art. 7º, § 3º)."
+    },
+    {
+      "question_id": "q136",
+      "text": "Quando o acusado é considerado revel no processo administrativo sancionador, segundo o art. 21, § 4º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-21::par-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O acusado que, embora citado, não apresentar defesa será considerado revel (art. 21, § 4º)."
+    },
+    {
+      "question_id": "q137",
+      "text": "Como se opera a preclusão no processo administrativo sancionador da CVM, segundo o art. 27 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-27",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Opera-se a preclusão quando o acusado praticar determinado ato processual ou quando decorrido o prazo previsto para a sua realização (art. 27)."
+    },
+    {
+      "question_id": "q138",
+      "text": "Quais informações devem constar da citação do acusado, segundo o art. 21, § 1º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-21::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve conter a identificação do acusado, os fatos imputados, a finalidade da citação, o prazo para defesa, a informação sobre a continuidade do processo, o dever de cadastro no sistema eletrônico, e o aviso sobre a possibilidade de propor termo de compromisso (art. 21, § 1º)."
+    },
+    {
+      "question_id": "q139",
+      "text": "O que ocorre quando a nulidade de um ato processual é reconhecida, segundo o art. 40 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-40",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A nulidade de qualquer ato processual somente prejudica os posteriores que dele dependam ou decorram (art. 40, caput)."
+    },
+    {
+      "question_id": "q140",
+      "text": "Em quantos dias os acusados devem se manifestar sobre as provas produzidas, segundo o art. 46 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-46",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deverá ser concedido prazo de 15 (quinze) dias para se manifestarem sobre as provas produzidas (art. 46)."
+    },
+    {
+      "question_id": "q141",
+      "text": "Com quantos dias de antecedência a sessão pública de julgamento deve ser convocada, segundo o art. 49 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-49",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve ser convocada com pelo menos 15 (quinze) dias de antecedência (art. 49)."
+    },
+    {
+      "question_id": "q142",
+      "text": "Qual o número mínimo de membros do Colegiado necessário para realizar a sessão de julgamento, segundo o art. 50 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-50",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A sessão somente será realizada com a presença de no mínimo 3 (três) membros do Colegiado (art. 50, caput)."
+    },
+    {
+      "question_id": "q143",
+      "text": "Qual o tempo máximo concedido para a sustentação oral da defesa, segundo o art. 52 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-52",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Prazo máximo de 15 (quinze) minutos, prorrogáveis a critério do Presidente por até 15 (quinze) minutos adicionais (art. 52)."
+    },
+    {
+      "question_id": "q144",
+      "text": "Como são tomadas as deliberações na sessão de julgamento, segundo o art. 55 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-55",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A cada membro do Colegiado caberá um voto e as deliberações serão tomadas por maioria (art. 55, caput)."
+    },
+    {
+      "question_id": "q145",
+      "text": "Em caso de empate na votação do Colegiado, qual posição deve prevalecer, segundo o art. 55, parágrafo único da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-55::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Em caso de empate, deverá prevalecer a posição mais favorável ao acusado (art. 55, parágrafo único)."
+    },
+    {
+      "question_id": "q146",
+      "text": "O que deve conter a decisão proferida pelo Colegiado, segundo o art. 56 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-56",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deverá conter o relatório do processo, os fundamentos, a conclusão e as penalidades aplicadas, se for o caso (art. 56)."
+    },
+    {
+      "question_id": "q147",
+      "text": "Quais penalidades a CVM pode impor aos infratores, segundo o art. 60 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-60",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Advertência, multa, inabilitação temporária para cargos, suspensão de autorização ou registro, inabilitação para atividades da Lei 6.385/1976, proibição temporária de praticar atividades, e proibição temporária de atuar no mercado de valores mobiliários (art. 60)."
+    },
+    {
+      "question_id": "q148",
+      "text": "Qual é o prazo máximo de inabilitação temporária para exercício de cargo de administrador de companhia aberta, segundo o art. 60, inciso III da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-60::inc-iii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Até o máximo de 20 (vinte) anos (art. 60, III)."
+    },
+    {
+      "question_id": "q149",
+      "text": "Qual é um dos valores máximos para a penalidade de multa, segundo o art. 61, inciso I da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-61::inc-i",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A multa não deverá exceder R$ 50.000.000,00 (cinquenta milhões de reais), entre outros critérios possíveis (art. 61, I)."
+    },
+    {
+      "question_id": "q150",
+      "text": "Em caso de reincidência, até quanto pode ser multiplicada a multa prevista no art. 61, segundo o art. 61, § 1º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-61::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Poderá ser aplicada multa de até o triplo dos valores fixados nos incisos I a IV do caput do art. 61 (art. 61, § 1º)."
+    },
+    {
+      "question_id": "q151",
+      "text": "Quais critérios o Colegiado deve observar na fixação da pena-base, segundo o art. 63 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-63",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve observar os princípios da proporcionalidade e da razoabilidade, a capacidade econômica do infrator e os motivos que justifiquem a imposição da penalidade (art. 63, caput)."
+    },
+    {
+      "question_id": "q152",
+      "text": "Qual o limite máximo, em anos, para a pena-base das penalidades descritas no art. 60, incisos III a VI, segundo o art. 63, § 3º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-63::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não poderá ser superior a 10 (dez) anos (art. 63, § 3º)."
+    },
+    {
+      "question_id": "q153",
+      "text": "Quando as penalidades de suspensão, inabilitação e proibição serão aplicadas, segundo o art. 64 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-64",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Somente serão aplicadas nos casos de infração grave, assim definidas em normas da CVM, ou nos casos de reincidência (art. 64, caput)."
+    },
+    {
+      "question_id": "q154",
+      "text": "Quais são algumas das circunstâncias agravantes previstas no art. 65 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-65",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Entre outras: a prática sistemática ou reiterada da conduta irregular, o elevado prejuízo causado, a vantagem expressiva auferida, o dano à imagem do mercado, o cometimento mediante ardil ou fraude, e a violação de deveres fiduciários (art. 65)."
+    },
+    {
+      "question_id": "q155",
+      "text": "Em quanto a penalidade de multa será acrescida para cada circunstância agravante verificada, segundo o art. 65, § 1º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-65::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A multa será acrescida em até 25% (vinte e cinco por cento) para cada agravante verificada (art. 65, § 1º)."
+    },
+    {
+      "question_id": "q156",
+      "text": "Após quantos anos do cumprimento da punição a nova infração deixa de configurar reincidência, segundo o art. 65, § 3º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-65::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não haverá reincidência se decorridos 5 (cinco) anos do cumprimento da respectiva punição ou da extinção da pena (art. 65, § 3º)."
+    },
+    {
+      "question_id": "q157",
+      "text": "Quais são algumas das circunstâncias atenuantes previstas no art. 66 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-66",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A confissão do ilícito, os bons antecedentes do infrator, a regularização da infração, a boa-fé dos acusados, e a adoção efetiva de mecanismos internos de integridade e auditoria (art. 66)."
+    },
+    {
+      "question_id": "q158",
+      "text": "Se o dano financeiro for integralmente reparado até o julgamento pelo Colegiado, em quanto a pena será reduzida, segundo o art. 67 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-67",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A pena será reduzida de 1/3 (um terço) a 2/3 (dois terços) (art. 67, caput)."
+    },
+    {
+      "question_id": "q159",
+      "text": "Por até quantos anos a CVM pode proibir condenados de contratar com instituições financeiras oficiais, segundo o art. 69 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-69",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Por até 5 (cinco) anos (art. 69, caput)."
+    },
+    {
+      "question_id": "q160",
+      "text": "Como as circunstâncias agravantes do art. 65 se relacionam com o cálculo da pena-base previsto no art. 63 da ICVM 607/2019?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-63",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-65::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 63 determina que o Colegiado fixe a pena-base observando proporcionalidade, razoabilidade e capacidade econômica do infrator; sobre essa pena-base incidem as agravantes do art. 65, cada uma acrescendo até 25% ao valor da multa (art. 65, § 1º)."
+    },
+    {
+      "question_id": "q161",
+      "text": "Compare os efeitos das circunstâncias agravantes (art. 65) e atenuantes (art. 66) sobre a penalidade de multa na ICVM 607/2019.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-65::par-1",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-66::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Cada circunstância agravante verificada acresce a multa em até 25% (art. 65, § 1º), enquanto cada circunstância atenuante verificada reduz a multa em até 25% (art. 66, § 3º) - ambas incidindo sobre a pena-base fixada pelo Colegiado."
+    },
+    {
+      "question_id": "q162",
+      "text": "De modo geral, como a ICVM 607/2019 estrutura o cálculo e a dosimetria das penalidades aplicáveis pela CVM?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-60",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-61",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-63",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-65",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-66",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A CVM pode impor sete tipos de penalidade (art. 60), com limites para a multa (art. 61); o Colegiado fixa uma pena-base observando proporcionalidade e capacidade econômica (art. 63), sobre a qual incidem circunstâncias agravantes, que aumentam a pena (art. 65), e atenuantes, que a reduzem (art. 66)."
+    },
+    {
+      "question_id": "q163",
+      "text": "Qual é o valor exato da multa aplicada no processo administrativo sancionador mais recente julgado pela CVM?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A ICVM 607/2019 estabelece regras gerais sobre limites e dosimetria de multas, mas não contém informações sobre processos administrativos sancionadores específicos ou seus valores concretos."
+    },
+    {
+      "question_id": "q164",
+      "text": "O procedimento de dosimetria dos arts. 62 a 66 se aplica a todas as penalidades previstas na ICVM 607/2019, segundo o art. 68?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-68",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, o procedimento previsto nos arts. 62 a 66 não se aplica às penalidades impostas com fundamento nos arts. 60, I (advertência), e 61, II, III e IV (art. 68)."
+    },
+    {
+      "question_id": "q165",
+      "text": "Quem preside a sessão de julgamento do processo administrativo sancionador, segundo o art. 50 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-50",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A sessão será presidida pelo Presidente da CVM ou, na sua ausência ou impedimento, por seu substituto eventual (art. 50, caput)."
+    },
+    {
+      "question_id": "q166",
+      "text": "O Relator pode apresentar seu voto de forma sucinta, segundo o art. 57, § 1º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-57::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, é facultado ao Relator apresentar o voto de forma sucinta, com as razões de decidir, sendo permitido o julgamento em bloco de processos sobre assuntos semelhantes (art. 57, § 1º)."
+    },
+    {
+      "question_id": "q167",
+      "text": "Quando o Relator devolve os autos à superintendência que formulou a acusação, segundo o art. 41 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-41",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Quando o termo de acusação ou a peça acusatória não tiver observado o disposto no art. 6º, incisos I, IV, V ou VI (art. 41, caput)."
+    },
+    {
+      "question_id": "q168",
+      "text": "Em quantos dias o acusado deve ser intimado para aditar sua defesa em caso de nova definição jurídica dos fatos, segundo o art. 47 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-47",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 30 (trinta) dias a contar do recebimento da intimação (art. 47, caput)."
+    },
+    {
+      "question_id": "q169",
+      "text": "Em quantos dias corridos deve ser interposto recurso ao Conselho de Recursos do Sistema Financeiro Nacional, segundo o art. 70 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-70",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O recurso deve ser interposto no prazo de 30 (trinta) dias corridos da intimação (art. 70)."
+    },
+    {
+      "question_id": "q170",
+      "text": "O recurso contra decisão que impuser penalidade de advertência ou de multa tem efeito suspensivo, segundo o art. 72 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-72",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o recurso interposto contra decisão que impuser as penalidades de advertência ou de multa terá efeito suspensivo (art. 72, caput)."
+    },
+    {
+      "question_id": "q171",
+      "text": "Quais processos administrativos sancionadores se submetem ao rito simplificado, segundo o art. 73 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-73",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Submetem-se ao rito simplificado os processos relativos às infrações previstas no Anexo 73, que, em razão de seu nível de complexidade, não exigem dilação probatória ordinária (art. 73, caput)."
+    },
+    {
+      "question_id": "q172",
+      "text": "Em quantos dias a superintendência deve elaborar relatório após a apresentação das defesas no rito simplificado, segundo o art. 74 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-74",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 60 (sessenta) dias a contar do recebimento dos autos (art. 74, caput)."
+    },
+    {
+      "question_id": "q173",
+      "text": "Em quantos dias o Relator deve convocar sessão pública de julgamento no rito simplificado, segundo o art. 75 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-75",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo máximo de 120 (cento e vinte) dias contados da distribuição do processo (art. 75)."
+    },
+    {
+      "question_id": "q174",
+      "text": "A celebração de termo de compromisso importa em confissão quanto à matéria de fato, segundo o art. 81 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-81",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, a celebração de termo de compromisso não importará em confissão quanto à matéria de fato, nem em reconhecimento de ilicitude da conduta analisada (art. 81)."
+    },
+    {
+      "question_id": "q175",
+      "text": "A que o interessado se compromete ao propor a celebração de termo de compromisso, segundo o art. 82 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-82",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Compromete-se a cessar a prática de atividades ou atos considerados ilícitos, se for o caso, e a corrigir as irregularidades apontadas, inclusive indenizando os prejuízos (art. 82, caput)."
+    },
+    {
+      "question_id": "q176",
+      "text": "Em quantos dias após a apresentação da defesa a proposta completa de termo de compromisso deve ser encaminhada à CCP, segundo o art. 82, § 2º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-82::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Em até 30 (trinta) dias após a apresentação de defesa (art. 82, § 2º)."
+    },
+    {
+      "question_id": "q177",
+      "text": "Qual o número mínimo de superintendentes que compõem o Comitê de Termo de Compromisso, além do titular da Superintendência Geral, segundo o art. 83, § 2º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-83::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No mínimo 5 (cinco) superintendentes expressamente designados pelo Presidente da CVM, além do titular da Superintendência Geral, que o coordenará (art. 83, § 2º)."
+    },
+    {
+      "question_id": "q178",
+      "text": "Em quantos dias o Comitê de Termo de Compromisso deve se manifestar sobre a proposta, contados do recebimento do parecer da PFE, segundo o art. 83, § 3º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-83::par-3",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo máximo de 30 (trinta) dias, contado da data do recebimento do parecer da PFE (art. 83, § 3º)."
+    },
+    {
+      "question_id": "q179",
+      "text": "Qual o prazo máximo para a negociação entre o Comitê de Termo de Compromisso e o proponente, segundo o art. 83, § 5º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-83::par-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A negociação deverá ser concluída no prazo máximo de 120 (cento e vinte) dias (art. 83, § 5º)."
+    },
+    {
+      "question_id": "q180",
+      "text": "Quem assina o termo de compromisso após aprovadas as condições para sua celebração, segundo o art. 87 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-87",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Será assinado pelo Presidente da CVM e pelo compromitente (art. 87, caput)."
+    },
+    {
+      "question_id": "q181",
+      "text": "Quais são os efeitos da celebração do termo de compromisso, segundo o art. 88 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-88",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A suspensão do processo administrativo em curso pelo prazo estipulado para cumprimento, ou a não instauração de processo administrativo sancionador, quando a proposta for apresentada antes ou durante a fase de apuração (art. 88)."
+    },
+    {
+      "question_id": "q182",
+      "text": "O termo de compromisso constitui título executivo extrajudicial, segundo o art. 91 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-91",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o termo de compromisso, após publicado, constituirá título executivo extrajudicial (art. 91)."
+    },
+    {
+      "question_id": "q183",
+      "text": "De quanto a quanto pode ser reduzida a penalidade aplicável em caso de Acordo de Supervisão, segundo o art. 92 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-92",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Pode haver extinção da ação punitiva ou redução de 1/3 (um terço) a 2/3 (dois terços) da penalidade aplicável, mediante cooperação efetiva do investigado (art. 92, caput)."
+    },
+    {
+      "question_id": "q184",
+      "text": "Até quando é cabível a apresentação de proposta de Acordo de Supervisão, segundo o art. 93 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-93",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Até o início do julgamento pelo Colegiado (art. 93, caput)."
+    },
+    {
+      "question_id": "q185",
+      "text": "Em quantos dias o CAS deve se manifestar sobre a admissibilidade da proposta de Acordo de Supervisão, segundo o art. 96, § 1º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-96::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 30 (trinta) dias da apresentação da proposta, prorrogáveis uma vez por igual período (art. 96, § 1º)."
+    },
+    {
+      "question_id": "q186",
+      "text": "O proponente pode retificar ou desistir da proposta de Acordo de Supervisão, segundo o art. 95 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-95",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o proponente poderá retificar ou desistir da proposta a qualquer momento antes da assinatura do respectivo instrumento (art. 95)."
+    },
+    {
+      "question_id": "q187",
+      "text": "Como o prazo de manifestação de intenção de celebrar termo de compromisso do art. 82, § 1º, se relaciona com o prazo de apresentação de defesa do art. 29 da ICVM 607/2019?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-82::par-1",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-29",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 29 estabelece o prazo de 30 dias após a citação para apresentação de defesa; o art. 82, § 1º, exige que a intenção de celebrar termo de compromisso seja manifestada dentro desse mesmo prazo de defesa."
+    },
+    {
+      "question_id": "q188",
+      "text": "Compare os efeitos do termo de compromisso (art. 88) com os efeitos do Acordo de Supervisão (art. 92) na ICVM 607/2019.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-88",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-92",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O termo de compromisso (art. 88) suspende o processo ou impede sua instauração, sem admissão de culpa. Já o Acordo de Supervisão (art. 92) pressupõe confissão da infração pelo investigado, em troca de extinção da ação punitiva ou redução de 1/3 a 2/3 da penalidade, mediante cooperação efetiva na apuração dos fatos."
+    },
+    {
+      "question_id": "q189",
+      "text": "De modo geral, quais mecanismos alternativos à sanção a ICVM 607/2019 disponibiliza aos investigados?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-80",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-88",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-92",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A Instrução prevê o termo de compromisso (art. 80), que suspende ou evita a instauração do processo sem admissão de culpa (art. 88), e o Acordo de Supervisão (art. 92), que pressupõe confissão e cooperação efetiva em troca de extinção ou redução da penalidade."
+    },
+    {
+      "question_id": "q190",
+      "text": "Qual é o percentual médio de propostas de Acordo de Supervisão aceitas pela CVM desde a edição da ICVM 607/2019?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A ICVM 607/2019 estabelece as regras procedimentais para o Acordo de Supervisão, mas não contém dados estatísticos sobre a taxa de aceitação de propostas."
+    },
+    {
+      "question_id": "q191",
+      "text": "Quem fiscaliza o cumprimento das obrigações assumidas no termo de compromisso, segundo o art. 89 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-89",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Será fiscalizado pela superintendência afeta ao mérito do processo ou por outra superintendência indicada pelo Colegiado (art. 89, caput)."
+    },
+    {
+      "question_id": "q192",
+      "text": "O que ocorre se as obrigações assumidas no termo de compromisso não forem cumpridas de forma integral e adequada, segundo o art. 90 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-90",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O processo será instaurado ou seu curso retomado, conforme o caso, sem prejuízo das penalidades ou outras medidas cabíveis (art. 90)."
+    },
+    {
+      "question_id": "q193",
+      "text": "A participação do investidor lesado na análise da proposta de termo de compromisso lhe confere a condição de parte no processo, segundo o art. 85, § 1º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-85::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, a participação do investidor lesado não lhe confere a condição de parte no processo administrativo (art. 85, § 1º)."
+    },
+    {
+      "question_id": "q194",
+      "text": "O que o Colegiado considera na deliberação sobre a proposta de termo de compromisso, segundo o art. 86 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-86",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Considera a oportunidade e conveniência na celebração do compromisso, a natureza e gravidade das infrações, os antecedentes dos acusados, a colaboração de boa-fé, e a efetiva possibilidade de punição no caso concreto (art. 86, caput)."
+    },
+    {
+      "question_id": "q195",
+      "text": "Como deve ser apresentada a proposta de celebração de Acordo de Supervisão, segundo o art. 94 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-94",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Somente por escrito, submetida ao Comitê de Acordo de Supervisão em envelope lacrado e claramente identificado com os termos 'Proposta de Acordo de Supervisão' e 'Sigiloso' (art. 94, caput e inciso I)."
+    },
+    {
+      "question_id": "q196",
+      "text": "Em quantos dias, no máximo, o CAS deve decidir sobre a aceitação da proposta de Acordo de Supervisão, contados do recebimento, segundo o art. 98, parágrafo único da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-98::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A decisão não poderá ultrapassar 180 (cento e oitenta) dias, contados da data de recebimento da proposta pelo CAS (art. 98, parágrafo único)."
+    },
+    {
+      "question_id": "q197",
+      "text": "A proposta de Acordo de Supervisão rejeitada importa em confissão da matéria de fato, segundo o art. 99 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-99",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, a proposta rejeitada não importa em confissão quanto à matéria de fato nem reconhecimento de ilicitude, e dela não se fará qualquer divulgação (art. 99, caput)."
+    },
+    {
+      "question_id": "q198",
+      "text": "Em quantos dias o Acordo de Supervisão aprovado deve ser assinado pelas partes interessadas, segundo o art. 100 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-100",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 10 (dez) dias, sob pena de rejeição da proposta (art. 100, caput)."
+    },
+    {
+      "question_id": "q199",
+      "text": "O que deve constar do Acordo de Supervisão quanto à confissão do signatário, segundo o art. 101, inciso V da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-101::inc-v",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve constar confissão expressa da participação do signatário do Acordo de Supervisão no ilícito (art. 101, V)."
+    },
+    {
+      "question_id": "q200",
+      "text": "Em quantos dias o Acordo de Supervisão deve ser publicado após sua assinatura, segundo o art. 102 da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-102",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "No prazo de 5 (cinco) dias, contado de sua assinatura (art. 102, caput)."
+    },
+    {
+      "question_id": "q201",
+      "text": "A publicação do Acordo de Supervisão conterá informações sobre a identidade dos signatários, segundo o art. 102, parágrafo único da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-102::par-unico",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, a publicação não conterá informações sobre a identidade dos signatários do Acordo de Supervisão (art. 102, parágrafo único)."
+    },
+    {
+      "question_id": "q202",
+      "text": "Quem fiscaliza o cumprimento das obrigações assumidas no Acordo de Supervisão, segundo o art. 104 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-104",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Será fiscalizado pela SPS, nos casos de inquéritos administrativos ou processos já instaurados, ou pela superintendência afeta ao mérito, em coordenação com o CAS (art. 104)."
+    },
+    {
+      "question_id": "q203",
+      "text": "O que o Colegiado avalia ao ratificar o cumprimento do Acordo de Supervisão, segundo o art. 106 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-106",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Avalia cumulativamente o atendimento das condições estipuladas no acordo, a efetividade da cooperação prestada, e a boa-fé do signatário quanto ao cumprimento (art. 106, caput)."
+    },
+    {
+      "question_id": "q204",
+      "text": "De quanto é a redução das penas quando a CVM já tinha conhecimento prévio da infração, segundo o art. 107, inciso II da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-107::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Redução de 1/3 (um terço) a 2/3 (dois terços) das penas aplicáveis na esfera administrativa (art. 107, II)."
+    },
+    {
+      "question_id": "q205",
+      "text": "De quanto é o benefício exclusivo para o signatário que não for o primeiro a se qualificar em relação à infração noticiada, segundo o art. 107, § 1º da ICVM 607/2019?",
+      "query_class": "numeric_tabular",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-107::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Poderá beneficiar-se exclusivamente da redução de 1/3 (um terço) da penalidade a ela aplicável (art. 107, § 1º)."
+    },
+    {
+      "question_id": "q206",
+      "text": "O descumprimento do Acordo de Supervisão implica em quê, segundo o art. 108 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-108",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Implica a não obtenção dos benefícios previstos no art. 107, podendo ser declarado pelo CAS ou pelo Colegiado (art. 108, caput)."
+    },
+    {
+      "question_id": "q207",
+      "text": "Os procedimentos previstos na ICVM 607/2019 podem ser realizados por meio eletrônico, segundo o art. 111?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-111",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, salvo disposição legal em contrário, os procedimentos poderão ser realizados por meio eletrônico, na forma disciplinada pela CVM (art. 111)."
+    },
+    {
+      "question_id": "q208",
+      "text": "Quando a ICVM 607/2019 entrou em vigor, segundo o art. 112?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-112",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Entrou em vigor no dia 1º de setembro de 2019, aplicando-se imediatamente aos processos em curso (art. 112)."
+    },
+    {
+      "question_id": "q209",
+      "text": "Quais atos normativos foram revogados pela ICVM 607/2019, segundo o art. 113?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-113",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Foram revogadas as Deliberações CVM nº 390/2001, nº 538/2008, nº 542/2008, nº 552/2008 e nº 775/2017, bem como a Instrução CVM nº 491/2011 (art. 113)."
+    },
+    {
+      "question_id": "q210",
+      "text": "Como a extinção da ação punitiva do art. 107, inciso I, se relaciona com o desconhecimento prévio da infração pela CVM mencionado no art. 101, § 1º da ICVM 607/2019?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-107::inc-i",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-101::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 107, I, concede a extinção da ação punitiva quando a proposta de Acordo de Supervisão é apresentada sem que a CVM tivesse conhecimento prévio da infração; o art. 101, § 1º, define precisamente as datas a partir das quais se considera que a CVM tem conhecimento da infração noticiada, para fins desse benefício."
+    },
+    {
+      "question_id": "q211",
+      "text": "Compare as hipóteses de extinção da ação punitiva (art. 107, I) e de redução de penas (art. 107, II) no Acordo de Supervisão da ICVM 607/2019.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-107::inc-i",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-107::inc-ii",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A extinção da ação punitiva (art. 107, I) ocorre quando a CVM não tinha conhecimento prévio da infração noticiada. A redução de 1/3 a 2/3 das penas (art. 107, II) ocorre quando a CVM já tinha esse conhecimento prévio - um benefício menor, pois a colaboração agrega menos valor à investigação já em curso."
+    },
+    {
+      "question_id": "q212",
+      "text": "De modo geral, quais benefícios um signatário pode obter ao celebrar um Acordo de Supervisão com a CVM, segundo a ICVM 607/2019?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-92",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-107",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Mediante confissão e cooperação efetiva, o signatário pode obter extinção de sua ação punitiva ou redução de 1/3 a 2/3 da penalidade aplicável (art. 92), sendo o benefício exato determinado conforme a CVM já tivesse ou não conhecimento prévio da infração no momento da propositura (art. 107)."
+    },
+    {
+      "question_id": "q213",
+      "text": "Quantos Acordos de Supervisão foram celebrados pela CVM no ano de 2020?",
+      "query_class": "unanswerable",
+      "relevant_refs": [],
+      "reference_answer": "A ICVM 607/2019 estabelece as regras procedimentais do Acordo de Supervisão, mas não contém dados estatísticos sobre a quantidade de acordos celebrados em determinado ano."
+    },
+    {
+      "question_id": "q214",
+      "text": "O sigilo do Acordo de Supervisão perdura até quando, segundo o art. 103 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-103",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O conteúdo do acordo, o histórico de conduta, a identidade dos signatários e os documentos relacionados devem ser mantidos sigilosos em relação ao público em geral até o julgamento do processo pela CVM (art. 103, caput)."
+    },
+    {
+      "question_id": "q215",
+      "text": "É vedada a divulgação do Acordo de Supervisão a terceiros, segundo o art. 103, § 2º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-103::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, é vedada a divulgação total ou parcial do Acordo de Supervisão e seus anexos a outras pessoas ou entes, mesmo que os fatos já tenham sido divulgados por terceiros ou pelo signatário (art. 103, § 2º)."
+    },
+    {
+      "question_id": "q216",
+      "text": "O Relator deve solicitar ao CAS relatório sobre o cumprimento das obrigações antes de incluir o processo em pauta de julgamento, segundo o art. 105 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-105",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, o Relator solicitará ao CAS relatório circunstanciado a respeito do cumprimento das obrigações pelo signatário, previamente à inclusão do processo em pauta (art. 105, caput)."
+    },
+    {
+      "question_id": "q217",
+      "text": "As disposições sobre Acordo de Supervisão se aplicam às infrações relacionadas à lavagem de dinheiro, segundo o art. 109 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-109",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, aplica-se, no que couber, às infrações de que trata a Lei nº 9.613/1998 (lavagem de dinheiro) e sua regulamentação no âmbito da CVM (art. 109)."
+    },
+    {
+      "question_id": "q218",
+      "text": "Quem pode prever outras hipóteses de dispensa da elaboração de parecer jurídico, segundo o art. 110 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-110",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Ato do Superintendente Geral e do Procurador-Chefe poderá prever outras hipóteses, além da descrita no art. 7º, § 3º, em que o parecer jurídico seja dispensado (art. 110)."
+    },
+    {
+      "question_id": "q219",
+      "text": "A assinatura do Acordo de Supervisão exime o signatário da obrigação de reparar o dano causado, segundo o art. 101, § 8º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-101::par-8",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Não, a assinatura do Acordo de Supervisão não exime o signatário da obrigação de reparar integralmente o dano porventura causado pela sua conduta (art. 101, § 8º)."
+    },
+    {
+      "question_id": "q220",
+      "text": "Os efeitos do Acordo de Supervisão podem ser estendidos a empresas do mesmo grupo, segundo o art. 101, § 5º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-101::par-5",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, os efeitos podem ser estendidos às empresas do mesmo grupo e a seus dirigentes, administradores e empregados envolvidos na infração, desde que firmem o instrumento em conjunto com a pessoa jurídica proponente (art. 101, § 5º)."
+    },
+    {
+      "question_id": "q221",
+      "text": "Em qualquer hipótese de suspensão de julgamento, a quem cabe decidir sobre a produção extraordinária de provas, segundo o art. 58 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-58",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Caberá ao Relator decidir sobre a produção extraordinária de provas, nos termos dos arts. 42 a 46 (art. 58)."
+    },
+    {
+      "question_id": "q222",
+      "text": "O que deve conter, no mínimo, a ementa de divulgação da decisão proferida, segundo o art. 59 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-59",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve conter, no mínimo, a identificação dos acusados, as infrações a eles imputadas e as penalidades ou absolvições, conforme o caso (art. 59)."
+    },
+    {
+      "question_id": "q223",
+      "text": "Quando cabe recurso da decisão da superintendência de não lavrar termo de acusação, segundo o art. 4º, § 4º da ICVM 607/2019?",
+      "query_class": "semantic",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-4::par-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Somente caberá recurso se ausente a fundamentação da decisão ou caso ela esteja em desacordo com o posicionamento prevalecente no Colegiado (art. 4º, § 4º)."
+    },
+    {
+      "question_id": "q224",
+      "text": "O sorteio para designação do Relator deve assegurar o quê, segundo o art. 31, § 1º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-31::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Deve assegurar a distribuição uniforme de processos entre os membros do Colegiado, mediante mecanismo passível de verificação (art. 31, § 1º)."
+    },
+    {
+      "question_id": "q225",
+      "text": "A quem cabe decidir sobre pedido de provas formulado na defesa do acusado, segundo o art. 43 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-43",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Caberá ao Relator decidir acerca do pedido de provas formulado na defesa do acusado, bem como presidir as diligências necessárias à sua produção (art. 43, caput)."
+    },
+    {
+      "question_id": "q226",
+      "text": "Quem arca com os custos para produção de provas requeridas pelo acusado, segundo o art. 43, § 1º da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-43::par-1",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Qualquer custo para a produção de provas requeridas pelo acusado deverá ser por ele suportado (art. 43, § 1º)."
+    },
+    {
+      "question_id": "q227",
+      "text": "As diligências necessárias podem ser realizadas por qualquer das superintendências, segundo o art. 44 da ICVM 607/2019?",
+      "query_class": "exact_factual",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-44",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "Sim, as diligências, quando necessárias, poderão ser realizadas por qualquer das superintendências, a critério do Relator (art. 44)."
+    },
+    {
+      "question_id": "q228",
+      "text": "Como o adiamento de sessão de julgamento por motivo de força maior (art. 50, § 4º) se relaciona com a exigência de presença mínima de membros do Colegiado (art. 50, caput) na ICVM 607/2019?",
+      "query_class": "multi_hop",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-50",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-50::par-4",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O art. 50, caput, exige a presença de no mínimo 3 membros do Colegiado para a sessão se realizar; se isso não ocorrer por motivo de força maior, o art. 50, § 4º, permite que a sessão seja transferida para o primeiro dia útil seguinte, sem necessidade de nova convocação."
+    },
+    {
+      "question_id": "q229",
+      "text": "Compare a participação por videoconferência (art. 50, § 1º) com o julgamento por meio eletrônico quando não há comparecimento de acusados (art. 50, § 2º) na ICVM 607/2019.",
+      "query_class": "section_comparative",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-50::par-1",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-50::par-2",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "A videoconferência (art. 50, § 1º) permite que os próprios membros do Colegiado participem remotamente de uma sessão presencial normal. Já o julgamento por meio eletrônico (art. 50, § 2º) é uma modalidade distinta, cabível apenas quando nenhum acusado ou procurador comparecer à sessão."
+    },
+    {
+      "question_id": "q230",
+      "text": "De modo geral, como a ICVM 607/2019 organiza a sessão de julgamento do processo administrativo sancionador?",
+      "query_class": "global",
+      "relevant_refs": [
+        {
+          "ref": "ICVM-607/2019::art-49",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-50",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-55",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-56",
+          "grade": "relevant"
+        },
+        {
+          "ref": "ICVM-607/2019::art-59",
+          "grade": "relevant"
+        }
+      ],
+      "reference_answer": "O processo é julgado pelo Colegiado em sessão pública convocada com 15 dias de antecedência (art. 49), presidida com quórum mínimo de 3 membros (art. 50); as deliberações são tomadas por maioria, um voto por membro (art. 55); a decisão final contém relatório, fundamentos, conclusão e penalidades (art. 56); e é divulgada publicamente por meio de ementa (art. 59)."
     }
   ]
 }
