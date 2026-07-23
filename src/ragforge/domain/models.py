@@ -101,3 +101,18 @@ class Judgment:
     question_id: str
     query: Query
     relevant_refs: tuple[JudgedRef, ...]
+    reference_answer: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class Answer:
+    """A generated response grounded in retrieved chunks, with structural-ID citations (ADR-0007).
+
+    ``citations`` are the canonical structural IDs (``StructuralRef.canonical``)
+    the answer cites, in first-cited order - the input to Citation Accuracy
+    (the proportion belonging to a judgment's relevant set) and, downstream,
+    to a RAGAS quality judge.
+    """
+
+    text: str
+    citations: tuple[str, ...]

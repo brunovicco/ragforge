@@ -32,6 +32,11 @@ def load_judgments(path: Path) -> list[Judgment]:
             for ref in entry["relevant_refs"]
         )
         judgments.append(
-            Judgment(question_id=entry["question_id"], query=query, relevant_refs=relevant_refs)
+            Judgment(
+                question_id=entry["question_id"],
+                query=query,
+                relevant_refs=relevant_refs,
+                reference_answer=entry.get("reference_answer"),
+            )
         )
     return judgments

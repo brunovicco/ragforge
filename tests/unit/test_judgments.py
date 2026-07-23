@@ -24,6 +24,7 @@ _NORM_SOURCES = {
     "RES-CMN-4893/2021": (CORPUS / "bacen/RES-CMN-4893-2021.pdf", PyMuPdfExtractor().extract),
     "RES-CMN-5274/2025": (CORPUS / "bacen/RES-CMN-5274-2025.htm", HtmlTextExtractor().extract),
     "LEI-13709/2018": (CORPUS / "lc-lgpd/LEI-13709-2018-LGPD.htm", HtmlTextExtractor().extract),
+    "ICVM-607/2019": (CORPUS / "cvm/ICVM-607-2019.pdf", PyMuPdfExtractor().extract),
 }
 
 
@@ -39,11 +40,11 @@ def _real_structural_ids_by_norm() -> dict[str, set[str]]:
 
 
 def test_load_judgments_returns_one_judgment_per_entry() -> None:
-    """The loader parses every entry in the seed file into a Judgment."""
+    """The loader parses every entry in the golden set into a Judgment."""
     judgments = load_judgments(JUDGMENTS_PATH)
-    assert len(judgments) == 20
+    assert len(judgments) == 230
     assert all(isinstance(j, Judgment) for j in judgments)
-    assert len({j.question_id for j in judgments}) == 20, "question_id must be unique"
+    assert len({j.question_id for j in judgments}) == 230, "question_id must be unique"
 
 
 def test_load_judgments_parses_query_class() -> None:
@@ -53,12 +54,18 @@ def test_load_judgments_parses_query_class() -> None:
     assert all(isinstance(j.query.query_class, QueryClass) for j in judgments)
 
 
-def test_load_judgments_handles_the_unanswerable_question_with_no_relevant_refs() -> None:
-    """The one unanswerable-class question is loaded with an empty relevant_refs tuple."""
+def test_load_judgments_handles_unanswerable_questions_with_no_relevant_refs() -> None:
+    """Every unanswerable-class question is loaded with an empty relevant_refs tuple."""
     judgments = load_judgments(JUDGMENTS_PATH)
     unanswerable = [j for j in judgments if j.query.query_class == QueryClass.UNANSWERABLE]
-    assert len(unanswerable) == 1
-    assert unanswerable[0].relevant_refs == ()
+    assert len(unanswerable) == 11
+    assert all(j.relevant_refs == () for j in unanswerable)
+
+
+def test_load_judgments_parses_reference_answer_for_every_entry() -> None:
+    """Every entry in the golden set carries a non-empty reference answer."""
+    judgments = load_judgments(JUDGMENTS_PATH)
+    assert all(j.reference_answer is not None and j.reference_answer.strip() for j in judgments)
 
 
 def test_every_judged_structural_id_exists_in_the_real_parsed_corpus() -> None:

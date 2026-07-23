@@ -14,3 +14,4 @@ Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; 
 | [0008](0008-streamlit-comparison-frontend.md) | Comparison frontend in Streamlit (dashboard + arena) | Accepted |
 | [0009](0009-scaffold-via-engineering-harness.md) | Scaffold and quality gates via claude-python-engineering-harness | Accepted |
 | [0010](0010-graphrag-evaluation-scope.md) | GraphRAG (LightRAG) evaluation scope and provenance recovery | Accepted |
+| [0011](0011-structural-id-collision-in-amended-norms.md) | Structural-ID collisions in amended norms excluded from golden-set citations, not fixed at the source | Accepted |

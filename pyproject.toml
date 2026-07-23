@@ -29,6 +29,17 @@ tracing = [
     "langfuse>=3.0",
 ]
 
+[tool.uv]
+# ragas==0.4.3 declares langchain-community with no upper bound, but its own
+# code (ragas/llms/base.py) unconditionally imports
+# langchain_community.chat_models.vertexai - removed starting in
+# langchain-community 0.4 (the package's own "sunset" cut). Without this
+# constraint, `import ragas` fails outright. Not a ragforge dependency in its
+# own right; pinned only to satisfy ragas's actual (unstated) requirement.
+constraint-dependencies = [
+    "langchain-community<0.4",
+]
+
 [dependency-groups]
 dev = [
     "bandit[toml]>=1.8",
