@@ -145,6 +145,35 @@ def test_ndcg_at_k_penalizes_a_reversed_ranking() -> None:
     assert ndcg_at_k(reversed_results, judgment, k=2) == dcg / idcg
 
 
+def test_ndcg_at_k_does_not_double_count_the_same_relevant_id_across_results() -> None:
+    """Multiple results covering the same single relevant ID stay capped at nDCG 1.0.
+
+    Reproduces a real bug found running the full benchmark (ADR-0004):
+    RAPTOR's tree summary nodes carry the union of their descendants'
+    structural_ids, so a leaf article's ID can appear in several returned
+    chunks (the leaf itself, plus every ancestor summary). nDCG must credit
+    that ID's gain only once, or DCG can exceed IDCG and nDCG can exceed 1.0.
+    """
+    judgment = _judgment((ART_1, RelevanceGrade.RELEVANT))
+    leaf = _result("leaf", (ART_1,))
+    summary_l1 = _result("summary-l1", (ART_1,))
+    summary_l2 = _result("summary-l2", (ART_1,))
+
+    assert ndcg_at_k([leaf, summary_l1, summary_l2], judgment, k=3) == 1.0
+
+
+def test_ndcg_at_k_credits_a_later_result_for_a_still_uncovered_id() -> None:
+    """A second relevant ID first covered at rank 2 still contributes its own gain."""
+    judgment = _judgment(
+        (ART_1, RelevanceGrade.RELEVANT), (ART_2_PAR_1, RelevanceGrade.PARTIALLY_RELEVANT)
+    )
+    redundant_then_new = [_result("dup", (ART_1,)), _result("new", (ART_1, ART_2_PAR_1))]
+
+    dcg = 1.0 / math.log2(2) + 0.5 / math.log2(3)
+    idcg = 1.0 / math.log2(2) + 0.5 / math.log2(3)
+    assert ndcg_at_k(redundant_then_new, judgment, k=2) == dcg / idcg
+
+
 def test_ndcg_at_k_is_zero_for_an_unjudged_question() -> None:
     """A judgment with no relevant refs yields nDCG 0.0, not a division error."""
     judgment = _judgment()

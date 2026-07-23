@@ -6,22 +6,19 @@ real, metered API: unlike SentenceTransformerEmbedder, every embed() call is a
 network request that costs money, however small at this project's corpus
 scale. Used only for the explicit ADR-0005 embedding comparison.
 
-The free tier's embed_content quota is tight (observed: 100 requests/minute,
-and tighter still before billing is enabled on the project) and Google's own
-error response includes a retry-after hint, so a 429 is exactly the transient,
-repeatable case AGENTS.md asks for bounded exponential backoff on - this
-adapter retries those, and only those, before giving up.
+Retries 429s and transient transport errors via
+ragforge.adapters.gemini_retry, shared with every other Gemini-calling
+adapter in this project.
 """
 
 import os
-import random
-import time
 from typing import cast
 
 from google import genai
-from google.genai import errors, types
+from google.genai import types
 from google.genai.types import ContentListUnion
 
+from ragforge.adapters.gemini_retry import call_with_retry
 from ragforge.embeddings.errors import EmbeddingError
 
 _BATCH_SIZE = 100  # embed_content accepts a batch of contents per call
@@ -31,10 +28,6 @@ _BATCH_SIZE = 100  # embed_content accepts a batch of contents per call
 # batches correctly and keeps the default above.
 _SINGLE_TEXT_MODELS = frozenset({"gemini-embedding-2"})
 _PROBE_TEXT = "probe"
-_RATE_LIMIT_STATUS_CODE = 429
-_MAX_RETRIES = 5
-_BASE_DELAY_SECONDS = 2.0
-_MAX_DELAY_SECONDS = 60.0
 
 
 class GoogleGeminiEmbedder:
@@ -81,42 +74,28 @@ class GoogleGeminiEmbedder:
         """Return one embedding per text, batching requests to the API.
 
         Raises:
-            EmbeddingError: If a batch request fails, or rate limiting persists
-                past every retry.
+            EmbeddingError: If a batch request fails, or retries are exhausted.
         """
         vectors: list[list[float]] = []
         for start in range(0, len(texts), self._batch_size):
             vectors.extend(self._embed_batch(texts[start : start + self._batch_size]))
         return vectors
 
-    def _call_with_retry(self, batch: list[str]) -> types.EmbedContentResponse:
-        """Call embed_content, retrying only 429s with bounded exponential backoff."""
+    def _call(self, batch: list[str]) -> types.EmbedContentResponse:
         config = None
         if self._output_dimensionality is not None:
             config = types.EmbedContentConfig(output_dimensionality=self._output_dimensionality)
-
-        for attempt in range(_MAX_RETRIES):
-            try:
-                return self._client.models.embed_content(
+        try:
+            return call_with_retry(
+                lambda: self._client.models.embed_content(
                     model=self.name, contents=cast(ContentListUnion, batch), config=config
                 )
-            except errors.ClientError as exc:
-                is_last_attempt = attempt == _MAX_RETRIES - 1
-                if exc.code != _RATE_LIMIT_STATUS_CODE or is_last_attempt:
-                    raise EmbeddingError(
-                        f"Gemini embed_content failed for {self.name!r}: {exc}"
-                    ) from exc
-                delay = min(_BASE_DELAY_SECONDS * (2**attempt), _MAX_DELAY_SECONDS)
-                # Retry-backoff jitter, not a security use of randomness.
-                time.sleep(delay + random.uniform(0, delay * 0.1))  # noqa: S311  # nosec B311
-            except Exception as exc:
-                raise EmbeddingError(
-                    f"Gemini embed_content failed for {self.name!r}: {exc}"
-                ) from exc
-        raise EmbeddingError(f"Gemini embed_content retries exhausted for {self.name!r}")
+            )
+        except Exception as exc:
+            raise EmbeddingError(f"Gemini embed_content failed for {self.name!r}: {exc}") from exc
 
     def _embed_batch(self, batch: list[str]) -> list[list[float]]:
-        response = self._call_with_retry(batch)
+        response = self._call(batch)
 
         embeddings = response.embeddings or []
         if len(embeddings) != len(batch):

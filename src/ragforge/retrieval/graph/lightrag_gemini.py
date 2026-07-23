@@ -6,27 +6,26 @@ LightRAG (lightrag-hku) expects two callables at construction: an async
 These adapt GoogleGeminiEmbedder's synchronous embed() and a direct Gemini
 generate_content call to those contracts, reusing the GEMINI_API_KEY /
 GOOGLE_API_KEY credential every other Gemini adapter in this project uses.
+
+Retries 429s and transient transport errors via
+ragforge.adapters.gemini_retry, shared with every other Gemini-calling
+adapter in this project.
 """
 
 import asyncio
 import os
-import random
 from collections.abc import Callable, Coroutine
 from typing import Any, cast
 
 import numpy as np
 from google import genai
-from google.genai import errors, types
+from google.genai import types
 from google.genai.types import ContentListUnionDict
 from lightrag.utils import EmbeddingFunc
 
+from ragforge.adapters.gemini_retry import call_with_retry_async
 from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
 from ragforge.generation.errors import GenerationError
-
-_RATE_LIMIT_STATUS_CODE = 429
-_MAX_RETRIES = 5
-_BASE_DELAY_SECONDS = 2.0
-_MAX_DELAY_SECONDS = 60.0
 
 
 def build_gemini_embedding_func(embedder: GoogleGeminiEmbedder) -> EmbeddingFunc:
@@ -74,31 +73,20 @@ def build_gemini_llm_model_func(
         contents.append(types.Content(role="user", parts=[types.Part(text=prompt)]))
         config = types.GenerateContentConfig(system_instruction=system_prompt, temperature=0.0)
 
-        for attempt in range(_MAX_RETRIES):
-            try:
-                response = await asyncio.to_thread(
+        try:
+            response = await call_with_retry_async(
+                lambda: asyncio.to_thread(
                     client.models.generate_content,
                     model=model_name,
                     contents=cast(ContentListUnionDict, contents),
                     config=config,
                 )
-            except errors.ClientError as exc:
-                is_last_attempt = attempt == _MAX_RETRIES - 1
-                if exc.code != _RATE_LIMIT_STATUS_CODE or is_last_attempt:
-                    raise GenerationError(
-                        f"Gemini generate_content failed for {model_name!r}: {exc}"
-                    ) from exc
-                delay = min(_BASE_DELAY_SECONDS * (2**attempt), _MAX_DELAY_SECONDS)
-                # Retry-backoff jitter, not a security use of randomness.
-                await asyncio.sleep(delay + random.uniform(0, delay * 0.1))  # noqa: S311  # nosec B311
-                continue
-            except Exception as exc:
-                raise GenerationError(
-                    f"Gemini generate_content failed for {model_name!r}: {exc}"
-                ) from exc
+            )
+        except Exception as exc:
+            raise GenerationError(
+                f"Gemini generate_content failed for {model_name!r}: {exc}"
+            ) from exc
 
-            return response.text or ""
-
-        raise GenerationError(f"Gemini generate_content retries exhausted for {model_name!r}")
+        return response.text or ""
 
     return _llm_model_func

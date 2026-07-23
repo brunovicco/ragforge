@@ -128,6 +128,12 @@ ignore_missing_imports = true
 module = ["lightrag", "lightrag.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+# PyYAML ships no bundled stubs (types-PyYAML is a separate package this
+# project does not otherwise need).
+module = ["yaml"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers --cov=src/ragforge --cov-report=term-missing -m \"not integration\""
 testpaths = ["tests"]
