@@ -7,11 +7,25 @@ mode validation, strategy wiring from already-indexed (fake) stores, and the
 pure formatting/record-building functions.
 """
 
-from ragforge.domain.models import Chunk, Query, RetrievalResult
+from ragforge.domain.models import (
+    Answer,
+    Chunk,
+    JudgedRef,
+    Judgment,
+    Query,
+    RelevanceGrade,
+    RetrievalResult,
+    StructuralRef,
+)
+from ragforge.evaluation.manifest import load_corpus_manifest
 from ragforge.evaluation.run import (
+    MANIFEST_PATH,
+    _evaluate,
+    _load_documents,
     build_base_strategies,
     build_contextual_strategy,
     build_run_record,
+    format_answer_quality_table,
     format_results_table,
 )
 from ragforge.retrieval.reranked.strategy import RerankedRetrieval
@@ -134,7 +148,14 @@ def test_build_contextual_strategy_retrieves_through_hybrid() -> None:
 def test_format_results_table_includes_every_configured_strategy() -> None:
     """Every strategy label from the config appears in the table, in order."""
     metrics = {
-        "dense": {"recall_at_k": 0.8, "precision_at_k": 0.2, "ndcg_at_k": 0.7, "mrr": 0.6, "n": 5},
+        "dense": {
+            "recall_at_k": 0.8,
+            "precision_at_k": 0.2,
+            "ndcg_at_k": 0.7,
+            "mrr": 0.6,
+            "n": 5,
+            "errors": 0,
+        },
     }
 
     table = format_results_table(["dense", "sparse_bm25"], metrics)
@@ -146,7 +167,7 @@ def test_format_results_table_includes_every_configured_strategy() -> None:
 
 
 def test_build_run_record_includes_all_run_metadata() -> None:
-    """The run record carries the run id, mode, embedding config, and per-strategy metrics."""
+    """The run record carries the run id, mode, embedding/generation/judge config, and metrics."""
     metrics = {"dense": {"recall_at_k": 0.8, "n": 5.0}}
 
     record = build_run_record(
@@ -155,6 +176,10 @@ def test_build_run_record_includes_all_run_metadata() -> None:
         config_path="configs/experiments/benchmark-v01.yaml",
         embedding_model="gemini-embedding-001",
         embedding_dimensions=1536,
+        generation_model="gemini-3.1-flash-lite",
+        judge_model="gemini-3.1-flash-lite",
+        corpus_version="0.2",
+        split_dataset_version="0.2",
         n_chunks=465,
         top_k=5,
         run_metrics=metrics,
@@ -163,5 +188,99 @@ def test_build_run_record_includes_all_run_metadata() -> None:
     assert record["run_id"] == "20260101T000000Z"
     assert record["mode"] == "live"
     assert record["embedding"] == {"model": "gemini-embedding-001", "dimensions": 1536}
+    assert record["generation_model"] == "gemini-3.1-flash-lite"
+    assert record["judge_model"] == "gemini-3.1-flash-lite"
+    assert record["corpus_version"] == "0.2"
+    assert record["split_dataset_version"] == "0.2"
     assert record["n_chunks"] == 465
     assert record["metrics"] == metrics
+    assert record["records_path"] == "records.jsonl"
+
+
+def test_format_answer_quality_table_includes_every_configured_strategy() -> None:
+    """Every strategy label from the config appears in the answer-quality table, in order."""
+    metrics = {
+        "dense": {
+            "citation_accuracy": 0.9,
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.7,
+            "answer_n": 5,
+            "answer_errors": 0,
+        },
+    }
+
+    table = format_answer_quality_table(["dense", "sparse_bm25"], metrics)
+
+    lines = table.splitlines()
+    assert "dense" in lines[1]
+    assert "0.900" in lines[1]
+    assert "(not run)" in lines[2]
+
+
+def test_load_documents_extracts_and_chunks_every_enabled_manifest_document() -> None:
+    """_load_documents discovers documents only from the manifest, not a hard-coded constant."""
+    manifest = load_corpus_manifest(MANIFEST_PATH)
+
+    documents = _load_documents(manifest)
+
+    assert set(documents) == {doc.norm_id for doc in manifest.enabled_documents}
+    for norm_id, (text, chunks) in documents.items():
+        assert text
+        assert chunks
+        assert all(chunk.structural_ids[0].startswith(norm_id) for chunk in chunks)
+
+
+ART_1 = "NORM/2000::art-1"
+
+
+class _FakeStrategyForEvaluate:
+    name = "fake-strategy"
+
+    def retrieve(self, query: Query, top_k: int) -> list[RetrievalResult]:
+        return [
+            RetrievalResult(
+                chunk=Chunk(chunk_id=ART_1, text="chunk text", structural_ids=(ART_1,)),
+                score=1.0,
+                strategy="fake-strategy",
+            )
+        ]
+
+
+class _FakeGeneratorForEvaluate:
+    name = "fake-generator"
+
+    def generate(self, query: Query, results: list[RetrievalResult]) -> Answer:
+        return Answer(text="answer", citations=(ART_1,))
+
+
+class _FakeJudgeForEvaluate:
+    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
+        return {"faithfulness": 1.0, "answer_relevancy": 1.0}
+
+
+def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_name() -> None:
+    """_evaluate returns metrics from both harnesses plus one merged record per question."""
+    judgments = [
+        Judgment(
+            question_id="q1",
+            query=Query(text="q1"),
+            relevant_refs=(
+                JudgedRef(ref=StructuralRef.parse(ART_1), grade=RelevanceGrade.RELEVANT),
+            ),
+        )
+    ]
+
+    metrics, records = _evaluate(
+        _FakeStrategyForEvaluate(),
+        judgments,
+        _FakeGeneratorForEvaluate(),
+        lambda: _FakeJudgeForEvaluate(),
+        top_k=5,
+    )
+
+    assert metrics["recall_at_k"] == 1.0
+    assert metrics["citation_accuracy"] == 1.0
+    assert len(records) == 1
+    assert records[0].strategy == "fake-strategy"
+    assert records[0].retrieval_status == "succeeded"
+    assert records[0].generation_status == "succeeded"

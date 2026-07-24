@@ -2,7 +2,7 @@
 
 **Adaptive RAG benchmarking platform for Brazilian financial and regulatory documents.**
 
-RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarchical (RAPTOR), graph (GraphRAG) and corrective strategies - measuring answer quality, retrieval precision, latency and cost on **RegRAG-BR**, a golden dataset targeting 210 questions over CMN/BCB and CVM norms.
+RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarchical (RAPTOR), graph (GraphRAG) and corrective strategies - measuring answer quality, retrieval precision, latency and cost on **RegRAG-BR**, a 230-question golden dataset over CMN/BCB and CVM norms.
 
 > 🚧 v0.1 in progress. See [Status](#status) for what is implemented today versus planned.
 
@@ -23,7 +23,7 @@ Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG str
 | 7 | RAPTOR | Recursive summary tree (minimal impl.) | Implemented |
 | 8 | GraphRAG | LightRAG adapter (local + global) | Implemented |
 
-Cross-cutting: **Adaptive Router** (rules + few-shot, planned), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph, planned), **governance** (answer → chunk → article citation tracing, planned), **observability** (Langfuse metadata-only tracing implemented; OpenTelemetry planned).
+Cross-cutting: **Adaptive Router** (rules + few-shot, planned), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph, planned), **governance** (answer → chunk → article citation tracing via Citation Accuracy, implemented; full audit trail beyond the metric, planned), **observability** (Langfuse metadata-only tracing implemented; OpenTelemetry planned).
 
 ## Status
 
@@ -37,9 +37,10 @@ is actually running today versus what the design targets - see the [PR history](
 | All 8 benchmarked retrieval strategies (Dense through GraphRAG) | Implemented |
 | Evaluation harness + structural-coverage judgments (ADR-0002) | Implemented |
 | Observability (Langfuse, metadata-only) | Implemented |
-| Main benchmark runner (`make bench-live`, all 8 strategies) | Implemented - live mode only |
-| Adaptive Router, Corrective workflow, Governance | Planned |
-| RegRAG-BR golden set | In progress - 20 questions published, 210 targeted |
+| Answer generation + Citation Accuracy + RAGAS judge (ADR-0007) | Implemented - judge uncalibrated (ADR-0007 kappa exercise pending) |
+| Main benchmark runner (`make bench-live`, all 8 strategies + answer quality) | Implemented - live mode only |
+| Adaptive Router, Corrective workflow | Planned |
+| RegRAG-BR golden set | 230 questions published (5 of 6 corpus documents curated) |
 | API / dashboard apps | Planned (scaffolding only) |
 | `make bench` (cached, bit-for-bit replay, ADR-0004) | Planned - needs a versioned LLM call cache, not built yet |
 
@@ -63,6 +64,7 @@ All non-obvious choices are recorded as [ADRs](docs/adr/README.md). The load-bea
 - [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - `make bench` replays a versioned LLM cache: bit-for-bit reproduction, zero API cost.
 - [ADR-0006](docs/adr/0006-legal-structural-chunker.md) - domain-aware chunking by legal hierarchy (Art./§/inciso) with stable structural IDs.
 - [ADR-0007](docs/adr/0007-llm-judge-calibration-ptbr.md) - the LLM judge is calibrated against human evaluation in PT-BR and the agreement is published.
+- [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md) - structural IDs that collide across amendment history/appended annexes are excluded from golden-set citations, not fixed at the chunker level.
 
 ## Repository layout
 
@@ -80,9 +82,9 @@ The core is framework-free: `RetrievalStrategy` is a Protocol; LLM SDKs are bann
 
 ## Dataset - RegRAG-BR
 
-Targeting 210 questions (7 classes × 30) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM rules, with article-level relevance judgments and reference answers, published under CC-BY-4.0 with a datasheet. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
+230 questions (7 query classes) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM/CMN norms, with article-level relevance judgments and reference answers, published under CC-BY-4.0 with a datasheet. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
 
-Today, 20 questions are published (`datasets/regrag-br/judgments.json`) - a hand-curated starter set verified against the real parsed text of 4 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018), demonstrating the judgment format end-to-end. The remaining 190 are in progress.
+Published (`datasets/regrag-br/judgments.json`): 230 hand-curated questions, each with a reference answer, verified against the real parsed text of 5 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018-LGPD, ICVM-607/2019). A 6th corpus document, LEI-6385/1976, is not yet curated. Structural IDs known to be ambiguous in the real source text - amendment-history and appended-annex artifacts in 3 of the 5 documents - are excluded from citation; see [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md).
 
 ## Development
 

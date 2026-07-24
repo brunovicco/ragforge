@@ -23,10 +23,15 @@ embedding:
   provider: gemini
   dimensions: 1536  # Matryoshka truncation; pgvector's HNSW index caps at 2000
 generation:
-  model: null  # pin exact model version, e.g. provider snapshot date
+  # Not chosen via a dedicated comparison (unlike the embedding model,
+  # ADR-0005) - a placeholder, not a data-driven winner, matching the
+  # reranker model's status.
+  model: gemini-3.1-flash-lite
   temperature: 0
 judge:
-  model: null  # pinned; calibration reported per ADR-0007
+  # RAGAS Faithfulness/Answer Relevancy judge model (ADR-0007). Scores are
+  # unvalidated until the human-calibration exercise (kappa >= 0.6) happens.
+  model: gemini-3.1-flash-lite
 retrieval:
   top_k: 5
   rerank_pool: 50
