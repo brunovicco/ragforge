@@ -246,6 +246,90 @@ def test_evaluate_answer_quality_stops_early_after_consecutive_retrieval_failure
     assert {r.question_id for r in skipped} == {"q6", "q7"}
 
 
+class _FlakyGenerator:
+    """Raises GenerationError for the given query texts, generates normally otherwise."""
+
+    name = "flaky-generator"
+
+    def __init__(self, answers_by_question: dict[str, Answer], fails_for: frozenset[str]) -> None:
+        self._answers_by_question = answers_by_question
+        self._fails_for = fails_for
+
+    def generate(self, query: Query, results: list[RetrievalResult]) -> Answer:
+        if query.text in self._fails_for:
+            raise GenerationError("simulated generation failure")
+        return self._answers_by_question[query.text]
+
+
+def test_evaluate_answer_quality_stops_early_after_consecutive_scoring_failures() -> None:
+    """Five-in-a-row generation failures stop scoring without inflating answer_errors.
+
+    Mirrors the retrieval-phase circuit breaker test: a separate counter for
+    the scoring phase (generation+judge), not shared with retrieval failures.
+    """
+    generator = _FlakyGenerator({}, fails_for=frozenset({f"q{i}" for i in range(1, 8)}))
+    judgments = [_judgment(f"q{i}", ART_1) for i in range(1, 8)]
+
+    result = evaluate_answer_quality(
+        _FakeStrategy(), judgments, generator, lambda: _FakeJudge({}), k=5, max_workers=1
+    )
+
+    assert result.metrics["answer_n"] == 0.0
+    assert result.metrics["answer_errors"] == 5.0
+    assert len(result.records) == 7
+    skipped = [r for r in result.records if r.status == "skipped"]
+    assert len(skipped) == 2
+    assert {r.question_id for r in skipped} == {"q6", "q7"}
+
+
+class _VariableLatencyJudge:
+    """Deterministic scores; sleeps per a per-question delay map to scramble completion order."""
+
+    def __init__(self, delays_by_question: dict[str, float]) -> None:
+        self._delays = delays_by_question
+
+    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
+        time.sleep(self._delays.get(query_text, 0.0))
+        return {"faithfulness": 1.0, "answer_relevancy": 1.0}
+
+
+def test_evaluate_answer_quality_produces_identical_records_regardless_of_worker_count() -> None:
+    """workers=1 and workers>1 produce identical record order and content (ADR-0014 exit gate).
+
+    Delays are inverted (q0 slowest, q(n-1) fastest) so concurrent completion
+    order is the exact reverse of input order - a real stress test of the
+    ordering fix, not one that happens to pass by accident.
+    """
+    count = 6
+    generator = _FakeGenerator(
+        {f"q{i}": Answer(text=f"answer {i}", citations=(ART_1,)) for i in range(count)}
+    )
+    delays = {f"q{i}": (count - i) * 0.01 for i in range(count)}
+    judgments = [_judgment(f"q{i}", ART_1) for i in range(count)]
+
+    serial_result = evaluate_answer_quality(
+        _FakeStrategy(),
+        judgments,
+        generator,
+        lambda: _VariableLatencyJudge(delays),
+        k=5,
+        max_workers=1,
+    )
+    parallel_result = evaluate_answer_quality(
+        _FakeStrategy(),
+        judgments,
+        generator,
+        lambda: _VariableLatencyJudge(delays),
+        k=5,
+        max_workers=count,
+    )
+
+    expected_ids = [f"q{i}" for i in range(count)]
+    assert [r.question_id for r in serial_result.records] == expected_ids
+    assert [r.question_id for r in parallel_result.records] == expected_ids
+    assert serial_result.metrics == parallel_result.metrics
+
+
 def test_evaluate_answer_quality_scores_questions_concurrently() -> None:
     """Multiple questions are scored in parallel, not strictly one at a time."""
     count = 6

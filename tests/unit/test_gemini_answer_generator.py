@@ -2,12 +2,14 @@
 
 import time
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pytest
 from google import genai
 from google.genai import errors
 
+from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.domain.models import Chunk, Query, RetrievalResult
 from ragforge.generation.errors import GenerationError
 from ragforge.generation.gemini_answer_generator import (
@@ -177,3 +179,23 @@ def test_raises_when_client_creation_fails(monkeypatch: pytest.MonkeyPatch) -> N
 
     with pytest.raises(GenerationError, match="failed to create Gemini client"):
         GeminiAnswerGenerator("gemini-3.1-flash-lite", api_key="key")
+
+
+def test_a_cache_hit_skips_the_api_call_entirely(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The second generate() for the same query+context reuses the cached answer, no new call."""
+    fake_client = _install_fake_client(
+        monkeypatch, lambda contents: _FakeResponse("Resposta [LC-105/2001::art-10].")
+    )
+    cache = FileLLMCache(tmp_path)
+    generator = GeminiAnswerGenerator("gemini-3.1-flash-lite", api_key="key", cache=cache)
+    results = [_result("c1", "Texto.", ("LC-105/2001::art-10",))]
+
+    first = generator.generate(Query(text="pergunta"), results)
+    calls_after_first = len(fake_client.models.calls)
+    second = generator.generate(Query(text="pergunta"), results)
+
+    assert calls_after_first == 1
+    assert len(fake_client.models.calls) == 1, "the second generate() made no additional API call"
+    assert second == first

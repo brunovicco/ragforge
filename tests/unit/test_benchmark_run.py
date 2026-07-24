@@ -297,6 +297,7 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
         _FakeGeneratorForEvaluate(),
         lambda: _FakeJudgeForEvaluate(),
         top_k=5,
+        answer_quality_workers=1,
     )
 
     assert metrics["recall_at_k"] == 1.0
@@ -322,9 +323,17 @@ class _FakeSentenceTransformerEmbedder:
 class _FakeGoogleGeminiEmbedder:
     """Stands in for GoogleGeminiEmbedder - no real API key/network call."""
 
-    def __init__(self, model_name: str, output_dimensionality: int | None = None) -> None:
+    def __init__(
+        self,
+        model_name: str,
+        output_dimensionality: int | None = None,
+        cache: object = None,
+        max_in_flight: int = 4,
+    ) -> None:
         self.name = model_name
         self.dimensions = output_dimensionality or 3072
+        self.cache = cache
+        self.max_in_flight = max_in_flight
 
     def embed(self, texts: list[str]) -> list[list[float]]:
         return [[0.0] * self.dimensions for _ in texts]
@@ -336,7 +345,7 @@ def test_build_embedder_constructs_a_local_embedder_without_credentials(
     """provider: local builds SentenceTransformerEmbedder and a matching identity."""
     monkeypatch.setattr(run, "SentenceTransformerEmbedder", _FakeSentenceTransformerEmbedder)
 
-    embedder, identity = run._build_embedder("local", "Qwen/Qwen3-Embedding-0.6B", None)
+    embedder, identity = run._build_embedder("local", "Qwen/Qwen3-Embedding-0.6B", None, None, 4)
 
     assert embedder.dimensions == 1024
     assert identity.provider == "local"
@@ -353,7 +362,7 @@ def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(
     """provider: gemini builds GoogleGeminiEmbedder, passing dimensions through as truncation."""
     monkeypatch.setattr(run, "GoogleGeminiEmbedder", _FakeGoogleGeminiEmbedder)
 
-    embedder, identity = run._build_embedder("gemini", "gemini-embedding-001", 1536)
+    embedder, identity = run._build_embedder("gemini", "gemini-embedding-001", 1536, None, 4)
 
     assert embedder.dimensions == 1536
     assert identity.provider == "gemini"
@@ -365,4 +374,43 @@ def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(
 def test_build_embedder_fails_closed_for_an_unknown_provider() -> None:
     """An unrecognized provider fails fast rather than silently falling back to either adapter."""
     with pytest.raises(SystemExit, match="unknown embedding provider"):
-        run._build_embedder("openai", "text-embedding-3", None)
+        run._build_embedder("openai", "text-embedding-3", None, None, 4)
+
+
+def test_verify_resume_identity_passes_when_everything_matches() -> None:
+    """Identical index_namespace/generation_model/judge_model resumes cleanly."""
+    previous = {
+        "index_namespace": "abc123",
+        "generation_model": "gemini-3.1-flash-lite",
+        "judge_model": "gemini-3.1-flash-lite",
+    }
+
+    run._verify_resume_identity(
+        previous, "abc123", "gemini-3.1-flash-lite", "gemini-3.1-flash-lite"
+    )
+
+
+def test_verify_resume_identity_fails_closed_on_index_namespace_mismatch() -> None:
+    """A different index_namespace (corpus/chunking/embedding changed) refuses to resume."""
+    previous = {
+        "index_namespace": "abc123",
+        "generation_model": "gemini-3.1-flash-lite",
+        "judge_model": "gemini-3.1-flash-lite",
+    }
+
+    with pytest.raises(SystemExit, match="index_namespace"):
+        run._verify_resume_identity(
+            previous, "xyz789", "gemini-3.1-flash-lite", "gemini-3.1-flash-lite"
+        )
+
+
+def test_verify_resume_identity_fails_closed_on_generation_model_mismatch() -> None:
+    """A different generation_model refuses to resume - cached answers wouldn't be trustworthy."""
+    previous = {
+        "index_namespace": "abc123",
+        "generation_model": "gemini-3.1-flash-lite",
+        "judge_model": "gemini-3.1-flash-lite",
+    }
+
+    with pytest.raises(SystemExit, match="generation_model"):
+        run._verify_resume_identity(previous, "abc123", "gemini-3.2-pro", "gemini-3.1-flash-lite")

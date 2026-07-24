@@ -82,6 +82,24 @@ this codebase and is intentionally out of scope here.
 No reranker model has been chosen via a dedicated comparison (unlike the
 embedding model, ADR-0005); _RERANKER_MODEL is a placeholder, not a data-
 driven winner - already used and verified in test_cross_encoder_reranker.py.
+
+Bounded parallel execution and a minimal LLM cache (ADR-0014 + ADR-0004):
+a FileLLMCache under experiments/<run_id>/llm-cache/ is shared by the
+embedder, GeminiAnswerGenerator, and the judge - a Gemini call already made
+for the exact same (model, prompt) is never repeated. A ProviderLimiter
+bounds concurrent in-flight Gemini calls process-wide
+(execution.gemini_max_in_flight). Answer generation + judge scoring use
+ragforge.evaluation.scheduler.run_bounded (execution.answer_quality_workers
+workers), which always restores canonical question order regardless of
+completion order. ``--resume <run_id>`` reuses an existing run's directory
+(results.json, records.jsonl, llm-cache/), skips strategies already present
+in results.json's metrics, and fails closed if the corpus/embedding/model
+identity doesn't match what produced that run. Resuming still re-runs a
+stage's indexing (contextualization, RAPTOR summarization) even when only
+some of that stage's strategies remain unscored - contextualize_chunks and
+build_raptor_tree are not cache-wired in this increment, only the embedder
+and the two per-question LLM calls are; see docs/adr/0014 for the fuller,
+deferred scope (RPM/TPM limits, `Retry-After`, cross-process coalescing).
 """
 
 import argparse
@@ -89,7 +107,7 @@ import asyncio
 import json
 import shutil
 import tempfile
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Protocol
@@ -99,6 +117,7 @@ import yaml
 from lightrag import LightRAG
 from opensearchpy import OpenSearch
 
+from ragforge.adapters.llm_cache import FileLLMCache, LLMCache
 from ragforge.domain.models import Chunk, Judgment
 from ragforge.domain.protocols import RetrievalStrategy
 from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
@@ -173,7 +192,10 @@ _RETRIEVAL_TEXT_SCHEMA_VERSION = "source-text-v1"
 # bottleneck: multiple sequential LLM round-trips per question). Not a
 # data-driven pick - conservative enough to not obviously trip API rate
 # limits, high enough to meaningfully shorten a multi-hour live run.
-_ANSWER_QUALITY_WORKERS = 5
+# Overridable via execution.answer_quality_workers in the config.
+_DEFAULT_ANSWER_QUALITY_WORKERS = 5
+# Overridable via execution.gemini_max_in_flight (ADR-0014).
+_DEFAULT_GEMINI_MAX_IN_FLIGHT = 4
 
 # Composition-root mapping from the manifest's `extractor` key to the actual
 # extraction callable - kept here, not in evaluation.manifest, so that module
@@ -189,6 +211,16 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=["cache", "live"], required=True)
     parser.add_argument("--config", type=Path, required=True)
+    parser.add_argument(
+        "--resume",
+        default=None,
+        metavar="RUN_ID",
+        help=(
+            "reuse experiments/<run_id>/ (results.json, records.jsonl, llm-cache/) "
+            "instead of starting a new run; fails closed if the corpus/embedding/model "
+            "identity doesn't match what produced that run"
+        ),
+    )
     return parser.parse_args()
 
 
@@ -231,15 +263,22 @@ def _load_documents(manifest: CorpusManifest) -> dict[str, tuple[str, list[Chunk
 
 
 def _build_embedder(
-    provider: str, model: str, dimensions: int | None
+    provider: str,
+    model: str,
+    dimensions: int | None,
+    cache: LLMCache | None,
+    gemini_max_in_flight: int,
 ) -> tuple[EmbeddingModel, EmbeddingIdentity]:
     """Construct the configured embedding provider and its identity (ADR-0013).
 
     ``provider: local`` is the operational default: no credentials needed,
     via SentenceTransformerEmbedder - ``dimensions`` is ignored since the
-    model reports its own. ``provider: gemini`` is the optional hosted
-    comparator, via GoogleGeminiEmbedder with ``dimensions`` requesting a
-    truncated (Matryoshka) size. Never a silent fallback between the two.
+    model reports its own, and it has no hosted-call cache/limiter to wire
+    (there's no network call to skip). ``provider: gemini`` is the optional
+    hosted comparator, via GoogleGeminiEmbedder with ``dimensions``
+    requesting a truncated (Matryoshka) size, ``cache`` (ADR-0004) consulted
+    per text, and ``gemini_max_in_flight`` bounding concurrent calls
+    (ADR-0014). Never a silent fallback between the two.
 
     Raises:
         SystemExit: If ``provider`` isn't one of "local"/"gemini".
@@ -257,7 +296,12 @@ def _build_embedder(
         )
         return local_embedder, identity
     if provider == "gemini":
-        gemini_embedder = GoogleGeminiEmbedder(model, output_dimensionality=dimensions)
+        gemini_embedder = GoogleGeminiEmbedder(
+            model,
+            output_dimensionality=dimensions,
+            cache=cache,
+            max_in_flight=gemini_max_in_flight,
+        )
         identity = EmbeddingIdentity(
             provider="gemini",
             model=model,
@@ -366,6 +410,7 @@ def _evaluate(
     generator: AnswerGenerator,
     judge_factory: Callable[[], AnswerJudge],
     top_k: int,
+    answer_quality_workers: int,
 ) -> tuple[dict[str, float], list[QuestionRecord]]:
     """Score ``strategy`` for retrieval ranking and answer quality alike (ADR-0002/0007).
 
@@ -380,7 +425,7 @@ def _evaluate(
         generator,
         judge_factory,
         k=top_k,
-        max_workers=_ANSWER_QUALITY_WORKERS,
+        max_workers=answer_quality_workers,
     )
     records = merge_question_records(strategy.name, retrieval_result.records, answer_result.records)
     return {**retrieval_result.metrics, **answer_result.metrics}, records
@@ -431,6 +476,41 @@ def build_run_record(
     }
 
 
+def _verify_resume_identity(
+    previous: Mapping[str, object],
+    index_namespace: str,
+    generation_model: str,
+    judge_model: str,
+) -> None:
+    """Fail closed if a resumed run's identity doesn't match the current configuration.
+
+    ADR-0014: "changing model, prompt, split, or strategy creates a new
+    run" - ``index_namespace`` alone already encodes corpus content,
+    chunking/retrieval-text schema, and the embedding's complete identity
+    (ADR-0013), so checking it plus the generation/judge models covers
+    everything that would make reusing cached answers/judge scores unsafe.
+
+    Raises:
+        SystemExit: If any identity component differs from the prior run.
+    """
+    mismatches = []
+    if previous.get("index_namespace") != index_namespace:
+        mismatches.append(
+            f"index_namespace: {previous.get('index_namespace')!r} != {index_namespace!r}"
+        )
+    if previous.get("generation_model") != generation_model:
+        mismatches.append(
+            f"generation_model: {previous.get('generation_model')!r} != {generation_model!r}"
+        )
+    if previous.get("judge_model") != judge_model:
+        mismatches.append(f"judge_model: {previous.get('judge_model')!r} != {judge_model!r}")
+    if mismatches:
+        raise SystemExit(
+            "--resume identity mismatch (changing model/corpus/split creates a new run):\n"
+            + "\n".join(f"- {mismatch}" for mismatch in mismatches)
+        )
+
+
 def main() -> None:
     """Index the real corpus with every strategy and score each against the golden set."""
     args = parse_args()
@@ -445,6 +525,13 @@ def main() -> None:
     embedding_dimensions = config["embedding"].get("dimensions")
     generation_model = config["generation"]["model"]
     judge_model = config["judge"]["model"]
+    execution_config = config.get("execution", {})
+    answer_quality_workers = execution_config.get(
+        "answer_quality_workers", _DEFAULT_ANSWER_QUALITY_WORKERS
+    )
+    gemini_max_in_flight = execution_config.get(
+        "gemini_max_in_flight", _DEFAULT_GEMINI_MAX_IN_FLIGHT
+    )
 
     manifest = load_corpus_manifest(MANIFEST_PATH)
     split = load_split(SPLIT_PATH)
@@ -456,6 +543,12 @@ def main() -> None:
         verify_split_integrity(split, judgments)
     except IntegrityError as exc:
         raise SystemExit(f"preflight integrity check failed:\n{exc}") from exc
+
+    run_id = args.resume or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+    run_dir = RESULTS_DIR / run_id
+    run_dir.mkdir(parents=True, exist_ok=True)
+    records_path = run_dir / "records.jsonl"
+    cache = FileLLMCache(run_dir / "llm-cache")
 
     print("Extracting and chunking real corpus documents...")
     documents = _load_documents(manifest)
@@ -469,7 +562,7 @@ def main() -> None:
 
     print(f"Loading embedding model {embedding_model} (provider={embedding_provider})...")
     embedder, embedding_identity = _build_embedder(
-        embedding_provider, embedding_model, embedding_dimensions
+        embedding_provider, embedding_model, embedding_dimensions, cache, gemini_max_in_flight
     )
     index_namespace = derive_index_namespace(
         manifest.content_hash,
@@ -481,22 +574,28 @@ def main() -> None:
     contextual_table = f"bench_v01_contextual_{index_namespace}"
     raptor_table = f"bench_v01_raptor_{index_namespace}"
 
+    run_metrics: dict[str, dict[str, float]] = {}
+    results_path = run_dir / "results.json"
+    if args.resume is not None and results_path.exists():
+        previous = json.loads(results_path.read_text(encoding="utf-8"))
+        _verify_resume_identity(previous, index_namespace, generation_model, judge_model)
+        run_metrics = previous["metrics"]
+        print(f"Resuming {run_id}: {sorted(run_metrics)} already scored.")
+
     print(f"Loading generation model {generation_model} and judge model {judge_model}...")
-    generator = GeminiAnswerGenerator(generation_model)
+    generator = GeminiAnswerGenerator(
+        generation_model, cache=cache, max_in_flight=gemini_max_in_flight
+    )
 
     def judge_factory() -> AnswerJudge:
-        return build_gemini_ragas_judge(judge_model, embedding_model)
+        return build_gemini_ragas_judge(
+            judge_model, embedding_model, cache=cache, max_in_flight=gemini_max_in_flight
+        )
 
     conn = psycopg.connect(DATABASE_URL)
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
     graphrag_dir = Path(tempfile.mkdtemp(prefix="ragforge-bench-graphrag-"))
     tables = [base_table, contextual_table, raptor_table]
-
-    run_metrics: dict[str, dict[str, float]] = {}
-    run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
-    run_dir = RESULTS_DIR / run_id
-    run_dir.mkdir(parents=True, exist_ok=True)
-    records_path = run_dir / "records.jsonl"
 
     def _checkpoint() -> None:
         """Write the run record as computed so far - survives a later strategy crashing."""
@@ -514,11 +613,23 @@ def main() -> None:
             top_k=top_k,
             run_metrics=run_metrics,
         )
-        (run_dir / "results.json").write_text(json.dumps(record, ensure_ascii=False, indent=2))
+        results_path.write_text(json.dumps(record, ensure_ascii=False, indent=2))
 
     def _evaluate_and_checkpoint(label: str, strategy: RetrievalStrategy) -> None:
-        """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json."""
-        metrics, records = _evaluate(strategy, judgments, generator, judge_factory, top_k)
+        """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json.
+
+        A no-op when ``label`` is already in ``run_metrics`` (--resume): the
+        stage's indexing above this call still runs regardless (contextual/
+        RAPTOR construction isn't cache-wired in this increment), but the
+        expensive per-question generation+judge calls are skipped entirely
+        rather than merely cache-hit.
+        """
+        if label in run_metrics:
+            print(f"  skipping {label} (already scored, --resume)")
+            return
+        metrics, records = _evaluate(
+            strategy, judgments, generator, judge_factory, top_k, answer_quality_workers
+        )
         run_metrics[label] = metrics
         append_records_jsonl(records_path, records)
         _checkpoint()

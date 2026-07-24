@@ -8,7 +8,7 @@ Faithfulness and Answer Relevancy.
 
 import threading
 from collections.abc import Callable
-from concurrent.futures import CancelledError, ThreadPoolExecutor, as_completed
+from concurrent.futures import CancelledError
 from dataclasses import dataclass
 from statistics import mean
 from typing import Protocol, runtime_checkable
@@ -17,6 +17,7 @@ from ragforge.domain.models import Answer, Judgment, RetrievalResult
 from ragforge.domain.protocols import RetrievalStrategy
 from ragforge.evaluation.metrics.citation import citation_accuracy
 from ragforge.evaluation.records import AnswerRecord
+from ragforge.evaluation.scheduler import run_bounded
 from ragforge.generation.ports import AnswerGenerator
 
 _MAX_CONSECUTIVE_ERRORS = 5
@@ -91,6 +92,15 @@ def evaluate_answer_quality(
     "answer_n" reports how many questions were actually scored, deliberately
     separate from evaluate_strategy's "n" (retrieval ranking is scored
     independently and keeps its own count).
+
+    Scoring uses ``ragforge.evaluation.scheduler.run_bounded`` (ADR-0014):
+    workers may still finish generation+judge calls in any order, but the
+    returned ``records`` are always restored to ``retrieved``'s canonical
+    order before this function returns - workers=1 and workers>1 produce
+    identical record order and content, never just equivalent aggregates.
+    The circuit breaker (consecutive scoring failures) observes outcomes in
+    completion order via ``run_bounded``'s ``on_result`` callback, since that
+    is inherently about real-time failure velocity, not artifact order.
 
     Raises:
         ValueError: If judgments is empty.
@@ -168,48 +178,62 @@ def evaluate_answer_quality(
     faithfulness_scores: list[float] = []
     answer_relevancy_scores: list[float] = []
     if retrieved and not retrieval_aborted:
-        with ThreadPoolExecutor(max_workers=max_workers) as pool:
-            futures = {
-                pool.submit(_score_one, judgment, results): judgment
-                for judgment, results in retrieved
-            }
-            scoring_aborted = False
-            for future in as_completed(futures):
-                judgment = futures[future]
-                try:
-                    answer, question_metrics = future.result()
-                except Exception as exc:
+        consecutive_scoring_errors = 0
+
+        def _on_scoring_result(
+            _index: int,
+            _value: tuple[Answer, dict[str, float]] | None,
+            exc: BaseException | None,
+        ) -> bool:
+            """Track consecutive scoring failures; request cancellation past the threshold.
+
+            A fresh counter from the retrieval phase's: a scoring failure
+            (generation/judge) is a different failure mode than a retrieval
+            failure, so one doesn't inflate the other's circuit breaker.
+            """
+            nonlocal consecutive_scoring_errors
+            if exc is None:
+                consecutive_scoring_errors = 0
+                return False
+            consecutive_scoring_errors += 1
+            return consecutive_scoring_errors >= _MAX_CONSECUTIVE_ERRORS
+
+        outcomes = run_bounded(
+            retrieved,
+            lambda pair: _score_one(pair[0], pair[1]),
+            max_workers=max_workers,
+            on_result=_on_scoring_result,
+        )
+        for (judgment, _results), outcome in zip(retrieved, outcomes, strict=True):
+            if isinstance(outcome, BaseException):
+                is_cancelled = isinstance(outcome, CancelledError)
+                status = "skipped" if is_cancelled else "failed"
+                if not is_cancelled:
                     errors += 1
-                    consecutive_errors += 1
-                    status = "skipped" if isinstance(exc, CancelledError) else "failed"
-                    records.append(
-                        AnswerRecord(
-                            question_id=judgment.question_id,
-                            status=status,
-                            answer_text=None,
-                            answer_citations=(),
-                            metrics={},
-                            error=str(exc) or exc.__class__.__name__,
-                        )
-                    )
-                    if not scoring_aborted and consecutive_errors >= _MAX_CONSECUTIVE_ERRORS:
-                        scoring_aborted = True
-                        for pending in futures:
-                            pending.cancel()
-                    continue
-                consecutive_errors = 0
-                citation_accuracies.append(question_metrics["citation_accuracy"])
-                faithfulness_scores.append(question_metrics["faithfulness"])
-                answer_relevancy_scores.append(question_metrics["answer_relevancy"])
                 records.append(
                     AnswerRecord(
                         question_id=judgment.question_id,
-                        status="succeeded",
-                        answer_text=answer.text,
-                        answer_citations=answer.citations,
-                        metrics=question_metrics,
+                        status=status,
+                        answer_text=None,
+                        answer_citations=(),
+                        metrics={},
+                        error=str(outcome) or outcome.__class__.__name__,
                     )
                 )
+                continue
+            answer, question_metrics = outcome
+            citation_accuracies.append(question_metrics["citation_accuracy"])
+            faithfulness_scores.append(question_metrics["faithfulness"])
+            answer_relevancy_scores.append(question_metrics["answer_relevancy"])
+            records.append(
+                AnswerRecord(
+                    question_id=judgment.question_id,
+                    status="succeeded",
+                    answer_text=answer.text,
+                    answer_citations=answer.citations,
+                    metrics=question_metrics,
+                )
+            )
 
     metrics = {
         "citation_accuracy": mean(citation_accuracies) if citation_accuracies else 0.0,
