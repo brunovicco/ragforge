@@ -1,4 +1,4 @@
-"""Tests for the answer-quality evaluation harness (ADR-0007), using fakes."""
+"""Tests for the answer-quality evaluation harness (ADR-0007/ADR-0018), using fakes."""
 
 import threading
 import time
@@ -17,10 +17,21 @@ from ragforge.domain.models import (
     StructuralRef,
 )
 from ragforge.evaluation.answer_harness import evaluate_answer_quality
+from ragforge.evaluation.judge_ports import (
+    AbstentionJudgment,
+    JudgeResult,
+    JudgeSample,
+    MetricScore,
+    ModelIdentity,
+)
 from ragforge.generation.errors import GenerationError
 
 ART_1 = "NORM::art-1"
 ART_2 = "NORM::art-2"
+
+_FAKE_IDENTITY = ModelIdentity(
+    provider="fake", model="fake-model", reasoning_effort=None, output_schema_version=1
+)
 
 
 def _judgment(question_id: str, *canonical_refs: str, unanswerable: bool = False) -> Judgment:
@@ -34,6 +45,17 @@ def _judgment(question_id: str, *canonical_refs: str, unanswerable: bool = False
             JudgedRef(ref=StructuralRef.parse(c), grade=RelevanceGrade.RELEVANT)
             for c in canonical_refs
         ),
+    )
+
+
+def _judge_result(
+    faithfulness: float = 1.0, answer_relevancy: float = 1.0, *, abstention_appropriate: bool = True
+) -> JudgeResult:
+    return JudgeResult(
+        schema_version=1,
+        faithfulness=MetricScore(score=faithfulness),
+        answer_relevancy=MetricScore(score=answer_relevancy),
+        abstention=AbstentionJudgment(appropriate=abstention_appropriate, rationale=""),
     )
 
 
@@ -71,30 +93,36 @@ class _FakeGenerator:
 
 
 class _FakeJudge:
+    identity = _FAKE_IDENTITY
+
     def __init__(self, scores: dict[str, float]) -> None:
         self._scores = scores
-        self.calls: list[tuple[str, list[str], str]] = []
+        self.calls: list[JudgeSample] = []
 
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
-        self.calls.append((query_text, contexts, answer_text))
-        return dict(self._scores)
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
+        self.calls.append(sample)
+        return _judge_result(self._scores["faithfulness"], self._scores["answer_relevancy"])
 
 
 class _FlakyJudge:
     """Raises GenerationError for the given query texts, scores everything else normally."""
 
+    identity = _FAKE_IDENTITY
+
     def __init__(self, scores: dict[str, float], fails_for: set[str]) -> None:
         self._scores = scores
         self._fails_for = fails_for
 
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
-        if query_text in self._fails_for:
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
+        if sample.question in self._fails_for:
             raise GenerationError("judge model did not return a function call")
-        return dict(self._scores)
+        return _judge_result(self._scores["faithfulness"], self._scores["answer_relevancy"])
 
 
 class _ConcurrentTrackingJudge:
-    """Records the highest number of score() calls observed running at once."""
+    """Records the highest number of evaluate() calls observed running at once."""
+
+    identity = _FAKE_IDENTITY
 
     def __init__(self, scores: dict[str, float]) -> None:
         self._scores = scores
@@ -102,26 +130,28 @@ class _ConcurrentTrackingJudge:
         self._active = 0
         self.max_concurrent = 0
 
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
         with self._lock:
             self._active += 1
             self.max_concurrent = max(self.max_concurrent, self._active)
         time.sleep(0.05)
         with self._lock:
             self._active -= 1
-        return dict(self._scores)
+        return _judge_result(self._scores["faithfulness"], self._scores["answer_relevancy"])
 
 
 class _FactoryTrackingJudge:
-    """Records every thread id that ever called score() on this particular instance."""
+    """Records every thread id that ever called evaluate() on this particular instance."""
+
+    identity = _FAKE_IDENTITY
 
     def __init__(self) -> None:
         self.thread_ids: set[int] = set()
 
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
         self.thread_ids.add(threading.get_ident())
         time.sleep(0.02)
-        return {"faithfulness": 1.0, "answer_relevancy": 1.0}
+        return _judge_result()
 
 
 def test_evaluate_answer_quality_averages_citation_accuracy_across_judgments() -> None:
@@ -141,22 +171,56 @@ def test_evaluate_answer_quality_averages_citation_accuracy_across_judgments() -
     assert result.metrics["faithfulness"] == pytest.approx(0.8)
     assert result.metrics["answer_relevancy"] == pytest.approx(0.9)
     assert result.metrics["answer_n"] == 2.0
+    assert result.metrics["citation_n"] == 2.0
     assert result.metrics["answer_errors"] == 0.0
     assert len(result.records) == 2
     assert all(record.status == "succeeded" for record in result.records)
 
 
-def test_evaluate_answer_quality_excludes_unanswerable_questions() -> None:
-    """An unanswerable-class judgment (no relevant refs) is skipped, not generated for."""
-    generator = _FakeGenerator({"q1": Answer(text="answer", citations=(ART_1,))})
+def test_evaluate_answer_quality_still_scores_unanswerable_questions() -> None:
+    """An unanswerable-class judgment is generated and judged too (ADR-0018), unlike before.
+
+    Only Citation Accuracy stays absent for it - abstention appropriateness
+    needs unanswerable questions to actually reach the judge to mean
+    anything.
+    """
+    generator = _FakeGenerator(
+        {
+            "q1": Answer(text="answer", citations=(ART_1,)),
+            "q2": Answer(text="não há evidência suficiente", citations=()),
+        }
+    )
     judge = _FakeJudge({"faithfulness": 1.0, "answer_relevancy": 1.0})
     judgments = [_judgment("q1", ART_1), _judgment("q2", unanswerable=True)]
 
     result = evaluate_answer_quality(_FakeStrategy(), judgments, generator, lambda: judge, k=5)
 
-    assert result.metrics["answer_n"] == 1.0
-    assert len(judge.calls) == 1
-    assert len(result.records) == 1, "the unanswerable question gets no AnswerRecord at all"
+    assert result.metrics["answer_n"] == 2.0
+    assert result.metrics["citation_n"] == 1.0
+    assert len(judge.calls) == 2
+    assert len(result.records) == 2
+    unanswerable_record = next(r for r in result.records if r.question_id == "q2")
+    assert unanswerable_record.status == "succeeded"
+    assert "citation_accuracy" not in unanswerable_record.metrics
+    assert "abstention_appropriate" in unanswerable_record.metrics
+
+
+def test_evaluate_answer_quality_marks_the_judge_sample_unanswerable_correctly() -> None:
+    """JudgeSample.unanswerable reflects whether the judgment has a relevant-ref set."""
+    generator = _FakeGenerator(
+        {
+            "q1": Answer(text="answer", citations=(ART_1,)),
+            "q2": Answer(text="não sei", citations=()),
+        }
+    )
+    judge = _FakeJudge({"faithfulness": 1.0, "answer_relevancy": 1.0})
+    judgments = [_judgment("q1", ART_1), _judgment("q2", unanswerable=True)]
+
+    evaluate_answer_quality(_FakeStrategy(), judgments, generator, lambda: judge, k=5)
+
+    by_question = {sample.question: sample for sample in judge.calls}
+    assert by_question["q1"].unanswerable is False
+    assert by_question["q2"].unanswerable is True
 
 
 def test_evaluate_answer_quality_passes_retrieved_chunk_text_as_judge_contexts() -> None:
@@ -168,7 +232,9 @@ def test_evaluate_answer_quality_passes_retrieved_chunk_text_as_judge_contexts()
         _FakeStrategy(), [_judgment("q1", ART_1)], generator, lambda: judge, k=5
     )
 
-    assert judge.calls[0] == ("q1", ["chunk text"], "answer")
+    assert judge.calls[0].question == "q1"
+    assert judge.calls[0].contexts == ("chunk text",)
+    assert judge.calls[0].answer == "answer"
 
 
 def test_evaluate_answer_quality_raises_for_an_empty_judgment_list() -> None:
@@ -290,12 +356,14 @@ def test_evaluate_answer_quality_stops_early_after_consecutive_scoring_failures(
 class _VariableLatencyJudge:
     """Deterministic scores; sleeps per a per-question delay map to scramble completion order."""
 
+    identity = _FAKE_IDENTITY
+
     def __init__(self, delays_by_question: dict[str, float]) -> None:
         self._delays = delays_by_question
 
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
-        time.sleep(self._delays.get(query_text, 0.0))
-        return {"faithfulness": 1.0, "answer_relevancy": 1.0}
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
+        time.sleep(self._delays.get(sample.question, 0.0))
+        return _judge_result()
 
 
 def test_evaluate_answer_quality_produces_identical_records_regardless_of_worker_count() -> None:
@@ -355,7 +423,7 @@ def test_evaluate_answer_quality_never_shares_one_judge_instance_across_threads(
     """judge_factory builds a separate judge per worker thread, never shared across threads.
 
     Regression test: a real live run shared one RagasJudge across concurrent
-    worker threads. Each RagasJudge.score() call does asyncio.run(...)
+    worker threads. Each RagasJudge.evaluate() call does asyncio.run(...)
     internally (a fresh event loop per call, reusing the same async client
     underneath); calling that concurrently from multiple threads against one
     shared judge corrupted its connection pool - observed for real as

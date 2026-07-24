@@ -21,6 +21,10 @@ dependencies = [
     "lightrag-hku>=1.0",
     "streamlit>=1.40",
     "google-genai>=1.0",
+    # Already resolved transitively via ragas/instructor/langchain-openai -
+    # declared directly because ragforge.evaluation.ragas_judge imports it
+    # itself, for the OpenAI judge adapter (ADR-0018).
+    "openai>=1.0",
 ]
 
 [project.optional-dependencies]

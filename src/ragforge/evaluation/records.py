@@ -80,11 +80,12 @@ def merge_question_records(
 ) -> list[QuestionRecord]:
     """Join retrieval and answer-quality outcomes by question_id into one record each.
 
-    A question with no matching entry in ``answer_records`` - every
-    unanswerable-class question, which evaluate_answer_quality never scores
-    since Citation Accuracy has nothing to check citations against - gets
-    "not_applicable" generation/judge status rather than being silently
-    absent from the merged output.
+    A question with no matching entry in ``answer_records`` (e.g. a strategy
+    aborted before reaching it) gets "not_applicable" generation/judge status
+    rather than being silently absent from the merged output. Since ADR-0018,
+    unanswerable-class questions are no longer inherently absent here -
+    evaluate_answer_quality scores them too (for abstention appropriateness),
+    just without a citation_accuracy metric.
     """
     answer_by_id = {record.question_id: record for record in answer_records}
     merged = []
