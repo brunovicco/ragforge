@@ -35,10 +35,15 @@ def _judgment(question_id: str, *canonical_refs: str, unanswerable: bool = False
 class _FakeStrategy:
     name = "fake"
 
-    def __init__(self, hits_by_question: dict[str, list[str]]) -> None:
+    def __init__(
+        self, hits_by_question: dict[str, list[str]], fails_for: frozenset[str] = frozenset()
+    ) -> None:
         self._hits_by_question = hits_by_question
+        self._fails_for = fails_for
 
     def retrieve(self, query: Query, top_k: int) -> list[RetrievalResult]:
+        if query.text in self._fails_for:
+            raise RuntimeError("simulated retrieval failure")
         structural_ids = self._hits_by_question.get(query.text, [])
         return [
             RetrievalResult(
@@ -55,10 +60,10 @@ def test_evaluate_strategy_averages_recall_across_judgments() -> None:
     strategy = _FakeStrategy({"q1": [ART_1], "q2": [ART_2]})
     judgments = [_judgment("q1", ART_1), _judgment("q2", ART_1)]
 
-    metrics = evaluate_strategy(strategy, judgments, k=5)
+    result = evaluate_strategy(strategy, judgments, k=5)
 
-    assert metrics["recall_at_k"] == 0.5
-    assert metrics["n"] == 2.0
+    assert result.metrics["recall_at_k"] == 0.5
+    assert result.metrics["n"] == 2.0
 
 
 def test_evaluate_strategy_excludes_unanswerable_questions_from_the_average() -> None:
@@ -66,20 +71,72 @@ def test_evaluate_strategy_excludes_unanswerable_questions_from_the_average() ->
     strategy = _FakeStrategy({"q1": [ART_1], "q2": []})
     judgments = [_judgment("q1", ART_1), _judgment("q2", unanswerable=True)]
 
-    metrics = evaluate_strategy(strategy, judgments, k=5)
+    result = evaluate_strategy(strategy, judgments, k=5)
 
-    assert metrics["recall_at_k"] == 1.0
-    assert metrics["n"] == 1.0
+    assert result.metrics["recall_at_k"] == 1.0
+    assert result.metrics["n"] == 1.0
+
+
+def test_evaluate_strategy_still_emits_a_record_for_an_unanswerable_question() -> None:
+    """An unanswerable-class question is retrieved and recorded, just excluded from the average."""
+    strategy = _FakeStrategy({"q1": [ART_1], "q2": []})
+    judgments = [_judgment("q1", ART_1), _judgment("q2", unanswerable=True)]
+
+    result = evaluate_strategy(strategy, judgments, k=5)
+
+    assert len(result.records) == 2
+    unanswerable_record = next(r for r in result.records if r.question_id == "q2")
+    assert unanswerable_record.unanswerable is True
+    assert unanswerable_record.status == "succeeded"
+    assert unanswerable_record.metrics == {}
 
 
 def test_evaluate_strategy_reports_k_in_the_result() -> None:
     """The k used for the run is echoed back in the result dict."""
-    strategy = _FakeStrategy({"q1": [ART_1]})
-    metrics = evaluate_strategy(strategy, [_judgment("q1", ART_1)], k=3)
-    assert metrics["k"] == 3.0
+    result = evaluate_strategy(_FakeStrategy({"q1": [ART_1]}), [_judgment("q1", ART_1)], k=3)
+    assert result.metrics["k"] == 3.0
 
 
 def test_evaluate_strategy_raises_for_an_empty_judgment_list() -> None:
     """An empty golden set is a caller error, not a silently meaningless 0.0 result."""
     with pytest.raises(ValueError, match="judgments must not be empty"):
         evaluate_strategy(_FakeStrategy({}), [], k=5)
+
+
+def test_evaluate_strategy_survives_a_single_retrieval_failure() -> None:
+    """One question whose retrieve() raises doesn't abort the whole strategy."""
+    strategy = _FakeStrategy({"q1": [ART_1], "q3": [ART_1]}, fails_for=frozenset({"q2"}))
+    judgments = [_judgment("q1", ART_1), _judgment("q2", ART_1), _judgment("q3", ART_1)]
+
+    result = evaluate_strategy(strategy, judgments, k=5)
+
+    assert result.metrics["n"] == 2.0
+    assert result.metrics["errors"] == 1.0
+    assert result.metrics["recall_at_k"] == 1.0
+    failed_record = next(r for r in result.records if r.question_id == "q2")
+    assert failed_record.status == "failed"
+    assert failed_record.error == "simulated retrieval failure"
+
+
+def test_evaluate_strategy_stops_early_after_consecutive_retrieval_failures() -> None:
+    """Five-in-a-row failures (a systemic problem) stop the strategy rather than retry forever."""
+    strategy = _FakeStrategy({}, fails_for=frozenset({f"q{i}" for i in range(1, 8)}))
+    judgments = [_judgment(f"q{i}", ART_1) for i in range(1, 8)]
+
+    result = evaluate_strategy(strategy, judgments, k=5)
+
+    assert result.metrics["n"] == 0.0
+    assert result.metrics["errors"] == 5.0
+
+
+def test_evaluate_strategy_still_records_questions_skipped_after_the_abort() -> None:
+    """Questions left unattempted after the circuit breaker trips still get an explicit record."""
+    strategy = _FakeStrategy({}, fails_for=frozenset({f"q{i}" for i in range(1, 8)}))
+    judgments = [_judgment(f"q{i}", ART_1) for i in range(1, 8)]
+
+    result = evaluate_strategy(strategy, judgments, k=5)
+
+    assert len(result.records) == 7
+    skipped = [r for r in result.records if r.status == "skipped"]
+    assert len(skipped) == 2
+    assert {r.question_id for r in skipped} == {"q6", "q7"}

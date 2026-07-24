@@ -82,7 +82,8 @@ def test_real_strategies_score_above_zero_on_the_real_golden_set() -> None:
             f"{'ndcg@5':>8} {'mrr':>6} {'n':>4}"
         )
         for strategy in (dense, sparse, hybrid, parent_child):
-            metrics = evaluate_strategy(strategy, judgments, k=5)
+            result = evaluate_strategy(strategy, judgments, k=5)
+            metrics = result.metrics
             print(
                 f"{strategy.name:<14} {metrics['recall_at_k']:>9.3f} "
                 f"{metrics['precision_at_k']:>12.3f} {metrics['ndcg_at_k']:>8.3f} "
@@ -93,7 +94,7 @@ def test_real_strategies_score_above_zero_on_the_real_golden_set() -> None:
             # bar, just a sanity check that indexing and retrieval are wired
             # correctly end to end.
             assert metrics["recall_at_k"] > 0.0, f"{strategy.name} found nothing relevant"
-            assert metrics["n"] == 19, "expected 19 scored questions (20 minus 1 unanswerable)"
+            assert metrics["n"] == 219, "expected 219 scored questions (230 minus 11 unanswerable)"
     finally:
         with conn.cursor() as cur:
             cur.execute(f"DROP TABLE IF EXISTS {_TEST_NAME}")

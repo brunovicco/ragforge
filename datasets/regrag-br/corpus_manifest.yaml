@@ -1,0 +1,53 @@
+# Canonical corpus manifest (ADR-0012). The benchmark runner discovers
+# documents only from this file - no document path/extractor/expected-count
+# may be hard-coded elsewhere in the runner.
+#
+# source_sha256 is the SHA-256 of the raw source bytes (same algorithm as
+# ragforge.ingestion.snapshot.snapshot_hash). Recompute and update it
+# deliberately whenever a source file under datasets/corpus/ is replaced -
+# a stale hash is meant to fail the preflight gate, not be silently ignored.
+schema_version: 1
+corpus_id: regrag-br
+corpus_version: "0.2"
+documents:
+  - norm_id: LC-105/2001
+    source_path: datasets/corpus/lc-lgpd/LC-105-2001.htm
+    extractor: html
+    expected_article_count: 13
+    source_sha256: ef487427011bdf8610f12b3931a294797d10d25871dc88d7c4f8b168261dc362
+    enabled: true
+  - norm_id: RES-CMN-4893/2021
+    source_path: datasets/corpus/bacen/RES-CMN-4893-2021.pdf
+    extractor: pymupdf
+    expected_article_count: 28
+    source_sha256: 21375716dd09b4998afee9d57932cc046085b5670ba23aa892ccf13e46c04734
+    enabled: true
+  - norm_id: RES-CMN-5274/2025
+    source_path: datasets/corpus/bacen/RES-CMN-5274-2025.htm
+    extractor: html
+    expected_article_count: 3
+    source_sha256: 5f3a1d95b367fc0996d626b51578b6c6066c71735003777f57680e49231cc617
+    enabled: true
+  - norm_id: LEI-13709/2018
+    source_path: datasets/corpus/lc-lgpd/LEI-13709-2018-LGPD.htm
+    extractor: html
+    expected_article_count: 79
+    source_sha256: 88d50c0214906af82c78be6d9e092239692c89e3c2b517aacc0e6dec874520f5
+    enabled: true
+  - norm_id: ICVM-607/2019
+    source_path: datasets/corpus/cvm/ICVM-607-2019.pdf
+    extractor: pymupdf
+    expected_article_count: 115
+    source_sha256: 60eb11e43cf26c1bb9a4f2eb1fa546781d83934d564d00419c9211ca9c70e0da
+    enabled: true
+  # Present in the corpus but not yet curated in the golden set (see
+  # datasets/regrag-br/judgments.json's "note"): real article gaps from
+  # amendment history need legal research before a curated count is
+  # meaningful. Disabled, not deleted, so re-enabling it is a one-line change
+  # once curated.
+  - norm_id: LEI-6385/1976
+    source_path: datasets/corpus/cvm/LEI-6385-1976.htm
+    extractor: html
+    expected_article_count: null
+    source_sha256: null
+    enabled: false
