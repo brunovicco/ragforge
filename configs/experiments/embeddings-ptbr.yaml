@@ -39,6 +39,30 @@ candidates:
       collapses a multi-text embed_content request down to a single
       embedding instead of batching - GoogleGeminiEmbedder sends it one
       text per request, so indexing the corpus took ~465 sequential calls.
+  - name: Qwen/Qwen3-Embedding-0.6B
+    kind: open
+    provider: sentence-transformers
+    status: not_evaluated
+    dimensions: 1024
+    notes: >
+      ADR-0013's operational default for the main benchmark runner
+      (configs/experiments/benchmark-v01.yaml) - added here as a candidate
+      for this isolated comparison too, but not yet run: needs local
+      Postgres/OpenSearch up and the model weights downloaded. dimensions
+      is the model card's stated output size, not yet confirmed locally.
+      Run with: uv run python configs/experiments/run_embeddings_ptbr.py
+      --model Qwen/Qwen3-Embedding-0.6B
+  - name: intfloat/multilingual-e5-large-instruct
+    kind: open
+    provider: sentence-transformers
+    status: not_evaluated
+    dimensions: 1024
+    notes: >
+      Local control candidate (ADR-0013's model matrix). Not yet run - same
+      caveats as Qwen3-Embedding-0.6B above. Instruction-tuned like
+      Qwen3-Embedding, but this project doesn't yet send a versioned query
+      instruction (ADR-0013 rollout step 5, deferred); scores here would
+      reflect embedding without that instruction.
 
 dataset:
   path: datasets/regrag-br/judgments.json

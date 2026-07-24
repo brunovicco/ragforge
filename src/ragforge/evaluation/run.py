@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """RAGForge v0.1 main benchmark runner (ADR-0004). Entry point for `make bench`/`make bench-live`.
 
-Indexes the real corpus with the frozen embedding model (ADR-0005) and runs
-every strategy declared in configs/experiments/benchmark-v01.yaml against the
+Indexes the real corpus with the configured embedding model (ADR-0013) and
+runs every strategy declared in configs/experiments/benchmark-v01.yaml against the
 real golden set (datasets/regrag-br/judgments.json), reporting
 recall/precision/nDCG/MRR@k per strategy plus, per ADR-0007, a generated
 answer's Citation Accuracy/Faithfulness/Answer Relevancy - and writing a
@@ -21,6 +21,21 @@ selected question gets one immutable QuestionRecord per strategy - including
 unanswerable-class questions, which are excluded from ranking/citation
 averages but never dropped from coverage - appended to
 experiments/<run_id>/records.jsonl as each strategy finishes.
+
+The embedding provider is provider-neutral and config-driven (ADR-0013):
+``embedding.provider: local`` (operational default, no credentials needed,
+via SentenceTransformerEmbedder) or ``embedding.provider: gemini`` (optional
+hosted comparator, via GoogleGeminiEmbedder) - never a silent fallback
+between the two. The base/contextual/RAPTOR pgvector tables and OpenSearch
+indices are named from a namespace derived (ragforge.evaluation.index_namespace)
+from the corpus content hash, the chunking/retrieval-text schema versions,
+and the embedding's complete identity, so an index name alone reflects
+exactly what produced it - even though every run still creates and drops
+these tables fresh (no persistence/caching yet; that is Increment 3's job).
+Only the embedding step is provider-neutral: contextualization, RAPTOR
+summarization, GraphRAG's entity-extraction LLM, answer generation, and
+judge scoring all stay hard-coded to Gemini models regardless of
+``embedding.provider`` - those are separate ADRs (0007/0018), not ADR-0013.
 
 Per strategy, this doubles the LLM calls made per question: one
 GeminiAnswerGenerator.generate() call plus the RagasJudge's Faithfulness and
@@ -56,9 +71,11 @@ Strategy -> index mapping:
         GraphRagRetrieval's mode= parameter for a future side comparison,
         the same way ADR-0005 ran embeddings as an isolated experiment.
 
-Only --mode live is implemented: it makes real, metered Gemini API calls
-(embeddings, contextualization, summarization, entity extraction - ADR-0005/
-ADR-0010). --mode cache (bit-for-bit replay from a versioned LLM call cache,
+Only --mode live is implemented: with the default local embedding provider,
+it still makes real, metered Gemini API calls for everything except
+embeddings (contextualization, summarization, entity extraction - ADR-0010);
+switching to ``embedding.provider: gemini`` meters embeddings too (ADR-0005/
+ADR-0013). --mode cache (bit-for-bit replay from a versioned LLM call cache,
 ADR-0004) needs a cache-recording/replay layer that does not exist yet in
 this codebase and is intentionally out of scope here.
 
@@ -85,9 +102,12 @@ from opensearchpy import OpenSearch
 from ragforge.domain.models import Chunk, Judgment
 from ragforge.domain.protocols import RetrievalStrategy
 from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
+from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
 from ragforge.embeddings.ports import EmbeddingModel
+from ragforge.embeddings.sentence_transformer_embedder import SentenceTransformerEmbedder
 from ragforge.evaluation.answer_harness import AnswerJudge, evaluate_answer_quality
 from ragforge.evaluation.harness import evaluate_strategy
+from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
     IntegrityError,
     verify_source_integrity,
@@ -134,15 +154,20 @@ JUDGMENTS_PATH = ROOT / "datasets/regrag-br/judgments.json"
 RESULTS_DIR = ROOT / "experiments"
 DATABASE_URL = "postgresql://ragforge:ragforge@localhost:5432/ragforge"
 
-_BASE_TABLE = "bench_v01_base"
-_CONTEXTUAL_TABLE = "bench_v01_contextual"
-_RAPTOR_TABLE = "bench_v01_raptor"
-
 _RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 _CONTEXTUALIZER_MODEL = "gemini-3.1-flash-lite"
 _SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_MODE = "local"
+
+_EMBEDDING_PROVIDERS = ("local", "gemini")
+# Bumped only when the chunking logic (ragforge.chunking) or the retrieval
+# text derivation changes meaningfully enough that a prior index must not be
+# mistaken for compatible (ADR-0013). "source-text" means chunk.text as
+# chunked, unmodified - SAC (Increment 4) will introduce a second schema
+# version once retrieval text can differ from source text.
+_CHUNKING_CONFIG_VERSION = "adr-0006-v1"
+_RETRIEVAL_TEXT_SCHEMA_VERSION = "source-text-v1"
 
 # Bounded concurrency for answer generation + judge scoring (the actual
 # bottleneck: multiple sequential LLM round-trips per question). Not a
@@ -203,6 +228,49 @@ def _load_documents(manifest: CorpusManifest) -> dict[str, tuple[str, list[Chunk
         )
         documents[doc.norm_id] = (text, chunks)
     return documents
+
+
+def _build_embedder(
+    provider: str, model: str, dimensions: int | None
+) -> tuple[EmbeddingModel, EmbeddingIdentity]:
+    """Construct the configured embedding provider and its identity (ADR-0013).
+
+    ``provider: local`` is the operational default: no credentials needed,
+    via SentenceTransformerEmbedder - ``dimensions`` is ignored since the
+    model reports its own. ``provider: gemini`` is the optional hosted
+    comparator, via GoogleGeminiEmbedder with ``dimensions`` requesting a
+    truncated (Matryoshka) size. Never a silent fallback between the two.
+
+    Raises:
+        SystemExit: If ``provider`` isn't one of "local"/"gemini".
+    """
+    if provider == "local":
+        local_embedder = SentenceTransformerEmbedder(model)
+        identity = EmbeddingIdentity(
+            provider="local",
+            model=model,
+            revision=local_embedder.revision,
+            dimensions=local_embedder.dimensions,
+            normalize=True,
+            query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
+            runtime="local",
+        )
+        return local_embedder, identity
+    if provider == "gemini":
+        gemini_embedder = GoogleGeminiEmbedder(model, output_dimensionality=dimensions)
+        identity = EmbeddingIdentity(
+            provider="gemini",
+            model=model,
+            revision="api",
+            dimensions=gemini_embedder.dimensions,
+            normalize=False,
+            query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
+            runtime="hosted",
+        )
+        return gemini_embedder, identity
+    raise SystemExit(
+        f"unknown embedding provider {provider!r}; expected one of {_EMBEDDING_PROVIDERS}"
+    )
 
 
 class BaseDenseStore(ChunkSearchStore, ChunkFetchStore, Protocol):
@@ -323,8 +391,8 @@ def build_run_record(
     run_id: str,
     mode: str,
     config_path: str,
-    embedding_model: str,
-    embedding_dimensions: int,
+    embedding_identity: EmbeddingIdentity,
+    index_namespace: str,
     generation_model: str,
     judge_model: str,
     corpus_version: str,
@@ -338,7 +406,15 @@ def build_run_record(
         "run_id": run_id,
         "mode": mode,
         "config_path": config_path,
-        "embedding": {"model": embedding_model, "dimensions": embedding_dimensions},
+        "embedding": {
+            "provider": embedding_identity.provider,
+            "model": embedding_identity.model,
+            "revision": embedding_identity.revision,
+            "dimensions": embedding_identity.dimensions,
+            "normalize": embedding_identity.normalize,
+            "runtime": embedding_identity.runtime,
+        },
+        "index_namespace": index_namespace,
         "reranker_model": _RERANKER_MODEL,
         "contextualizer_model": _CONTEXTUALIZER_MODEL,
         "summarizer_model": _SUMMARIZER_MODEL,
@@ -364,8 +440,9 @@ def main() -> None:
     config = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     top_k = config["retrieval"]["top_k"]
     rerank_pool = config["retrieval"]["rerank_pool"]
+    embedding_provider = config["embedding"]["provider"]
     embedding_model = config["embedding"]["model"]
-    embedding_dimensions = config["embedding"]["dimensions"]
+    embedding_dimensions = config["embedding"].get("dimensions")
     generation_model = config["generation"]["model"]
     judge_model = config["judge"]["model"]
 
@@ -390,8 +467,19 @@ def main() -> None:
     except IntegrityError as exc:
         raise SystemExit(f"preflight integrity check failed:\n{exc}") from exc
 
-    print(f"Loading embedding model {embedding_model}...")
-    embedder = GoogleGeminiEmbedder(embedding_model, output_dimensionality=embedding_dimensions)
+    print(f"Loading embedding model {embedding_model} (provider={embedding_provider})...")
+    embedder, embedding_identity = _build_embedder(
+        embedding_provider, embedding_model, embedding_dimensions
+    )
+    index_namespace = derive_index_namespace(
+        manifest.content_hash,
+        _CHUNKING_CONFIG_VERSION,
+        _RETRIEVAL_TEXT_SCHEMA_VERSION,
+        embedding_identity,
+    )
+    base_table = f"bench_v01_base_{index_namespace}"
+    contextual_table = f"bench_v01_contextual_{index_namespace}"
+    raptor_table = f"bench_v01_raptor_{index_namespace}"
 
     print(f"Loading generation model {generation_model} and judge model {judge_model}...")
     generator = GeminiAnswerGenerator(generation_model)
@@ -402,7 +490,7 @@ def main() -> None:
     conn = psycopg.connect(DATABASE_URL)
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
     graphrag_dir = Path(tempfile.mkdtemp(prefix="ragforge-bench-graphrag-"))
-    tables = [_BASE_TABLE, _CONTEXTUAL_TABLE, _RAPTOR_TABLE]
+    tables = [base_table, contextual_table, raptor_table]
 
     run_metrics: dict[str, dict[str, float]] = {}
     run_id = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -416,8 +504,8 @@ def main() -> None:
             run_id=run_id,
             mode=args.mode,
             config_path=str(args.config.relative_to(ROOT)),
-            embedding_model=embedding_model,
-            embedding_dimensions=embedding_dimensions,
+            embedding_identity=embedding_identity,
+            index_namespace=index_namespace,
             generation_model=generation_model,
             judge_model=judge_model,
             corpus_version=manifest.corpus_version,
@@ -437,8 +525,8 @@ def main() -> None:
 
     try:
         print("\n[1/4] Indexing the base chunks (dense + sparse)...")
-        base_dense_store = DenseChunkStore(conn, table=_BASE_TABLE)
-        base_sparse_store = SparseChunkStore(os_client, index=_BASE_TABLE)
+        base_dense_store = DenseChunkStore(conn, table=base_table)
+        base_sparse_store = SparseChunkStore(os_client, index=base_table)
         base_embeddings = embedder.embed([chunk.text for chunk in all_chunks])
         base_dense_store.create_schema(dimensions=embedder.dimensions)
         base_dense_store.upsert_chunks(all_chunks, base_embeddings)
@@ -463,8 +551,8 @@ def main() -> None:
             for norm_id, (full_text, chunks) in documents.items()
             for contextualized in contextualize_chunks(full_text, chunks, contextualizer)
         ]
-        contextual_dense_store = DenseChunkStore(conn, table=_CONTEXTUAL_TABLE)
-        contextual_sparse_store = SparseChunkStore(os_client, index=_CONTEXTUAL_TABLE)
+        contextual_dense_store = DenseChunkStore(conn, table=contextual_table)
+        contextual_sparse_store = SparseChunkStore(os_client, index=contextual_table)
         contextual_embeddings = embedder.embed([chunk.text for chunk in contextual_chunks])
         contextual_dense_store.create_schema(dimensions=embedder.dimensions)
         contextual_dense_store.upsert_chunks(contextual_chunks, contextual_embeddings)
@@ -481,7 +569,7 @@ def main() -> None:
         raptor_chunks: list[Chunk] = []
         for _, chunks in documents.values():
             raptor_chunks.extend(build_raptor_tree(chunks, summarizer))
-        raptor_dense_store = DenseChunkStore(conn, table=_RAPTOR_TABLE)
+        raptor_dense_store = DenseChunkStore(conn, table=raptor_table)
         raptor_embeddings = embedder.embed([chunk.text for chunk in raptor_chunks])
         raptor_dense_store.create_schema(dimensions=embedder.dimensions)
         raptor_dense_store.upsert_chunks(raptor_chunks, raptor_embeddings)

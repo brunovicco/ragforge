@@ -5,6 +5,7 @@ constants containing document paths are removed from the runner in favor of
 this file.
 """
 
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -36,6 +37,16 @@ class CorpusManifest:
     def enabled_documents(self) -> tuple[CorpusDocument, ...]:
         """Return only the documents enabled for indexing."""
         return tuple(doc for doc in self.documents if doc.enabled)
+
+    @property
+    def content_hash(self) -> str:
+        """Deterministic hash of every enabled document's identity (ADR-0013).
+
+        Sorted by norm_id so the result depends only on which documents are
+        enabled and their pinned source hashes, never on YAML entry order.
+        """
+        pairs = sorted(f"{doc.norm_id}:{doc.source_sha256}" for doc in self.enabled_documents)
+        return hashlib.sha256("|".join(pairs).encode("utf-8")).hexdigest()
 
 
 def load_corpus_manifest(path: Path) -> CorpusManifest:

@@ -7,6 +7,8 @@ mode validation, strategy wiring from already-indexed (fake) stores, and the
 pure formatting/record-building functions.
 """
 
+import pytest
+
 from ragforge.domain.models import (
     Answer,
     Chunk,
@@ -17,6 +19,8 @@ from ragforge.domain.models import (
     RetrievalResult,
     StructuralRef,
 )
+from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
+from ragforge.evaluation import run
 from ragforge.evaluation.manifest import load_corpus_manifest
 from ragforge.evaluation.run import (
     MANIFEST_PATH,
@@ -167,15 +171,24 @@ def test_format_results_table_includes_every_configured_strategy() -> None:
 
 
 def test_build_run_record_includes_all_run_metadata() -> None:
-    """The run record carries the run id, mode, embedding/generation/judge config, and metrics."""
+    """The run record carries the run id, mode, embedding identity/generation/judge, and metrics."""
     metrics = {"dense": {"recall_at_k": 0.8, "n": 5.0}}
+    identity = EmbeddingIdentity(
+        provider="local",
+        model="Qwen/Qwen3-Embedding-0.6B",
+        revision="main",
+        dimensions=1024,
+        normalize=True,
+        query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
+        runtime="local",
+    )
 
     record = build_run_record(
         run_id="20260101T000000Z",
         mode="live",
         config_path="configs/experiments/benchmark-v01.yaml",
-        embedding_model="gemini-embedding-001",
-        embedding_dimensions=1536,
+        embedding_identity=identity,
+        index_namespace="abc123",
         generation_model="gemini-3.1-flash-lite",
         judge_model="gemini-3.1-flash-lite",
         corpus_version="0.2",
@@ -187,7 +200,15 @@ def test_build_run_record_includes_all_run_metadata() -> None:
 
     assert record["run_id"] == "20260101T000000Z"
     assert record["mode"] == "live"
-    assert record["embedding"] == {"model": "gemini-embedding-001", "dimensions": 1536}
+    assert record["embedding"] == {
+        "provider": "local",
+        "model": "Qwen/Qwen3-Embedding-0.6B",
+        "revision": "main",
+        "dimensions": 1024,
+        "normalize": True,
+        "runtime": "local",
+    }
+    assert record["index_namespace"] == "abc123"
     assert record["generation_model"] == "gemini-3.1-flash-lite"
     assert record["judge_model"] == "gemini-3.1-flash-lite"
     assert record["corpus_version"] == "0.2"
@@ -284,3 +305,64 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
     assert records[0].strategy == "fake-strategy"
     assert records[0].retrieval_status == "succeeded"
     assert records[0].generation_status == "succeeded"
+
+
+class _FakeSentenceTransformerEmbedder:
+    """Stands in for SentenceTransformerEmbedder - no real model load."""
+
+    def __init__(self, model_name: str) -> None:
+        self.name = model_name
+        self.dimensions = 1024
+        self.revision = "main"
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return [[0.0] * self.dimensions for _ in texts]
+
+
+class _FakeGoogleGeminiEmbedder:
+    """Stands in for GoogleGeminiEmbedder - no real API key/network call."""
+
+    def __init__(self, model_name: str, output_dimensionality: int | None = None) -> None:
+        self.name = model_name
+        self.dimensions = output_dimensionality or 3072
+
+    def embed(self, texts: list[str]) -> list[list[float]]:
+        return [[0.0] * self.dimensions for _ in texts]
+
+
+def test_build_embedder_constructs_a_local_embedder_without_credentials(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """provider: local builds SentenceTransformerEmbedder and a matching identity."""
+    monkeypatch.setattr(run, "SentenceTransformerEmbedder", _FakeSentenceTransformerEmbedder)
+
+    embedder, identity = run._build_embedder("local", "Qwen/Qwen3-Embedding-0.6B", None)
+
+    assert embedder.dimensions == 1024
+    assert identity.provider == "local"
+    assert identity.model == "Qwen/Qwen3-Embedding-0.6B"
+    assert identity.revision == "main"
+    assert identity.dimensions == 1024
+    assert identity.normalize is True
+    assert identity.runtime == "local"
+
+
+def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """provider: gemini builds GoogleGeminiEmbedder, passing dimensions through as truncation."""
+    monkeypatch.setattr(run, "GoogleGeminiEmbedder", _FakeGoogleGeminiEmbedder)
+
+    embedder, identity = run._build_embedder("gemini", "gemini-embedding-001", 1536)
+
+    assert embedder.dimensions == 1536
+    assert identity.provider == "gemini"
+    assert identity.revision == "api"
+    assert identity.normalize is False
+    assert identity.runtime == "hosted"
+
+
+def test_build_embedder_fails_closed_for_an_unknown_provider() -> None:
+    """An unrecognized provider fails fast rather than silently falling back to either adapter."""
+    with pytest.raises(SystemExit, match="unknown embedding provider"):
+        run._build_embedder("openai", "text-embedding-3", None)

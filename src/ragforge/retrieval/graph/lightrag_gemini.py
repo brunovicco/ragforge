@@ -1,11 +1,17 @@
-"""Gemini-backed embedding_func/llm_model_func for wiring LightRAG (README #8: GraphRAG).
+"""LightRAG glue: provider-neutral embedding_func, Gemini llm_model_func (README #8: GraphRAG).
 
 LightRAG (lightrag-hku) expects two callables at construction: an async
 ``embedding_func(list[str]) -> np.ndarray``, and an async
 ``llm_model_func(prompt, system_prompt=None, history_messages=None, **kwargs) -> str``.
-These adapt GoogleGeminiEmbedder's synchronous embed() and a direct Gemini
-generate_content call to those contracts, reusing the GEMINI_API_KEY /
-GOOGLE_API_KEY credential every other Gemini adapter in this project uses.
+
+``build_gemini_embedding_func`` just adapts any synchronous EmbeddingModel's
+embed() to that async contract (ADR-0013) - it has never actually depended on
+Gemini specifically, only on whichever embedder the caller already
+constructed. ``build_gemini_llm_model_func`` genuinely is Gemini-specific: a
+direct Gemini generate_content call, reusing the GEMINI_API_KEY /
+GOOGLE_API_KEY credential every other Gemini adapter in this project uses -
+GraphRAG's entity-extraction LLM is out of ADR-0013's scope (embeddings
+only) and stays hard-coded to Gemini for now.
 
 Retries 429s and transient transport errors via
 ragforge.adapters.gemini_retry, shared with every other Gemini-calling
@@ -24,12 +30,12 @@ from google.genai.types import ContentListUnionDict
 from lightrag.utils import EmbeddingFunc
 
 from ragforge.adapters.gemini_retry import call_with_retry_async
-from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
+from ragforge.embeddings.ports import EmbeddingModel
 from ragforge.generation.errors import GenerationError
 
 
-def build_gemini_embedding_func(embedder: GoogleGeminiEmbedder) -> EmbeddingFunc:
-    """Wrap an already-constructed GoogleGeminiEmbedder for LightRAG's EmbeddingFunc contract."""
+def build_gemini_embedding_func(embedder: EmbeddingModel) -> EmbeddingFunc:
+    """Wrap an already-constructed EmbeddingModel for LightRAG's EmbeddingFunc contract."""
 
     async def _embed(texts: list[str]) -> np.ndarray:
         vectors = await asyncio.to_thread(embedder.embed, texts)

@@ -22,14 +22,25 @@ from ragforge.embeddings.errors import EmbeddingError
 class SentenceTransformerEmbedder:
     """Encodes text with a local sentence-transformers model."""
 
-    def __init__(self, model_name: str, device: str | None = None) -> None:
+    def __init__(
+        self, model_name: str, device: str | None = None, revision: str | None = None
+    ) -> None:
         """Load ``model_name`` once; the constructor is the expensive step.
+
+        Args:
+            model_name: The Hugging Face model id, e.g. "Qwen/Qwen3-Embedding-0.6B".
+            device: cpu | mps | cuda. Defaults to sentence-transformers' own
+                auto-detection when omitted.
+            revision: Pinned model revision (git commit/tag), for exact
+                reproducibility (ADR-0013). Defaults to the same "main" HF
+                resolves to when unspecified - recorded as such via
+                ``self.revision`` rather than left ambiguous.
 
         Raises:
             EmbeddingError: If the model cannot be loaded.
         """
         try:
-            self._model = SentenceTransformer(model_name, device=device)
+            self._model = SentenceTransformer(model_name, device=device, revision=revision)
         except Exception as exc:
             # The load path spans several backends (huggingface_hub, torch,
             # safetensors) with varied exception types; translate all of them
@@ -42,6 +53,7 @@ class SentenceTransformerEmbedder:
 
         self.name = model_name
         self.dimensions = dimensions
+        self.revision = revision or "main"
 
     def embed(self, texts: list[str]) -> list[list[float]]:
         """Return one embedding per text, encoded in a single batched call.
