@@ -12,11 +12,7 @@ from google.genai import errors
 from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.domain.models import Chunk, Query, RetrievalResult
 from ragforge.generation.errors import GenerationError
-from ragforge.generation.gemini_answer_generator import (
-    GeminiAnswerGenerator,
-    _extract_citations,
-    _format_context,
-)
+from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator, _format_context
 
 
 def _result(chunk_id: str, text: str, structural_ids: tuple[str, ...]) -> RetrievalResult:
@@ -24,38 +20,6 @@ def _result(chunk_id: str, text: str, structural_ids: tuple[str, ...]) -> Retrie
         chunk_id=chunk_id, source_text=text, retrieval_text=text, structural_ids=structural_ids
     )
     return RetrievalResult(chunk=chunk, score=1.0, strategy="dense")
-
-
-def test_extract_citations_returns_well_formed_structural_ids_in_first_cited_order() -> None:
-    """Only valid structural IDs are extracted, deduplicated, in first-seen order."""
-    text = "Regra A [LC-105/2001::art-10]. Regra B [RES-CMN-4893/2021::art-2::par-1]."
-
-    citations = _extract_citations(text)
-
-    assert citations == ("LC-105/2001::art-10", "RES-CMN-4893/2021::art-2::par-1")
-
-
-def test_extract_citations_skips_malformed_brackets() -> None:
-    """A bracketed span that isn't a valid structural ID is skipped, not raised."""
-    text = "See [this note] and [LC-105/2001::art-10]."
-
-    citations = _extract_citations(text)
-
-    assert citations == ("LC-105/2001::art-10",)
-
-
-def test_extract_citations_deduplicates_repeated_citations() -> None:
-    """The same structural ID cited twice appears once, at its first position."""
-    text = "First [LC-105/2001::art-10]. Again [LC-105/2001::art-10]."
-
-    citations = _extract_citations(text)
-
-    assert citations == ("LC-105/2001::art-10",)
-
-
-def test_extract_citations_returns_empty_tuple_for_no_citations() -> None:
-    """Text with no brackets at all yields no citations, not an error."""
-    assert _extract_citations("Uma resposta sem citações.") == ()
 
 
 def test_format_context_includes_each_result_text_and_structural_ids() -> None:

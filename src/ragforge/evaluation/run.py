@@ -51,6 +51,16 @@ entity extraction). Judge scores are unvalidated until the ADR-0007/ADR-0018
 human calibration exercise happens (see judge_calibration.py) - report them
 with that caveat.
 
+``audit.enabled: true`` (ADR-0016, off by default) wraps the generator with
+AuditingAnswerGenerator: every answer is segmented into claims, checked
+deterministically (existence, corpus version, retrieved-context presence),
+and - only for claims that already pass every deterministic check -
+semantically verified via OpenAI, with at most one bounded rewrite and
+full re-audit when something fails. Off by default because the semantic
+verifier and any rewrite are real, additional LLM calls the ADR itself
+flags as a cost/latency trade-off; the run record always states
+audit_enabled/audit_provider/audit_model regardless.
+
 Per-question retrieval/generation/judge failures are isolated and counted
 (evaluate_strategy's "errors", evaluate_answer_quality's "answer_errors")
 rather than aborting the strategy; answer generation and judge scoring run
@@ -143,6 +153,7 @@ from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIde
 from ragforge.embeddings.ports import EmbeddingModel
 from ragforge.embeddings.sentence_transformer_embedder import SentenceTransformerEmbedder
 from ragforge.evaluation.answer_harness import evaluate_answer_quality
+from ragforge.evaluation.audit_metrics import compute_audit_report
 from ragforge.evaluation.harness import evaluate_strategy
 from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
@@ -162,10 +173,13 @@ from ragforge.evaluation.ragas_judge import (
 from ragforge.evaluation.records import QuestionRecord, append_records_jsonl, merge_question_records
 from ragforge.evaluation.scheduler import run_bounded
 from ragforge.evaluation.split import load_split
+from ragforge.generation.auditing_answer_generator import AuditingAnswerGenerator
 from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator
 from ragforge.generation.gemini_contextualizer import GeminiContextualizer
 from ragforge.generation.gemini_document_summarizer import GeminiDocumentSummarizer
 from ragforge.generation.gemini_summarizer import GeminiSummarizer
+from ragforge.generation.openai_answer_rewriter import OpenAIAnswerRewriter
+from ragforge.generation.openai_semantic_verifier import OpenAISemanticSupportVerifier
 from ragforge.generation.ports import AnswerGenerator
 from ragforge.ingestion.html_extractor import HtmlTextExtractor
 from ragforge.ingestion.pipeline import ingest_norm
@@ -560,6 +574,9 @@ def build_run_record(
     judge_provider: str,
     judge_model: str,
     judge_reasoning_effort: str | None,
+    audit_enabled: bool,
+    audit_provider: str | None,
+    audit_model: str | None,
     corpus_version: str,
     split_dataset_version: str,
     n_chunks: int,
@@ -572,6 +589,10 @@ def build_run_record(
     ``judge_provider == "gemini"`` (ADR-0018): the answer generator is always
     Gemini-based (GeminiAnswerGenerator), so a Gemini judge is never
     independent from it. ``None`` for the canonical "openai" judge.
+
+    ``audit_enabled``/``audit_provider``/``audit_model`` are always present
+    (ADR-0016: audit calls must be identified) - ``provider``/``model`` are
+    ``None`` when auditing is off, never silently omitted.
     """
     judge_label = "exploratory_same_provider_judge" if judge_provider == "gemini" else None
     return {
@@ -598,6 +619,9 @@ def build_run_record(
         "judge_reasoning_effort": judge_reasoning_effort,
         "judge_prompt_version": ABSTENTION_PROMPT_VERSION,
         "judge_label": judge_label,
+        "audit_enabled": audit_enabled,
+        "audit_provider": audit_provider,
+        "audit_model": audit_model,
         "corpus_version": corpus_version,
         "split_dataset_version": split_dataset_version,
         "k": top_k,
@@ -667,6 +691,11 @@ def main() -> None:
     judge_model = config["judge"]["model"]
     judge_embedding_model = config["judge"]["embedding_model"]
     judge_reasoning_effort = config["judge"].get("reasoning_effort", "medium")
+    audit_config = config.get("audit", {})
+    audit_enabled = audit_config.get("enabled", False)
+    audit_provider = audit_config.get("provider", "openai")
+    audit_model = audit_config.get("model")
+    audit_reasoning_effort = audit_config.get("reasoning_effort", "medium")
     execution_config = config.get("execution", {})
     answer_quality_workers = execution_config.get(
         "answer_quality_workers", _DEFAULT_ANSWER_QUALITY_WORKERS
@@ -696,6 +725,11 @@ def main() -> None:
     documents = _load_documents(manifest)
     all_chunks = [chunk for _, chunks in documents.values() for chunk in chunks]
     print(f"{len(all_chunks)} chunks total across {len(documents)} documents")
+    document_versions = _document_versions(manifest)
+    corpus_structural_ids = {
+        norm_id: {ref for chunk in chunks for ref in chunk.structural_ids}
+        for norm_id, (_, chunks) in documents.items()
+    }
 
     try:
         verify_structural_references(judgments, documents)
@@ -732,9 +766,32 @@ def main() -> None:
         f"Loading generation model {generation_model} and "
         f"judge model {judge_model} (provider={judge_provider})..."
     )
-    generator = GeminiAnswerGenerator(
+    generator: AnswerGenerator = GeminiAnswerGenerator(
         generation_model, cache=cache, max_in_flight=gemini_max_in_flight
     )
+    auditing_generator: AuditingAnswerGenerator | None = None
+    if audit_enabled:
+        if audit_model is None:
+            raise SystemExit("audit.enabled is true but audit.model is not set in the config")
+        print(f"Loading audit model {audit_model} (provider={audit_provider})...")
+        if audit_provider != "openai":
+            raise SystemExit(f"unknown audit provider {audit_provider!r}; expected 'openai'")
+        verifier = OpenAISemanticSupportVerifier(
+            audit_model,
+            reasoning_effort=audit_reasoning_effort,
+            cache=cache,
+            max_in_flight=gemini_max_in_flight,
+        )
+        rewriter = OpenAIAnswerRewriter(
+            audit_model,
+            reasoning_effort=audit_reasoning_effort,
+            cache=cache,
+            max_in_flight=gemini_max_in_flight,
+        )
+        auditing_generator = AuditingAnswerGenerator(
+            generator, verifier, rewriter, corpus_structural_ids, document_versions
+        )
+        generator = auditing_generator
     judge_factory = _build_judge_factory(
         judge_provider,
         judge_model,
@@ -761,6 +818,9 @@ def main() -> None:
             judge_provider=judge_provider,
             judge_model=judge_model,
             judge_reasoning_effort=judge_reasoning_effort if judge_provider == "openai" else None,
+            audit_enabled=audit_enabled,
+            audit_provider=audit_provider if audit_enabled else None,
+            audit_model=audit_model if audit_enabled else None,
             corpus_version=manifest.corpus_version,
             split_dataset_version=split.dataset_version,
             n_chunks=len(all_chunks),
@@ -784,6 +844,8 @@ def main() -> None:
         metrics, records = _evaluate(
             strategy, judgments, generator, judge_factory, top_k, answer_quality_workers
         )
+        if auditing_generator is not None:
+            metrics = {**metrics, **compute_audit_report(auditing_generator.drain_audit_results())}
         run_metrics[label] = metrics
         append_records_jsonl(records_path, records)
         _checkpoint()
@@ -838,7 +900,7 @@ def main() -> None:
             _DOCUMENT_SUMMARIZER_MODEL, cache=cache, max_in_flight=gemini_max_in_flight
         )
         document_summaries = _summarize_documents(
-            documents, _document_versions(manifest), document_summarizer, answer_quality_workers
+            documents, document_versions, document_summarizer, answer_quality_workers
         )
         sac_chunks = [
             sac_chunk

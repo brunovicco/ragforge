@@ -19,7 +19,6 @@ concurrent in-flight generate_content calls process-wide.
 
 import json
 import os
-import re
 
 from google import genai
 from google.genai import types
@@ -27,12 +26,12 @@ from google.genai import types
 from ragforge.adapters.gemini_retry import call_with_retry
 from ragforge.adapters.llm_cache import LLMCache, cache_key, cached_call
 from ragforge.adapters.provider_limiter import get_limiter
-from ragforge.domain.models import Answer, Query, RetrievalResult, StructuralRef
+from ragforge.domain.models import Answer, Query, RetrievalResult
+from ragforge.generation.citation_parsing import extract_citations
 from ragforge.generation.errors import GenerationError
 
 _TEMPERATURE = 0.0
 _MAX_OUTPUT_TOKENS = 800
-_CITATION_RE = re.compile(r"\[([^\[\]]+)\]")
 _PROVIDER = "gemini"
 # Conservative default - not data-driven, matches ADR-0014's own example config.
 _DEFAULT_MAX_IN_FLIGHT = 4
@@ -61,23 +60,6 @@ def _format_context(results: list[RetrievalResult]) -> str:
         ids = ", ".join(result.chunk.structural_ids)
         blocks.append(f"[structural_ids: {ids}]\n{result.chunk.source_text}")
     return "\n\n".join(blocks)
-
-
-def _extract_citations(text: str) -> tuple[str, ...]:
-    """Return every well-formed structural ID cited in ``text``, in first-cited order.
-
-    A bracketed span that isn't a valid structural ID (a hallucinated or
-    unrelated bracket) is skipped rather than raised - this parses untrusted
-    model output, not a contract the model is guaranteed to honor.
-    """
-    seen: dict[str, None] = {}
-    for candidate in _CITATION_RE.findall(text):
-        try:
-            ref = StructuralRef.parse(candidate)
-        except ValueError:
-            continue
-        seen.setdefault(ref.canonical, None)
-    return tuple(seen)
 
 
 class GeminiAnswerGenerator:
@@ -163,4 +145,4 @@ class GeminiAnswerGenerator:
         if not response.text:
             raise GenerationError(f"Gemini returned no text for {self.name!r}")
         text = response.text.strip()
-        return Answer(text=text, citations=_extract_citations(text))
+        return Answer(text=text, citations=extract_citations(text))
