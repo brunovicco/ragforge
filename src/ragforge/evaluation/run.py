@@ -19,7 +19,8 @@ reduced or drifted corpus. RAPTOR is built once per document, never across a
 document boundary, so a summary node can never blend unrelated norms. Every
 selected question gets one immutable QuestionRecord per strategy - including
 unanswerable-class questions, which are excluded from ranking/citation
-averages but never dropped from coverage - appended to
+averages (ADR-0018: they are still generated and judged, for abstention
+appropriateness) but never dropped from coverage - appended to
 experiments/<run_id>/records.jsonl as each strategy finishes.
 
 The embedding provider is provider-neutral and config-driven (ADR-0013):
@@ -32,17 +33,23 @@ from the corpus content hash, the chunking/retrieval-text schema versions,
 and the embedding's complete identity, so an index name alone reflects
 exactly what produced it - even though every run still creates and drops
 these tables fresh (no persistence/caching yet; that is Increment 3's job).
-Only the embedding step is provider-neutral: contextualization, RAPTOR
-summarization, GraphRAG's entity-extraction LLM, answer generation, and
-judge scoring all stay hard-coded to Gemini models regardless of
-``embedding.provider`` - those are separate ADRs (0007/0018), not ADR-0013.
+The embedding step, contextualization, RAPTOR summarization, and GraphRAG's
+entity-extraction LLM stay hard-coded to Gemini/local models regardless of
+``judge.provider`` - only answer generation stays Gemini-hardcoded too
+(GeminiAnswerGenerator). The judge is its own provider-neutral choice
+(ADR-0018): ``judge.provider: openai`` (canonical for publishable results,
+independent from the Gemini answer generator) or ``judge.provider: gemini``
+(development fallback, labeled "exploratory_same_provider_judge" in the run
+record since generation is also Gemini) - never a silent fallback between
+the two.
 
 Per strategy, this doubles the LLM calls made per question: one
-GeminiAnswerGenerator.generate() call plus the RagasJudge's Faithfulness and
-Answer Relevancy scoring calls, on top of whatever the strategy itself
-already costs (contextualization, RAPTOR summarization, GraphRAG entity
-extraction). Judge scores are unvalidated until the ADR-0007 human
-calibration exercise happens - report them with that caveat.
+GeminiAnswerGenerator.generate() call plus the judge's Faithfulness, Answer
+Relevancy, and abstention scoring calls, on top of whatever the strategy
+itself already costs (contextualization, RAPTOR summarization, GraphRAG
+entity extraction). Judge scores are unvalidated until the ADR-0007/ADR-0018
+human calibration exercise happens (see judge_calibration.py) - report them
+with that caveat.
 
 Per-question retrieval/generation/judge failures are isolated and counted
 (evaluate_strategy's "errors", evaluate_answer_quality's "answer_errors")
@@ -95,10 +102,11 @@ driven winner - already used and verified in test_cross_encoder_reranker.py.
 
 Bounded parallel execution and a minimal LLM cache (ADR-0014 + ADR-0004):
 a FileLLMCache under experiments/<run_id>/llm-cache/ is shared by the
-embedder, GeminiAnswerGenerator, and the judge - a Gemini call already made
-for the exact same (model, prompt) is never repeated. A ProviderLimiter
-bounds concurrent in-flight Gemini calls process-wide
-(execution.gemini_max_in_flight). Answer generation + judge scoring use
+embedder, GeminiAnswerGenerator, and the judge (Gemini or OpenAI) - a call
+already made for the exact same (model, prompt) is never repeated. A
+ProviderLimiter bounds concurrent in-flight calls process-wide, per provider
+(execution.gemini_max_in_flight, reused as the shared bound whichever hosted
+provider is active). Answer generation + judge scoring use
 ragforge.evaluation.scheduler.run_bounded (execution.answer_quality_workers
 workers), which always restores canonical question order regardless of
 completion order. ``--resume <run_id>`` reuses an existing run's directory
@@ -134,7 +142,7 @@ from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
 from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
 from ragforge.embeddings.ports import EmbeddingModel
 from ragforge.embeddings.sentence_transformer_embedder import SentenceTransformerEmbedder
-from ragforge.evaluation.answer_harness import AnswerJudge, evaluate_answer_quality
+from ragforge.evaluation.answer_harness import evaluate_answer_quality
 from ragforge.evaluation.harness import evaluate_strategy
 from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
@@ -143,9 +151,14 @@ from ragforge.evaluation.integrity import (
     verify_split_integrity,
     verify_structural_references,
 )
+from ragforge.evaluation.judge_ports import AnswerQualityJudge
 from ragforge.evaluation.judgments import load_judgments
 from ragforge.evaluation.manifest import CorpusManifest, load_corpus_manifest
-from ragforge.evaluation.ragas_judge import build_gemini_ragas_judge
+from ragforge.evaluation.ragas_judge import (
+    ABSTENTION_PROMPT_VERSION,
+    build_gemini_ragas_judge,
+    build_openai_ragas_judge,
+)
 from ragforge.evaluation.records import QuestionRecord, append_records_jsonl, merge_question_records
 from ragforge.evaluation.scheduler import run_bounded
 from ragforge.evaluation.split import load_split
@@ -195,6 +208,7 @@ _GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_MODE = "local"
 
 _EMBEDDING_PROVIDERS = ("local", "gemini")
+_JUDGE_PROVIDERS = ("openai", "gemini")
 # Bumped only when the chunking logic (ragforge.chunking) or a retrieval-text
 # derivation (contextualize_chunks, sac.pipeline.apply_document_summary)
 # changes meaningfully enough that a prior index must not be mistaken for
@@ -383,6 +397,44 @@ def _build_embedder(
     )
 
 
+def _build_judge_factory(
+    provider: str,
+    model: str,
+    embedding_model: str,
+    reasoning_effort: str,
+    cache: LLMCache | None,
+    max_in_flight: int,
+) -> Callable[[], AnswerQualityJudge]:
+    """Return a zero-arg factory building the configured judge (ADR-0018).
+
+    ``provider: openai`` is canonical for publishable results, independent
+    from the Gemini answer generator. ``provider: gemini`` is a development
+    fallback - callers should label a run using it (main() does, via
+    "judge_label": "exploratory_same_provider_judge") since the answer
+    generator is also Gemini-based. Never a silent fallback between the two.
+
+    A factory, not an already-built judge: evaluate_answer_quality calls
+    this once per worker thread (RagasJudge's underlying sync wrapper isn't
+    safe to share across threads - see answer_harness.py).
+
+    Raises:
+        SystemExit: If ``provider`` isn't one of "openai"/"gemini".
+    """
+    if provider == "openai":
+        return lambda: build_openai_ragas_judge(
+            model,
+            embedding_model,
+            reasoning_effort=reasoning_effort,
+            cache=cache,
+            max_in_flight=max_in_flight,
+        )
+    if provider == "gemini":
+        return lambda: build_gemini_ragas_judge(
+            model, embedding_model, cache=cache, max_in_flight=max_in_flight
+        )
+    raise SystemExit(f"unknown judge provider {provider!r}; expected one of {_JUDGE_PROVIDERS}")
+
+
 class BaseDenseStore(ChunkSearchStore, ChunkFetchStore, Protocol):
     """A dense store usable both for vector search and parent-chunk lookup.
 
@@ -451,10 +503,10 @@ def format_results_table(
 def format_answer_quality_table(
     strategy_labels: list[str], run_metrics: dict[str, dict[str, float]]
 ) -> str:
-    """Render a fixed-width Citation Accuracy/Faithfulness/Answer Relevancy table (ADR-0007)."""
+    """Render a Citation Accuracy/Faithfulness/Relevancy/abstention table (ADR-0007/ADR-0018)."""
     header = (
         f"{'strategy':<14} {'citation_acc':>12} {'faithfulness':>12} {'relevancy':>10} "
-        f"{'n':>4} {'errors':>6}"
+        f"{'abstention':>10} {'n':>4} {'errors':>6}"
     )
     lines = [header]
     for label in strategy_labels:
@@ -464,8 +516,8 @@ def format_answer_quality_table(
             continue
         lines.append(
             f"{label:<14} {metrics['citation_accuracy']:>12.3f} {metrics['faithfulness']:>12.3f} "
-            f"{metrics['answer_relevancy']:>10.3f} {metrics['answer_n']:>4.0f} "
-            f"{metrics['answer_errors']:>6.0f}"
+            f"{metrics['answer_relevancy']:>10.3f} {metrics['abstention_appropriate']:>10.3f} "
+            f"{metrics['answer_n']:>4.0f} {metrics['answer_errors']:>6.0f}"
         )
     return "\n".join(lines)
 
@@ -474,7 +526,7 @@ def _evaluate(
     strategy: RetrievalStrategy,
     judgments: list[Judgment],
     generator: AnswerGenerator,
-    judge_factory: Callable[[], AnswerJudge],
+    judge_factory: Callable[[], AnswerQualityJudge],
     top_k: int,
     answer_quality_workers: int,
 ) -> tuple[dict[str, float], list[QuestionRecord]]:
@@ -505,14 +557,23 @@ def build_run_record(
     embedding_identity: EmbeddingIdentity,
     index_namespace: str,
     generation_model: str,
+    judge_provider: str,
     judge_model: str,
+    judge_reasoning_effort: str | None,
     corpus_version: str,
     split_dataset_version: str,
     n_chunks: int,
     top_k: int,
     run_metrics: dict[str, dict[str, float]],
 ) -> dict[str, object]:
-    """Assemble the JSON-serializable run record written to experiments/<run_id>/results.json."""
+    """Assemble the JSON-serializable run record written to experiments/<run_id>/results.json.
+
+    ``judge_label`` is "exploratory_same_provider_judge" whenever
+    ``judge_provider == "gemini"`` (ADR-0018): the answer generator is always
+    Gemini-based (GeminiAnswerGenerator), so a Gemini judge is never
+    independent from it. ``None`` for the canonical "openai" judge.
+    """
+    judge_label = "exploratory_same_provider_judge" if judge_provider == "gemini" else None
     return {
         "run_id": run_id,
         "mode": mode,
@@ -532,7 +593,11 @@ def build_run_record(
         "graphrag_llm_model": _GRAPHRAG_LLM_MODEL,
         "graphrag_mode": _GRAPHRAG_MODE,
         "generation_model": generation_model,
+        "judge_provider": judge_provider,
         "judge_model": judge_model,
+        "judge_reasoning_effort": judge_reasoning_effort,
+        "judge_prompt_version": ABSTENTION_PROMPT_VERSION,
+        "judge_label": judge_label,
         "corpus_version": corpus_version,
         "split_dataset_version": split_dataset_version,
         "k": top_k,
@@ -546,6 +611,7 @@ def _verify_resume_identity(
     previous: Mapping[str, object],
     index_namespace: str,
     generation_model: str,
+    judge_provider: str,
     judge_model: str,
 ) -> None:
     """Fail closed if a resumed run's identity doesn't match the current configuration.
@@ -553,8 +619,11 @@ def _verify_resume_identity(
     ADR-0014: "changing model, prompt, split, or strategy creates a new
     run" - ``index_namespace`` alone already encodes corpus content,
     chunking/retrieval-text schema, and the embedding's complete identity
-    (ADR-0013), so checking it plus the generation/judge models covers
+    (ADR-0013), so checking it plus the generation/judge identity covers
     everything that would make reusing cached answers/judge scores unsafe.
+    ``judge_provider`` is checked separately from ``judge_model`` since
+    switching provider (e.g. gemini -> openai) is a change of judge identity
+    even if a model name happened to collide (ADR-0018).
 
     Raises:
         SystemExit: If any identity component differs from the prior run.
@@ -567,6 +636,10 @@ def _verify_resume_identity(
     if previous.get("generation_model") != generation_model:
         mismatches.append(
             f"generation_model: {previous.get('generation_model')!r} != {generation_model!r}"
+        )
+    if previous.get("judge_provider") != judge_provider:
+        mismatches.append(
+            f"judge_provider: {previous.get('judge_provider')!r} != {judge_provider!r}"
         )
     if previous.get("judge_model") != judge_model:
         mismatches.append(f"judge_model: {previous.get('judge_model')!r} != {judge_model!r}")
@@ -590,7 +663,10 @@ def main() -> None:
     embedding_model = config["embedding"]["model"]
     embedding_dimensions = config["embedding"].get("dimensions")
     generation_model = config["generation"]["model"]
+    judge_provider = config["judge"]["provider"]
     judge_model = config["judge"]["model"]
+    judge_embedding_model = config["judge"]["embedding_model"]
+    judge_reasoning_effort = config["judge"].get("reasoning_effort", "medium")
     execution_config = config.get("execution", {})
     answer_quality_workers = execution_config.get(
         "answer_quality_workers", _DEFAULT_ANSWER_QUALITY_WORKERS
@@ -646,19 +722,27 @@ def main() -> None:
     results_path = run_dir / "results.json"
     if args.resume is not None and results_path.exists():
         previous = json.loads(results_path.read_text(encoding="utf-8"))
-        _verify_resume_identity(previous, index_namespace, generation_model, judge_model)
+        _verify_resume_identity(
+            previous, index_namespace, generation_model, judge_provider, judge_model
+        )
         run_metrics = previous["metrics"]
         print(f"Resuming {run_id}: {sorted(run_metrics)} already scored.")
 
-    print(f"Loading generation model {generation_model} and judge model {judge_model}...")
+    print(
+        f"Loading generation model {generation_model} and "
+        f"judge model {judge_model} (provider={judge_provider})..."
+    )
     generator = GeminiAnswerGenerator(
         generation_model, cache=cache, max_in_flight=gemini_max_in_flight
     )
-
-    def judge_factory() -> AnswerJudge:
-        return build_gemini_ragas_judge(
-            judge_model, embedding_model, cache=cache, max_in_flight=gemini_max_in_flight
-        )
+    judge_factory = _build_judge_factory(
+        judge_provider,
+        judge_model,
+        judge_embedding_model,
+        judge_reasoning_effort,
+        cache,
+        gemini_max_in_flight,
+    )
 
     conn = psycopg.connect(DATABASE_URL)
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
@@ -674,7 +758,9 @@ def main() -> None:
             embedding_identity=embedding_identity,
             index_namespace=index_namespace,
             generation_model=generation_model,
+            judge_provider=judge_provider,
             judge_model=judge_model,
+            judge_reasoning_effort=judge_reasoning_effort if judge_provider == "openai" else None,
             corpus_version=manifest.corpus_version,
             split_dataset_version=split.dataset_version,
             n_chunks=len(all_chunks),

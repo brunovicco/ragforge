@@ -43,9 +43,23 @@ generation:
   model: gemini-3.1-flash-lite
   temperature: 0
 judge:
-  # RAGAS Faithfulness/Answer Relevancy judge model (ADR-0007). Scores are
-  # unvalidated until the human-calibration exercise (kappa >= 0.6) happens.
-  model: gemini-3.1-flash-lite
+  # ADR-0018: openai is the canonical judge for publishable results -
+  # independent from the Gemini answer generator, dated snapshot, never the
+  # floating "gpt-5.4-mini" alias. Requires OPENAI_API_KEY. Scores (RAGAS
+  # Faithfulness/Answer Relevancy plus this project's own abstention check)
+  # are unvalidated until the human-calibration exercise (kappa >= 0.6)
+  # happens - see src/ragforge/evaluation/judge_calibration.py.
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  embedding_model: text-embedding-3-small
+  reasoning_effort: medium
+  # Development fallback when no OpenAI credential is available (ADR-0018) -
+  # labeled "exploratory_same_provider_judge" in the run record, since
+  # generation is also Gemini-based:
+  #   provider: gemini
+  #   model: gemini-3.1-flash-lite
+  #   embedding_model: gemini-embedding-001
+  # (requires GEMINI_API_KEY or GOOGLE_API_KEY)
 retrieval:
   top_k: 5
   rerank_pool: 50

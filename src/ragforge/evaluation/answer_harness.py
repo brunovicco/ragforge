@@ -1,9 +1,10 @@
-"""Aggregate answer-quality evaluation harness: generate then score (ADR-0007).
+"""Aggregate answer-quality evaluation harness: generate then score (ADR-0007/ADR-0018).
 
 Companion to evaluate_strategy (harness.py), which only measures retrieval
 ranking. This module additionally generates a cited answer per question and
-scores it for Citation Accuracy (deterministic) and, via RagasJudge,
-Faithfulness and Answer Relevancy.
+scores it for Citation Accuracy (deterministic) and, via the ADR-0018
+AnswerQualityJudge port, Faithfulness, Answer Relevancy, and abstention
+appropriateness.
 """
 
 import threading
@@ -11,10 +12,10 @@ from collections.abc import Callable
 from concurrent.futures import CancelledError
 from dataclasses import dataclass
 from statistics import mean
-from typing import Protocol, runtime_checkable
 
 from ragforge.domain.models import Answer, Judgment, RetrievalResult
 from ragforge.domain.protocols import RetrievalStrategy
+from ragforge.evaluation.judge_ports import AnswerQualityJudge, JudgeSample
 from ragforge.evaluation.metrics.citation import citation_accuracy
 from ragforge.evaluation.records import AnswerRecord
 from ragforge.evaluation.scheduler import run_bounded
@@ -24,23 +25,15 @@ _MAX_CONSECUTIVE_ERRORS = 5
 _DEFAULT_MAX_WORKERS = 5
 
 
-@runtime_checkable
-class AnswerJudge(Protocol):
-    """Shape required of a RagasJudge (or a test fake) by this harness."""
-
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
-        """Return at least ``{"faithfulness": ..., "answer_relevancy": ...}`` for the triple."""
-        ...
-
-
 @dataclass(frozen=True, slots=True)
 class AnswerEvaluationResult:
-    """Aggregate answer-quality metrics plus one AnswerRecord per answerable judgment (ADR-0012).
+    """Aggregate answer-quality metrics plus one AnswerRecord per attempted judgment (ADR-0012).
 
-    Unanswerable-class judgments never appear here: Citation Accuracy has
-    nothing to check citations against for them, so they are not scored -
-    downstream merging (``ragforge.evaluation.records.merge_question_records``)
-    treats their absence as "not_applicable", not as a dropped question.
+    Every judgment gets an AnswerRecord now, including unanswerable-class
+    ones (ADR-0018: abstention appropriateness needs them generated and
+    judged too, not skipped) - only Citation Accuracy stays absent from
+    ``metrics`` for unanswerable questions, since it has nothing to check
+    citations against.
     """
 
     metrics: dict[str, float]
@@ -51,15 +44,17 @@ def evaluate_answer_quality(
     strategy: RetrievalStrategy,
     judgments: list[Judgment],
     generator: AnswerGenerator,
-    judge_factory: Callable[[], AnswerJudge],
+    judge_factory: Callable[[], AnswerQualityJudge],
     k: int = 5,
     max_workers: int = _DEFAULT_MAX_WORKERS,
 ) -> AnswerEvaluationResult:
     """Generate an answer per judgment's query and average Citation Accuracy/Faithfulness/Relevancy.
 
-    Mirrors evaluate_strategy's judgment filtering: judgments with no
-    relevant refs (unanswerable-class questions) are excluded, since
-    Citation Accuracy has nothing to check citations against for them.
+    Every judgment - including unanswerable-class questions - goes through
+    retrieve/generate/judge now (ADR-0018): abstention appropriateness only
+    means something if unanswerable questions actually reach the judge.
+    Citation Accuracy is the one metric still skipped for them (nothing to
+    check citations against with no relevant refs).
 
     Retrieval runs sequentially, one judgment at a time: strategies here can
     share a store with a single non-thread-safe connection (e.g.
@@ -71,7 +66,7 @@ def evaluate_answer_quality(
 
     ``judge_factory`` builds one judge, not many: ``generator`` (a plain
     synchronous HTTP client) is shared safely across worker threads, but
-    RagasJudge.score() calls ragas's sync wrapper, which internally does
+    RagasJudge.evaluate() calls ragas's sync wrapper, which internally does
     ``asyncio.run(self.ascore(...))`` - a fresh event loop per call, reusing
     the same async client underneath. Calling that concurrently from
     multiple threads against one shared judge corrupts its connection pool
@@ -108,14 +103,12 @@ def evaluate_answer_quality(
     if not judgments:
         raise ValueError("judgments must not be empty")
 
-    scored_judgments = [judgment for judgment in judgments if judgment.relevant_refs]
-
     errors = 0
     consecutive_errors = 0
     retrieval_aborted = False
     records: list[AnswerRecord] = []
     retrieved: list[tuple[Judgment, list[RetrievalResult]]] = []
-    for judgment in scored_judgments:
+    for judgment in judgments:
         if retrieval_aborted:
             records.append(
                 AnswerRecord(
@@ -151,7 +144,7 @@ def evaluate_answer_quality(
 
     thread_local = threading.local()
 
-    def _judge_for_this_thread() -> AnswerJudge:
+    def _judge_for_this_thread() -> AnswerQualityJudge:
         judge = getattr(thread_local, "judge", None)
         if judge is None:
             judge = judge_factory()
@@ -162,21 +155,27 @@ def evaluate_answer_quality(
         judgment: Judgment, results: list[RetrievalResult]
     ) -> tuple[Answer, dict[str, float]]:
         answer = generator.generate(judgment.query, results)
-        judged = _judge_for_this_thread().score(
-            query_text=judgment.query.text,
-            contexts=[result.chunk.source_text for result in results],
-            answer_text=answer.text,
+        sample = JudgeSample(
+            question=judgment.query.text,
+            contexts=tuple(result.chunk.source_text for result in results),
+            answer=answer.text,
+            query_class=judgment.query.query_class.value if judgment.query.query_class else None,
+            unanswerable=not judgment.relevant_refs,
         )
+        judged = _judge_for_this_thread().evaluate(sample)
         question_metrics = {
-            "citation_accuracy": citation_accuracy(answer, judgment),
-            "faithfulness": judged["faithfulness"],
-            "answer_relevancy": judged["answer_relevancy"],
+            "faithfulness": judged.faithfulness.score,
+            "answer_relevancy": judged.answer_relevancy.score,
+            "abstention_appropriate": 1.0 if judged.abstention.appropriate else 0.0,
         }
+        if judgment.relevant_refs:
+            question_metrics["citation_accuracy"] = citation_accuracy(answer, judgment)
         return answer, question_metrics
 
     citation_accuracies: list[float] = []
     faithfulness_scores: list[float] = []
     answer_relevancy_scores: list[float] = []
+    abstention_scores: list[float] = []
     if retrieved and not retrieval_aborted:
         consecutive_scoring_errors = 0
 
@@ -222,9 +221,11 @@ def evaluate_answer_quality(
                 )
                 continue
             answer, question_metrics = outcome
-            citation_accuracies.append(question_metrics["citation_accuracy"])
+            if "citation_accuracy" in question_metrics:
+                citation_accuracies.append(question_metrics["citation_accuracy"])
             faithfulness_scores.append(question_metrics["faithfulness"])
             answer_relevancy_scores.append(question_metrics["answer_relevancy"])
+            abstention_scores.append(question_metrics["abstention_appropriate"])
             records.append(
                 AnswerRecord(
                     question_id=judgment.question_id,
@@ -239,7 +240,9 @@ def evaluate_answer_quality(
         "citation_accuracy": mean(citation_accuracies) if citation_accuracies else 0.0,
         "faithfulness": mean(faithfulness_scores) if faithfulness_scores else 0.0,
         "answer_relevancy": mean(answer_relevancy_scores) if answer_relevancy_scores else 0.0,
-        "answer_n": float(len(citation_accuracies)),
+        "abstention_appropriate": mean(abstention_scores) if abstention_scores else 0.0,
+        "citation_n": float(len(citation_accuracies)),
+        "answer_n": float(len(faithfulness_scores)),
         "answer_errors": float(errors),
     }
     return AnswerEvaluationResult(metrics=metrics, records=records)

@@ -21,6 +21,10 @@ dependencies = [
     "lightrag-hku>=1.0",
     "streamlit>=1.40",
     "google-genai>=1.0",
+    # Already resolved transitively via ragas/instructor/langchain-openai -
+    # declared directly because ragforge.evaluation.ragas_judge imports it
+    # itself, for the OpenAI judge adapter (ADR-0018).
+    "openai>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -38,6 +42,11 @@ tracing = [
 # own right; pinned only to satisfy ragas's actual (unstated) requirement.
 constraint-dependencies = [
     "langchain-community<0.4",
+    # streamlit pulls gitpython with no tight upper bound; 3.1.53 has three
+    # known CVEs (GHSA-fjr4-x663-mwxc, GHSA-6p8h-3wgx-97gf,
+    # GHSA-r9mr-m37c-5fr3), fixed in 3.1.54. Not a ragforge dependency in
+    # its own right; pinned only so pip-audit stays clean.
+    "gitpython>=3.1.54",
 ]
 
 [dependency-groups]

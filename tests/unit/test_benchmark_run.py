@@ -21,6 +21,13 @@ from ragforge.domain.models import (
 )
 from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
 from ragforge.evaluation import run
+from ragforge.evaluation.judge_ports import (
+    AbstentionJudgment,
+    JudgeResult,
+    JudgeSample,
+    MetricScore,
+    ModelIdentity,
+)
 from ragforge.evaluation.manifest import load_corpus_manifest
 from ragforge.evaluation.run import (
     MANIFEST_PATH,
@@ -202,7 +209,9 @@ def test_build_run_record_includes_all_run_metadata() -> None:
         embedding_identity=identity,
         index_namespace="abc123",
         generation_model="gemini-3.1-flash-lite",
-        judge_model="gemini-3.1-flash-lite",
+        judge_provider="openai",
+        judge_model="gpt-5.4-mini-2026-03-17",
+        judge_reasoning_effort="medium",
         corpus_version="0.2",
         split_dataset_version="0.2",
         n_chunks=465,
@@ -222,12 +231,51 @@ def test_build_run_record_includes_all_run_metadata() -> None:
     }
     assert record["index_namespace"] == "abc123"
     assert record["generation_model"] == "gemini-3.1-flash-lite"
-    assert record["judge_model"] == "gemini-3.1-flash-lite"
+    assert record["judge_provider"] == "openai"
+    assert record["judge_model"] == "gpt-5.4-mini-2026-03-17"
+    assert record["judge_reasoning_effort"] == "medium"
+    assert record["judge_label"] is None
     assert record["corpus_version"] == "0.2"
     assert record["split_dataset_version"] == "0.2"
     assert record["n_chunks"] == 465
     assert record["metrics"] == metrics
     assert record["records_path"] == "records.jsonl"
+
+
+def test_build_run_record_labels_a_gemini_judge_as_exploratory() -> None:
+    """A judge_provider of 'gemini' is labeled exploratory_same_provider_judge (ADR-0018).
+
+    The answer generator is always Gemini-based, so a Gemini judge is never
+    independent from it.
+    """
+    identity = EmbeddingIdentity(
+        provider="local",
+        model="Qwen/Qwen3-Embedding-0.6B",
+        revision="main",
+        dimensions=1024,
+        normalize=True,
+        query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
+        runtime="local",
+    )
+
+    record = build_run_record(
+        run_id="20260101T000000Z",
+        mode="live",
+        config_path="configs/experiments/benchmark-v01.yaml",
+        embedding_identity=identity,
+        index_namespace="abc123",
+        generation_model="gemini-3.1-flash-lite",
+        judge_provider="gemini",
+        judge_model="gemini-3.1-flash-lite",
+        judge_reasoning_effort=None,
+        corpus_version="0.2",
+        split_dataset_version="0.2",
+        n_chunks=465,
+        top_k=5,
+        run_metrics={},
+    )
+
+    assert record["judge_label"] == "exploratory_same_provider_judge"
 
 
 def test_format_answer_quality_table_includes_every_configured_strategy() -> None:
@@ -237,6 +285,7 @@ def test_format_answer_quality_table_includes_every_configured_strategy() -> Non
             "citation_accuracy": 0.9,
             "faithfulness": 0.8,
             "answer_relevancy": 0.7,
+            "abstention_appropriate": 0.6,
             "answer_n": 5,
             "answer_errors": 0,
         },
@@ -292,8 +341,17 @@ class _FakeGeneratorForEvaluate:
 
 
 class _FakeJudgeForEvaluate:
-    def score(self, query_text: str, contexts: list[str], answer_text: str) -> dict[str, float]:
-        return {"faithfulness": 1.0, "answer_relevancy": 1.0}
+    identity = ModelIdentity(
+        provider="fake", model="fake-model", reasoning_effort=None, output_schema_version=1
+    )
+
+    def evaluate(self, sample: JudgeSample) -> JudgeResult:
+        return JudgeResult(
+            schema_version=1,
+            faithfulness=MetricScore(score=1.0),
+            answer_relevancy=MetricScore(score=1.0),
+            abstention=AbstentionJudgment(appropriate=True, rationale=""),
+        )
 
 
 def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_name() -> None:
@@ -394,16 +452,72 @@ def test_build_embedder_fails_closed_for_an_unknown_provider() -> None:
         run._build_embedder("openai", "text-embedding-3", None, None, 4)
 
 
+def test_build_judge_factory_constructs_an_openai_judge(monkeypatch: pytest.MonkeyPatch) -> None:
+    """provider: openai builds via build_openai_ragas_judge, forwarding reasoning_effort."""
+    calls: list[tuple[object, ...]] = []
+
+    def fake_build_openai_ragas_judge(
+        model: str,
+        embedding_model: str,
+        reasoning_effort: str = "medium",
+        api_key: str | None = None,
+        cache: object = None,
+        max_in_flight: int = 4,
+    ) -> str:
+        calls.append((model, embedding_model, reasoning_effort, cache, max_in_flight))
+        return "fake-openai-judge"
+
+    monkeypatch.setattr(run, "build_openai_ragas_judge", fake_build_openai_ragas_judge)
+
+    factory = run._build_judge_factory(
+        "openai", "gpt-5.4-mini-2026-03-17", "text-embedding-3-small", "medium", None, 4
+    )
+    factory()
+
+    assert calls == [("gpt-5.4-mini-2026-03-17", "text-embedding-3-small", "medium", None, 4)]
+
+
+def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.MonkeyPatch) -> None:
+    """provider: gemini builds via build_gemini_ragas_judge, ignoring reasoning_effort."""
+    calls: list[tuple[object, ...]] = []
+
+    def fake_build_gemini_ragas_judge(
+        model: str,
+        embedding_model: str,
+        api_key: str | None = None,
+        cache: object = None,
+        max_in_flight: int = 4,
+    ) -> str:
+        calls.append((model, embedding_model, cache, max_in_flight))
+        return "fake-gemini-judge"
+
+    monkeypatch.setattr(run, "build_gemini_ragas_judge", fake_build_gemini_ragas_judge)
+
+    factory = run._build_judge_factory(
+        "gemini", "gemini-3.1-flash-lite", "gemini-embedding-001", "medium", None, 4
+    )
+    factory()
+
+    assert calls == [("gemini-3.1-flash-lite", "gemini-embedding-001", None, 4)]
+
+
+def test_build_judge_factory_fails_closed_for_an_unknown_provider() -> None:
+    """An unrecognized provider fails fast rather than silently falling back to either adapter."""
+    with pytest.raises(SystemExit, match="unknown judge provider"):
+        run._build_judge_factory("anthropic", "claude", "embed", "medium", None, 4)
+
+
 def test_verify_resume_identity_passes_when_everything_matches() -> None:
-    """Identical index_namespace/generation_model/judge_model resumes cleanly."""
+    """Identical index_namespace/generation_model/judge identity resumes cleanly."""
     previous = {
         "index_namespace": "abc123",
         "generation_model": "gemini-3.1-flash-lite",
-        "judge_model": "gemini-3.1-flash-lite",
+        "judge_provider": "openai",
+        "judge_model": "gpt-5.4-mini-2026-03-17",
     }
 
     run._verify_resume_identity(
-        previous, "abc123", "gemini-3.1-flash-lite", "gemini-3.1-flash-lite"
+        previous, "abc123", "gemini-3.1-flash-lite", "openai", "gpt-5.4-mini-2026-03-17"
     )
 
 
@@ -412,12 +526,13 @@ def test_verify_resume_identity_fails_closed_on_index_namespace_mismatch() -> No
     previous = {
         "index_namespace": "abc123",
         "generation_model": "gemini-3.1-flash-lite",
-        "judge_model": "gemini-3.1-flash-lite",
+        "judge_provider": "openai",
+        "judge_model": "gpt-5.4-mini-2026-03-17",
     }
 
     with pytest.raises(SystemExit, match="index_namespace"):
         run._verify_resume_identity(
-            previous, "xyz789", "gemini-3.1-flash-lite", "gemini-3.1-flash-lite"
+            previous, "xyz789", "gemini-3.1-flash-lite", "openai", "gpt-5.4-mini-2026-03-17"
         )
 
 
@@ -426,8 +541,30 @@ def test_verify_resume_identity_fails_closed_on_generation_model_mismatch() -> N
     previous = {
         "index_namespace": "abc123",
         "generation_model": "gemini-3.1-flash-lite",
-        "judge_model": "gemini-3.1-flash-lite",
+        "judge_provider": "openai",
+        "judge_model": "gpt-5.4-mini-2026-03-17",
     }
 
     with pytest.raises(SystemExit, match="generation_model"):
-        run._verify_resume_identity(previous, "abc123", "gemini-3.2-pro", "gemini-3.1-flash-lite")
+        run._verify_resume_identity(
+            previous, "abc123", "gemini-3.2-pro", "openai", "gpt-5.4-mini-2026-03-17"
+        )
+
+
+def test_verify_resume_identity_fails_closed_on_judge_provider_mismatch() -> None:
+    """A different judge_provider refuses to resume - cached judge scores wouldn't be trustworthy.
+
+    ADR-0018: switching provider (e.g. gemini -> openai) is a change of
+    judge identity even when a model name happened to collide.
+    """
+    previous = {
+        "index_namespace": "abc123",
+        "generation_model": "gemini-3.1-flash-lite",
+        "judge_provider": "gemini",
+        "judge_model": "gemini-3.1-flash-lite",
+    }
+
+    with pytest.raises(SystemExit, match="judge_provider"):
+        run._verify_resume_identity(
+            previous, "abc123", "gemini-3.1-flash-lite", "openai", "gemini-3.1-flash-lite"
+        )
