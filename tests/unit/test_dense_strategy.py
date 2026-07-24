@@ -28,7 +28,9 @@ class _FakeStore:
 
 def test_retrieve_embeds_the_query_text_and_searches_the_store() -> None:
     """DenseRetrieval embeds exactly the query's text and forwards the vector to the store."""
-    chunk = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("c1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("c1",)
+    )
     store = _FakeStore([RetrievalResult(chunk=chunk, score=0.9, strategy="dense")])
     embedder = _FakeEmbedder()
     strategy = DenseRetrieval(store, embedder)
@@ -44,7 +46,9 @@ def test_retrieve_respects_top_k_from_the_store() -> None:
     """The strategy returns whatever the store returns, capped at top_k."""
     chunks = [
         RetrievalResult(
-            chunk=Chunk(chunk_id=f"c{i}", text="x", structural_ids=(f"c{i}",)),
+            chunk=Chunk(
+                chunk_id=f"c{i}", source_text="x", retrieval_text="x", structural_ids=(f"c{i}",)
+            ),
             score=1.0 - i * 0.1,
             strategy="dense",
         )

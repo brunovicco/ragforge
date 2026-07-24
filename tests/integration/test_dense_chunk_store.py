@@ -40,9 +40,24 @@ def store() -> Iterator[DenseChunkStore]:
 def test_search_ranks_the_closest_vector_first(store: DenseChunkStore) -> None:
     """A query vector matches its nearest neighbor first, by cosine similarity."""
     chunks = [
-        Chunk(chunk_id="art-1", text="Art. 1º texto", structural_ids=("art-1",)),
-        Chunk(chunk_id="art-2", text="Art. 2º texto", structural_ids=("art-2",)),
-        Chunk(chunk_id="art-3", text="Art. 3º texto", structural_ids=("art-3",)),
+        Chunk(
+            chunk_id="art-1",
+            source_text="Art. 1º texto",
+            retrieval_text="Art. 1º texto",
+            structural_ids=("art-1",),
+        ),
+        Chunk(
+            chunk_id="art-2",
+            source_text="Art. 2º texto",
+            retrieval_text="Art. 2º texto",
+            structural_ids=("art-2",),
+        ),
+        Chunk(
+            chunk_id="art-3",
+            source_text="Art. 3º texto",
+            retrieval_text="Art. 3º texto",
+            structural_ids=("art-3",),
+        ),
     ]
     embeddings = [[1.0, 0.0, 0.0], [0.0, 1.0, 0.0], [0.0, 0.0, 1.0]]
     store.upsert_chunks(chunks, embeddings)
@@ -56,16 +71,26 @@ def test_search_ranks_the_closest_vector_first(store: DenseChunkStore) -> None:
 @pytest.mark.integration
 def test_upsert_is_idempotent_and_updates_existing_chunks(store: DenseChunkStore) -> None:
     """Re-indexing the same chunk_id updates the row instead of duplicating it."""
-    original = Chunk(chunk_id="art-1", text="original", structural_ids=("art-1",))
+    original = Chunk(
+        chunk_id="art-1",
+        source_text="original",
+        retrieval_text="original",
+        structural_ids=("art-1",),
+    )
     store.upsert_chunks([original], [[1.0, 0.0, 0.0]])
 
-    updated = Chunk(chunk_id="art-1", text="updated", structural_ids=("art-1",))
+    updated = Chunk(
+        chunk_id="art-1",
+        source_text="updated",
+        retrieval_text="updated",
+        structural_ids=("art-1",),
+    )
     store.upsert_chunks([updated], [[0.0, 1.0, 0.0]])
 
     results = store.search([0.0, 1.0, 0.0], top_k=10)
 
     assert len(results) == 1
-    assert results[0].chunk.text == "updated"
+    assert results[0].chunk.source_text == "updated"
 
 
 @pytest.mark.integration
@@ -73,7 +98,8 @@ def test_search_returns_structural_ids_and_metadata(store: DenseChunkStore) -> N
     """Round-tripped chunks preserve structural_ids, parent_id, and metadata."""
     chunk = Chunk(
         chunk_id="art-2::par-1",
-        text="§ 1º texto",
+        source_text="§ 1º texto",
+        retrieval_text="§ 1º texto",
         structural_ids=("art-2", "art-2::par-1"),
         parent_id="art-2",
         metadata={"norm": "NORM-1", "role": "fragment"},
@@ -90,13 +116,18 @@ def test_search_returns_structural_ids_and_metadata(store: DenseChunkStore) -> N
 @pytest.mark.integration
 def test_get_returns_a_chunk_by_id(store: DenseChunkStore) -> None:
     """get() fetches a chunk directly by chunk_id, used to expand to a parent article."""
-    chunk = Chunk(chunk_id="art-2", text="full article", structural_ids=("art-2",))
+    chunk = Chunk(
+        chunk_id="art-2",
+        source_text="full article",
+        retrieval_text="full article",
+        structural_ids=("art-2",),
+    )
     store.upsert_chunks([chunk], [[1.0, 0.0, 0.0]])
 
     result = store.get("art-2")
 
     assert result is not None
-    assert result.text == "full article"
+    assert result.source_text == "full article"
 
 
 @pytest.mark.integration

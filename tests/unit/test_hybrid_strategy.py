@@ -8,7 +8,12 @@ QUERY = Query(text="q")
 
 def _result(chunk_id: str, strategy: str, score: float = 1.0) -> RetrievalResult:
     return RetrievalResult(
-        chunk=Chunk(chunk_id=chunk_id, text=chunk_id, structural_ids=(chunk_id,)),
+        chunk=Chunk(
+            chunk_id=chunk_id,
+            source_text=chunk_id,
+            retrieval_text=chunk_id,
+            structural_ids=(chunk_id,),
+        ),
         score=score,
         strategy=strategy,
     )

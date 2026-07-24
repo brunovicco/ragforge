@@ -22,22 +22,22 @@ def index_norm(rag: LightRAG, norm_id: str, chunks: list[Chunk]) -> None:
     ) -> list[dict[str, Any]]:
         return [
             {
-                "content": chunk.text,
-                "tokens": len(tokenizer.encode(chunk.text)),
+                "content": chunk.source_text,
+                "tokens": len(tokenizer.encode(chunk.source_text)),
                 "chunk_order_index": index,
             }
             for index, chunk in enumerate(chunks)
         ]
 
     rag.chunking_func = _use_our_chunks
-    rag.insert("\n\n".join(chunk.text for chunk in chunks), ids=norm_id)
+    rag.insert("\n\n".join(chunk.source_text for chunk in chunks), ids=norm_id)
 
 
 def build_content_index(chunks: list[Chunk]) -> dict[str, Chunk]:
-    """Return a ``chunk.text.strip() -> Chunk`` lookup for recovering provenance after a query.
+    """Return a ``chunk.source_text.strip() -> Chunk`` lookup for provenance after a query.
 
     Assumes chunk text is unique across the indexed corpus - true for this
     project's legal chunks (each is a distinct article/paragraph/item), and
     the mapping this project's GraphRagRetrieval relies on (ADR-0010).
     """
-    return {chunk.text.strip(): chunk for chunk in chunks}
+    return {chunk.source_text.strip(): chunk for chunk in chunks}

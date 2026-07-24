@@ -1,4 +1,11 @@
-"""OpenSearch-backed chunk store for sparse BM25 retrieval (ADR-0005)."""
+"""OpenSearch-backed chunk store for sparse BM25 retrieval (ADR-0005).
+
+Unlike the dense store, BM25 matches directly against stored text, so this
+store must keep both fields: ``retrieval_text`` (what the ``match`` query
+searches - may carry Contextual Retrieval/SAC enrichment, ADR-0015) and
+``source_text`` (returned on hits, so the answer generator/judge only ever
+see the authoritative text, never the enrichment used to find it).
+"""
 
 from typing import Any
 
@@ -27,7 +34,8 @@ class SparseChunkStore:
             body={
                 "mappings": {
                     "properties": {
-                        "text": {"type": "text", "analyzer": "brazilian"},
+                        "source_text": {"type": "text", "analyzer": "brazilian"},
+                        "retrieval_text": {"type": "text", "analyzer": "brazilian"},
                         "structural_ids": {"type": "keyword"},
                         "parent_id": {"type": "keyword"},
                         "metadata": {"type": "object", "enabled": True},
@@ -43,7 +51,8 @@ class SparseChunkStore:
                 "_index": self._index,
                 "_id": chunk.chunk_id,
                 "_source": {
-                    "text": chunk.text,
+                    "source_text": chunk.source_text,
+                    "retrieval_text": chunk.retrieval_text,
                     "structural_ids": list(chunk.structural_ids),
                     "parent_id": chunk.parent_id,
                     "metadata": chunk.metadata,
@@ -57,7 +66,7 @@ class SparseChunkStore:
         """Return the top_k chunks by BM25 relevance to query_text."""
         response = self._client.search(
             index=self._index,
-            body={"query": {"match": {"text": query_text}}, "size": top_k},
+            body={"query": {"match": {"retrieval_text": query_text}}, "size": top_k},
         )
         return [self._to_result(hit) for hit in response["hits"]["hits"]]
 
@@ -66,7 +75,8 @@ class SparseChunkStore:
         source = hit["_source"]
         chunk = Chunk(
             chunk_id=hit["_id"],
-            text=source["text"],
+            source_text=source["source_text"],
+            retrieval_text=source["retrieval_text"],
             structural_ids=tuple(source["structural_ids"]),
             parent_id=source["parent_id"],
             metadata=source["metadata"],

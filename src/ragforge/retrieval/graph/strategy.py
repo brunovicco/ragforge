@@ -27,7 +27,7 @@ class GraphRagRetrieval:
 
         Args:
             rag: A LightRAG instance already indexed via ``indexing.index_norm``.
-            content_index: The ``chunk.text.strip() -> Chunk`` lookup from
+            content_index: The ``chunk.source_text.strip() -> Chunk`` lookup from
                 ``indexing.build_content_index``, covering every chunk indexed into ``rag``.
             mode: LightRAG query mode - "local" or "global" per the README's GraphRAG scope
                 (ADR-0010); "hybrid", "mix", and "naive" are also accepted.

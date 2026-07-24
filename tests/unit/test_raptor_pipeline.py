@@ -16,7 +16,10 @@ class _FakeSummarizer:
 
 
 def _chunk(chunk_id: str, structural_id: str) -> Chunk:
-    return Chunk(chunk_id=chunk_id, text=f"text {chunk_id}", structural_ids=(structural_id,))
+    text = f"text {chunk_id}"
+    return Chunk(
+        chunk_id=chunk_id, source_text=text, retrieval_text=text, structural_ids=(structural_id,)
+    )
 
 
 def test_build_raptor_tree_returns_only_the_leaf_for_a_single_chunk() -> None:
@@ -56,8 +59,8 @@ def test_build_raptor_tree_summary_structural_ids_union_the_group() -> None:
     """A summary node's structural_ids cover every leaf in its group, deduplicated."""
     summarizer = _FakeSummarizer()
     chunks = [
-        Chunk(chunk_id="c1", text="a", structural_ids=("s1", "shared")),
-        Chunk(chunk_id="c2", text="b", structural_ids=("s2", "shared")),
+        Chunk(chunk_id="c1", source_text="a", retrieval_text="a", structural_ids=("s1", "shared")),
+        Chunk(chunk_id="c2", source_text="b", retrieval_text="b", structural_ids=("s2", "shared")),
     ]
 
     result = build_raptor_tree(chunks, summarizer, group_size=2, max_levels=1)

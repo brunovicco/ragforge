@@ -53,7 +53,8 @@ def chunk_norm(tree: NormTree, max_chars: int = DEFAULT_MAX_CHARS) -> list[Chunk
         chunks.append(
             Chunk(
                 chunk_id=preamble_id,
-                text=tree.preamble.text,
+                source_text=tree.preamble.text,
+                retrieval_text=tree.preamble.text,
                 structural_ids=(preamble_id,),
                 metadata={"norm": tree.norm_id, "role": _ROLE_PREAMBLE},
             )
@@ -64,7 +65,8 @@ def chunk_norm(tree: NormTree, max_chars: int = DEFAULT_MAX_CHARS) -> list[Chunk
         chunks.append(
             Chunk(
                 chunk_id=article_id,
-                text=article.full_text,
+                source_text=article.full_text,
+                retrieval_text=article.full_text,
                 structural_ids=tuple(tree.article_ids(article)),
                 metadata=_base_metadata(tree, article, _ROLE_ARTICLE),
             )
@@ -76,7 +78,8 @@ def chunk_norm(tree: NormTree, max_chars: int = DEFAULT_MAX_CHARS) -> list[Chunk
             chunks.append(
                 Chunk(
                     chunk_id=tree.structural_id(article, (child,)),
-                    text=child.full_text,
+                    source_text=child.full_text,
+                    retrieval_text=child.full_text,
                     structural_ids=tuple(_subtree_ids(tree, article, child, (child,))),
                     parent_id=article_id,
                     metadata=_base_metadata(tree, article, _ROLE_FRAGMENT),

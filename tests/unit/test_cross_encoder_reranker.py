@@ -43,8 +43,15 @@ def test_score_returns_one_value_per_chunk_in_order(monkeypatch: pytest.MonkeyPa
     fake_model = _install_fake_cross_encoder(monkeypatch, lambda pairs: _FakeScores([0.9, 0.1]))
     reranker = CrossEncoderReranker("test-model")
     chunks = [
-        Chunk(chunk_id="c1", text="texto um", structural_ids=("c1",)),
-        Chunk(chunk_id="c2", text="texto dois", structural_ids=("c2",)),
+        Chunk(
+            chunk_id="c1", source_text="texto um", retrieval_text="texto um", structural_ids=("c1",)
+        ),
+        Chunk(
+            chunk_id="c2",
+            source_text="texto dois",
+            retrieval_text="texto dois",
+            structural_ids=("c2",),
+        ),
     ]
 
     scores = reranker.score(Query(text="pergunta"), chunks)
@@ -74,7 +81,9 @@ def test_score_raises_when_predict_fails(monkeypatch: pytest.MonkeyPatch) -> Non
 
     _install_fake_cross_encoder(monkeypatch, predict)
     reranker = CrossEncoderReranker("test-model")
-    chunk = Chunk(chunk_id="c1", text="texto", structural_ids=("c1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="texto", retrieval_text="texto", structural_ids=("c1",)
+    )
 
     with pytest.raises(RerankingError, match="failed to score 1 pair"):
         reranker.score(Query(text="pergunta"), [chunk])

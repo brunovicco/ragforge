@@ -48,10 +48,21 @@ class StructuralRef:
 
 @dataclass(frozen=True, slots=True)
 class Chunk:
-    """A retrievable unit carrying its structural provenance (ADR-0006)."""
+    """A retrievable unit carrying its structural provenance (ADR-0006).
+
+    ``source_text`` is the authoritative text extracted from the norm and is
+    never altered downstream - the answer generator, the judge, and citation
+    resolution all read only this field. ``retrieval_text`` is what actually
+    gets embedded/indexed and may carry synthetic enrichment (Contextual
+    Retrieval's per-chunk blurb, SAC's document summary prefix, ADR-0015) -
+    it exists only between chunk construction and the embedding call; no
+    store persists it, since nothing downstream ever needs it again once a
+    chunk has been indexed.
+    """
 
     chunk_id: str
-    text: str
+    source_text: str
+    retrieval_text: str
     structural_ids: tuple[str, ...]
     parent_id: str | None = None
     metadata: dict[str, str] = field(default_factory=dict)

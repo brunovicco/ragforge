@@ -16,13 +16,15 @@ from ragforge.retrieval.contextual.ports import Contextualizer
 def contextualize_chunks(
     document_text: str, chunks: list[Chunk], contextualizer: Contextualizer
 ) -> list[Chunk]:
-    """Return ``chunks`` with an LLM-generated context prepended to each one's text.
+    """Return ``chunks`` with an LLM-generated context prepended to each one's retrieval text.
 
-    Structural IDs, chunk IDs, and other provenance are preserved untouched -
-    only ``text`` changes, so relevance judgments (ADR-0002) stay valid.
+    Structural IDs, chunk IDs, and ``source_text`` are preserved untouched
+    (ADR-0015) - only ``retrieval_text`` gains the prefix, so relevance
+    judgments (ADR-0002) stay valid and the answer generator/judge, which
+    read only ``source_text``, never see this synthetic blurb.
     """
     contextualized = []
     for chunk in chunks:
-        context = contextualizer.contextualize(document_text, chunk.text)
-        contextualized.append(replace(chunk, text=f"{context}\n\n{chunk.text}"))
+        context = contextualizer.contextualize(document_text, chunk.source_text)
+        contextualized.append(replace(chunk, retrieval_text=f"{context}\n\n{chunk.source_text}"))
     return contextualized

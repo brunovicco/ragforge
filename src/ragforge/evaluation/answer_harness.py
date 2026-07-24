@@ -164,7 +164,7 @@ def evaluate_answer_quality(
         answer = generator.generate(judgment.query, results)
         judged = _judge_for_this_thread().score(
             query_text=judgment.query.text,
-            contexts=[result.chunk.text for result in results],
+            contexts=[result.chunk.source_text for result in results],
             answer_text=answer.text,
         )
         question_metrics = {

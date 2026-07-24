@@ -8,9 +8,11 @@ from ragforge.retrieval.graph.indexing import build_content_index, index_norm
 
 def test_build_content_index_maps_stripped_text_to_chunk() -> None:
     """Each chunk is keyed by its stripped text, recoverable by exact match."""
+    text_1 = "  Art. 1º dispõe sobre X.  "
+    text_2 = "Art. 2º dispõe sobre Y."
     chunks = [
-        Chunk(chunk_id="c1", text="  Art. 1º dispõe sobre X.  ", structural_ids=("s1",)),
-        Chunk(chunk_id="c2", text="Art. 2º dispõe sobre Y.", structural_ids=("s2",)),
+        Chunk(chunk_id="c1", source_text=text_1, retrieval_text=text_1, structural_ids=("s1",)),
+        Chunk(chunk_id="c2", source_text=text_2, retrieval_text=text_2, structural_ids=("s2",)),
     ]
 
     index = build_content_index(chunks)
@@ -38,8 +40,12 @@ def test_index_norm_overrides_chunking_func_to_return_our_chunks_verbatim() -> N
     """The installed chunking_func returns our chunks' text, unchanged, in order."""
     rag = _FakeRag()
     chunks = [
-        Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",)),
-        Chunk(chunk_id="c2", text="Art. 2º", structural_ids=("s2",)),
+        Chunk(
+            chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+        ),
+        Chunk(
+            chunk_id="c2", source_text="Art. 2º", retrieval_text="Art. 2º", structural_ids=("s2",)
+        ),
     ]
 
     index_norm(rag, "NORM-1", chunks)
@@ -52,7 +58,11 @@ def test_index_norm_overrides_chunking_func_to_return_our_chunks_verbatim() -> N
 def test_index_norm_calls_insert_with_the_norm_id() -> None:
     """insert() is called once, tagging the document with the norm's id."""
     rag = _FakeRag()
-    chunks = [Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",))]
+    chunks = [
+        Chunk(
+            chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+        )
+    ]
 
     index_norm(rag, "NORM-1", chunks)
 

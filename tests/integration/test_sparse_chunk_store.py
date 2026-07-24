@@ -37,12 +37,14 @@ def test_search_ranks_by_bm25_relevance_with_portuguese_stemming(
     chunks = [
         Chunk(
             chunk_id="art-1",
-            text="As instituições financeiras conservarão sigilo em suas operações.",
+            source_text="As instituições financeiras conservarão sigilo em suas operações.",
+            retrieval_text="As instituições financeiras conservarão sigilo em suas operações.",
             structural_ids=("art-1",),
         ),
         Chunk(
             chunk_id="art-2",
-            text="Esta Resolução dispõe sobre a política de segurança cibernética.",
+            source_text="Esta Resolução dispõe sobre a política de segurança cibernética.",
+            retrieval_text="Esta Resolução dispõe sobre a política de segurança cibernética.",
             structural_ids=("art-2",),
         ),
     ]
@@ -59,16 +61,26 @@ def test_reindexing_a_chunk_id_overwrites_instead_of_duplicating(
     store: SparseChunkStore,
 ) -> None:
     """Indexing the same chunk_id twice updates the document, not appends a new one."""
-    original = Chunk(chunk_id="art-1", text="texto original", structural_ids=("art-1",))
+    original = Chunk(
+        chunk_id="art-1",
+        source_text="texto original",
+        retrieval_text="texto original",
+        structural_ids=("art-1",),
+    )
     store.index_chunks([original])
 
-    updated = Chunk(chunk_id="art-1", text="texto atualizado", structural_ids=("art-1",))
+    updated = Chunk(
+        chunk_id="art-1",
+        source_text="texto atualizado",
+        retrieval_text="texto atualizado",
+        structural_ids=("art-1",),
+    )
     store.index_chunks([updated])
 
     results = store.search("atualizado", top_k=10)
 
     assert len(results) == 1
-    assert results[0].chunk.text == "texto atualizado"
+    assert results[0].chunk.source_text == "texto atualizado"
 
 
 @pytest.mark.integration
@@ -76,7 +88,8 @@ def test_search_returns_structural_ids_and_metadata(store: SparseChunkStore) -> 
     """Round-tripped chunks preserve structural_ids, parent_id, and metadata."""
     chunk = Chunk(
         chunk_id="art-2::par-1",
-        text="parágrafo com conteúdo pesquisável",
+        source_text="parágrafo com conteúdo pesquisável",
+        retrieval_text="parágrafo com conteúdo pesquisável",
         structural_ids=("art-2", "art-2::par-1"),
         parent_id="art-2",
         metadata={"norm": "NORM-1", "role": "fragment"},
