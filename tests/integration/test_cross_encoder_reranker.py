@@ -24,11 +24,15 @@ def test_scores_relevant_text_higher_than_irrelevant_text() -> None:
     reranker = CrossEncoderReranker(_TEST_MODEL)
     query = Query(text="What is the capital of France?")
     relevant = Chunk(
-        chunk_id="relevant", text="Paris is the capital of France.", structural_ids=("relevant",)
+        chunk_id="relevant",
+        source_text="Paris is the capital of France.",
+        retrieval_text="Paris is the capital of France.",
+        structural_ids=("relevant",),
     )
     irrelevant = Chunk(
         chunk_id="irrelevant",
-        text="Bananas are a good source of potassium.",
+        source_text="Bananas are a good source of potassium.",
+        retrieval_text="Bananas are a good source of potassium.",
         structural_ids=("irrelevant",),
     )
 

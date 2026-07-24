@@ -30,7 +30,12 @@ class _FakeReranker:
 
 def _result(chunk_id: str) -> RetrievalResult:
     return RetrievalResult(
-        chunk=Chunk(chunk_id=chunk_id, text=chunk_id, structural_ids=(chunk_id,)),
+        chunk=Chunk(
+            chunk_id=chunk_id,
+            source_text=chunk_id,
+            retrieval_text=chunk_id,
+            structural_ids=(chunk_id,),
+        ),
         score=1.0,
         strategy="fake-base",
     )

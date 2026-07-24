@@ -60,8 +60,18 @@ Strategy -> index mapping:
         A second index built from contextualize_chunks() output (per-chunk
         LLM context prepended), queried with Hybrid - Anthropic's technique
         pairs contextual embeddings with contextual BM25.
+    sac
+        A third index (ADR-0015): base chunks with one per-document summary
+        prepended (apply_document_summary()), queried with Dense - the ADR's
+        `sac` variant, isolating the summary's effect from Contextual
+        Retrieval's per-chunk blurb.
+    sac_contextual
+        A fourth index: contextual's already-context-prepended chunks with
+        the same per-document summary prepended on top (no re-contextualization),
+        queried with Dense - the ADR's `sac_contextual` variant, composing both
+        techniques.
     raptor
-        A third index: the base chunks plus their recursive summary tree
+        A fifth index: the base chunks plus their recursive summary tree
         (build_raptor_tree()), queried with Dense - the paper's "collapsed
         tree" retrieval is vector similarity over the flattened tree.
     graphrag
@@ -137,9 +147,11 @@ from ragforge.evaluation.judgments import load_judgments
 from ragforge.evaluation.manifest import CorpusManifest, load_corpus_manifest
 from ragforge.evaluation.ragas_judge import build_gemini_ragas_judge
 from ragforge.evaluation.records import QuestionRecord, append_records_jsonl, merge_question_records
+from ragforge.evaluation.scheduler import run_bounded
 from ragforge.evaluation.split import load_split
 from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator
 from ragforge.generation.gemini_contextualizer import GeminiContextualizer
+from ragforge.generation.gemini_document_summarizer import GeminiDocumentSummarizer
 from ragforge.generation.gemini_summarizer import GeminiSummarizer
 from ragforge.generation.ports import AnswerGenerator
 from ragforge.ingestion.html_extractor import HtmlTextExtractor
@@ -162,6 +174,8 @@ from ragforge.retrieval.hybrid.strategy import HybridRetrieval
 from ragforge.retrieval.raptor.pipeline import build_raptor_tree
 from ragforge.retrieval.reranked.ports import Reranker
 from ragforge.retrieval.reranked.strategy import RerankedRetrieval
+from ragforge.retrieval.sac.pipeline import apply_document_summary
+from ragforge.retrieval.sac.ports import DocumentSummarizer
 from ragforge.retrieval.sparse.ports import TextSearchStore
 from ragforge.retrieval.sparse.store import SparseChunkStore
 from ragforge.retrieval.sparse.strategy import SparseRetrieval
@@ -176,15 +190,18 @@ DATABASE_URL = "postgresql://ragforge:ragforge@localhost:5432/ragforge"
 _RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 _CONTEXTUALIZER_MODEL = "gemini-3.1-flash-lite"
 _SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
+_DOCUMENT_SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_MODE = "local"
 
 _EMBEDDING_PROVIDERS = ("local", "gemini")
-# Bumped only when the chunking logic (ragforge.chunking) or the retrieval
-# text derivation changes meaningfully enough that a prior index must not be
-# mistaken for compatible (ADR-0013). "source-text" means chunk.text as
-# chunked, unmodified - SAC (Increment 4) will introduce a second schema
-# version once retrieval text can differ from source text.
+# Bumped only when the chunking logic (ragforge.chunking) or a retrieval-text
+# derivation (contextualize_chunks, sac.pipeline.apply_document_summary)
+# changes meaningfully enough that a prior index must not be mistaken for
+# compatible (ADR-0013). Every strategy already gets its own table-name
+# prefix (base/contextual/raptor/sac/sac_contextual), so this one version
+# only needs bumping when a derivation's *output* changes shape/content for
+# an existing strategy - introducing SAC as a new strategy didn't (ADR-0015).
 _CHUNKING_CONFIG_VERSION = "adr-0006-v1"
 _RETRIEVAL_TEXT_SCHEMA_VERSION = "source-text-v1"
 
@@ -260,6 +277,55 @@ def _load_documents(manifest: CorpusManifest) -> dict[str, tuple[str, list[Chunk
         )
         documents[doc.norm_id] = (text, chunks)
     return documents
+
+
+def _document_versions(manifest: CorpusManifest) -> dict[str, str]:
+    """Return ``{norm_id: source_sha256}`` for every enabled document (ADR-0015 cache identity).
+
+    ``load_corpus_manifest`` already rejects an enabled document missing
+    ``source_sha256``, so every value here is guaranteed non-None.
+    """
+    versions = {}
+    for doc in manifest.enabled_documents:
+        if doc.source_sha256 is None:
+            msg = (
+                f"{doc.norm_id}: enabled document loaded without a source_sha256 "
+                "- load_corpus_manifest should have rejected this"
+            )
+            raise ValueError(msg)
+        versions[doc.norm_id] = doc.source_sha256
+    return versions
+
+
+def _summarize_documents(
+    documents: dict[str, tuple[str, list[Chunk]]],
+    document_versions: dict[str, str],
+    summarizer: DocumentSummarizer,
+    max_workers: int,
+) -> dict[str, str]:
+    """Return ``{norm_id: summary_text}``, one Gemini call per document, bounded and cached.
+
+    Raises the first summarization failure rather than tolerating it: like
+    contextualize_chunks and build_raptor_tree, this index-building step has
+    no per-item failure isolation (ADR-0014's circuit breaker is for the
+    per-question evaluation loop, not index construction) - a missing
+    summary means the sac/sac_contextual index for that document simply
+    cannot be built.
+    """
+    norm_ids = list(documents)
+
+    def _summarize_one(norm_id: str) -> str:
+        full_text, _ = documents[norm_id]
+        summary = summarizer.summarize_document(norm_id, document_versions[norm_id], full_text)
+        return summary.summary
+
+    outcomes = run_bounded(norm_ids, _summarize_one, max_workers=max_workers)
+    summaries: dict[str, str] = {}
+    for norm_id, outcome in zip(norm_ids, outcomes, strict=True):
+        if isinstance(outcome, BaseException):
+            raise outcome
+        summaries[norm_id] = outcome
+    return summaries
 
 
 def _build_embedder(
@@ -363,10 +429,10 @@ def build_contextual_strategy(
 def format_results_table(
     strategy_labels: list[str], run_metrics: dict[str, dict[str, float]]
 ) -> str:
-    """Render a fixed-width recall/precision/nDCG/MRR@k table for the given strategy order."""
+    """Render a fixed-width recall/precision/nDCG/MRR/DRM@k table for the given strategy order."""
     header = (
         f"{'strategy':<14} {'recall@k':>9} {'precision@k':>12} {'ndcg@k':>8} {'mrr':>6} "
-        f"{'n':>4} {'errors':>6}"
+        f"{'drm@k':>7} {'n':>4} {'errors':>6}"
     )
     lines = [header]
     for label in strategy_labels:
@@ -376,8 +442,8 @@ def format_results_table(
             continue
         lines.append(
             f"{label:<14} {metrics['recall_at_k']:>9.3f} {metrics['precision_at_k']:>12.3f} "
-            f"{metrics['ndcg_at_k']:>8.3f} {metrics['mrr']:>6.3f} {metrics['n']:>4.0f} "
-            f"{metrics['errors']:>6.0f}"
+            f"{metrics['ndcg_at_k']:>8.3f} {metrics['mrr']:>6.3f} {metrics['drm_at_k']:>7.3f} "
+            f"{metrics['n']:>4.0f} {metrics['errors']:>6.0f}"
         )
     return "\n".join(lines)
 
@@ -572,6 +638,8 @@ def main() -> None:
     )
     base_table = f"bench_v01_base_{index_namespace}"
     contextual_table = f"bench_v01_contextual_{index_namespace}"
+    sac_table = f"bench_v01_sac_{index_namespace}"
+    sac_contextual_table = f"bench_v01_sac_contextual_{index_namespace}"
     raptor_table = f"bench_v01_raptor_{index_namespace}"
 
     run_metrics: dict[str, dict[str, float]] = {}
@@ -595,7 +663,7 @@ def main() -> None:
     conn = psycopg.connect(DATABASE_URL)
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
     graphrag_dir = Path(tempfile.mkdtemp(prefix="ragforge-bench-graphrag-"))
-    tables = [base_table, contextual_table, raptor_table]
+    tables = [base_table, contextual_table, sac_table, sac_contextual_table, raptor_table]
 
     def _checkpoint() -> None:
         """Write the run record as computed so far - survives a later strategy crashing."""
@@ -635,10 +703,10 @@ def main() -> None:
         _checkpoint()
 
     try:
-        print("\n[1/4] Indexing the base chunks (dense + sparse)...")
+        print("\n[1/6] Indexing the base chunks (dense + sparse)...")
         base_dense_store = DenseChunkStore(conn, table=base_table)
         base_sparse_store = SparseChunkStore(os_client, index=base_table)
-        base_embeddings = embedder.embed([chunk.text for chunk in all_chunks])
+        base_embeddings = embedder.embed([chunk.retrieval_text for chunk in all_chunks])
         base_dense_store.create_schema(dimensions=embedder.dimensions)
         base_dense_store.upsert_chunks(all_chunks, base_embeddings)
         base_sparse_store.create_index()
@@ -655,16 +723,20 @@ def main() -> None:
             print(f"  evaluating {label}...")
             _evaluate_and_checkpoint(label, strategy)
 
-        print("\n[2/4] Building the Contextual Retrieval index (1 LLM call per chunk)...")
+        print("\n[2/6] Building the Contextual Retrieval index (1 LLM call per chunk)...")
         contextualizer = GeminiContextualizer(_CONTEXTUALIZER_MODEL)
-        contextual_chunks = [
-            contextualized
+        contextual_chunks_by_norm = {
+            norm_id: contextualize_chunks(full_text, chunks, contextualizer)
             for norm_id, (full_text, chunks) in documents.items()
-            for contextualized in contextualize_chunks(full_text, chunks, contextualizer)
+        }
+        contextual_chunks = [
+            chunk for chunks in contextual_chunks_by_norm.values() for chunk in chunks
         ]
         contextual_dense_store = DenseChunkStore(conn, table=contextual_table)
         contextual_sparse_store = SparseChunkStore(os_client, index=contextual_table)
-        contextual_embeddings = embedder.embed([chunk.text for chunk in contextual_chunks])
+        contextual_embeddings = embedder.embed(
+            [chunk.retrieval_text for chunk in contextual_chunks]
+        )
         contextual_dense_store.create_schema(dimensions=embedder.dimensions)
         contextual_dense_store.upsert_chunks(contextual_chunks, contextual_embeddings)
         contextual_sparse_store.create_index()
@@ -675,13 +747,52 @@ def main() -> None:
         print("  evaluating contextual...")
         _evaluate_and_checkpoint("contextual", contextual_strategy)
 
-        print("\n[3/4] Building the RAPTOR tree (1 LLM call per group, per level, per document)...")
+        print("\n[3/6] Building the SAC index (1 LLM call per document)...")
+        document_summarizer = GeminiDocumentSummarizer(
+            _DOCUMENT_SUMMARIZER_MODEL, cache=cache, max_in_flight=gemini_max_in_flight
+        )
+        document_summaries = _summarize_documents(
+            documents, _document_versions(manifest), document_summarizer, answer_quality_workers
+        )
+        sac_chunks = [
+            sac_chunk
+            for norm_id, (_, chunks) in documents.items()
+            for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
+        ]
+        sac_dense_store = DenseChunkStore(conn, table=sac_table)
+        sac_embeddings = embedder.embed([chunk.retrieval_text for chunk in sac_chunks])
+        sac_dense_store.create_schema(dimensions=embedder.dimensions)
+        sac_dense_store.upsert_chunks(sac_chunks, sac_embeddings)
+        sac_strategy = DenseRetrieval(sac_dense_store, embedder)
+        print("  evaluating sac...")
+        _evaluate_and_checkpoint("sac", sac_strategy)
+
+        print(
+            "\n[4/6] Building the SAC+Contextual index "
+            "(document summary + per-chunk context, no extra LLM calls)..."
+        )
+        sac_contextual_chunks = [
+            sac_chunk
+            for norm_id, chunks in contextual_chunks_by_norm.items()
+            for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
+        ]
+        sac_contextual_dense_store = DenseChunkStore(conn, table=sac_contextual_table)
+        sac_contextual_embeddings = embedder.embed(
+            [chunk.retrieval_text for chunk in sac_contextual_chunks]
+        )
+        sac_contextual_dense_store.create_schema(dimensions=embedder.dimensions)
+        sac_contextual_dense_store.upsert_chunks(sac_contextual_chunks, sac_contextual_embeddings)
+        sac_contextual_strategy = DenseRetrieval(sac_contextual_dense_store, embedder)
+        print("  evaluating sac_contextual...")
+        _evaluate_and_checkpoint("sac_contextual", sac_contextual_strategy)
+
+        print("\n[5/6] Building the RAPTOR tree (1 LLM call per group, per level, per document)...")
         summarizer = GeminiSummarizer(_SUMMARIZER_MODEL)
         raptor_chunks: list[Chunk] = []
         for _, chunks in documents.values():
             raptor_chunks.extend(build_raptor_tree(chunks, summarizer))
         raptor_dense_store = DenseChunkStore(conn, table=raptor_table)
-        raptor_embeddings = embedder.embed([chunk.text for chunk in raptor_chunks])
+        raptor_embeddings = embedder.embed([chunk.retrieval_text for chunk in raptor_chunks])
         raptor_dense_store.create_schema(dimensions=embedder.dimensions)
         raptor_dense_store.upsert_chunks(raptor_chunks, raptor_embeddings)
         raptor_strategy = DenseRetrieval(raptor_dense_store, embedder)
@@ -689,7 +800,7 @@ def main() -> None:
         _evaluate_and_checkpoint("raptor", raptor_strategy)
 
         print(
-            f"\n[4/4] Building the GraphRAG (LightRAG, mode={_GRAPHRAG_MODE}) index "
+            f"\n[6/6] Building the GraphRAG (LightRAG, mode={_GRAPHRAG_MODE}) index "
             "(multiple LLM calls per chunk)..."
         )
         rag = LightRAG(

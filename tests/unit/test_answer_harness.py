@@ -48,7 +48,12 @@ class _FakeStrategy:
             raise RuntimeError("simulated retrieval failure")
         return [
             RetrievalResult(
-                chunk=Chunk(chunk_id=ART_1, text="chunk text", structural_ids=(ART_1,)),
+                chunk=Chunk(
+                    chunk_id=ART_1,
+                    source_text="chunk text",
+                    retrieval_text="chunk text",
+                    structural_ids=(ART_1,),
+                ),
                 score=1.0,
                 strategy="fake",
             )

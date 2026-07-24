@@ -39,7 +39,7 @@ class CrossEncoderReranker:
         """
         if not chunks:
             return []
-        pairs = [(query.text, chunk.text) for chunk in chunks]
+        pairs = [(query.text, chunk.source_text) for chunk in chunks]
         try:
             scores = self._model.predict(pairs)
         except Exception as exc:

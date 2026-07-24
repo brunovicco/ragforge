@@ -50,13 +50,17 @@ def test_indexes_and_retrieves_real_chunks_with_provenance_recovered(tmp_path: P
         chunks = [
             Chunk(
                 chunk_id="c1",
-                text="Art. 1º As instituições financeiras devem adotar política de "
+                source_text="Art. 1º As instituições financeiras devem adotar política de "
+                "segurança cibernética.",
+                retrieval_text="Art. 1º As instituições financeiras devem adotar política de "
                 "segurança cibernética.",
                 structural_ids=("TEST-NORM::art-1",),
             ),
             Chunk(
                 chunk_id="c2",
-                text="Art. 2º É proibida a comercialização de produtos financeiros "
+                source_text="Art. 2º É proibida a comercialização de produtos financeiros "
+                "sem autorização prévia do Banco Central.",
+                retrieval_text="Art. 2º É proibida a comercialização de produtos financeiros "
                 "sem autorização prévia do Banco Central.",
                 structural_ids=("TEST-NORM::art-2",),
             ),

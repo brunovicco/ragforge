@@ -58,7 +58,7 @@ def test_real_strategies_score_above_zero_on_the_real_golden_set() -> None:
         chunks.extend(ingest_norm(norm_id, path, text, expected_article_count=expected_count))
 
     embedder = SentenceTransformerEmbedder("sentence-transformers/all-MiniLM-L6-v2")
-    embeddings = embedder.embed([chunk.text for chunk in chunks])
+    embeddings = embedder.embed([chunk.retrieval_text for chunk in chunks])
 
     conn = psycopg.connect(_DATABASE_URL)
     dense_store = DenseChunkStore(conn, table=_TEST_NAME)

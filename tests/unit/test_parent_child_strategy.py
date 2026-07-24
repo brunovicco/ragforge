@@ -30,10 +30,16 @@ class _FakeStore:
 
 def test_a_fragment_hit_is_expanded_to_its_parent_article() -> None:
     """A result with parent_id gets replaced by the full parent chunk."""
-    article = Chunk(chunk_id="art-2", text="full article text", structural_ids=("art-2",))
+    article = Chunk(
+        chunk_id="art-2",
+        source_text="full article text",
+        retrieval_text="full article text",
+        structural_ids=("art-2",),
+    )
     fragment = Chunk(
         chunk_id="art-2::par-1",
-        text="§ 1º fragment",
+        source_text="§ 1º fragment",
+        retrieval_text="§ 1º fragment",
         structural_ids=("art-2", "art-2::par-1"),
         parent_id="art-2",
     )
@@ -44,13 +50,18 @@ def test_a_fragment_hit_is_expanded_to_its_parent_article() -> None:
     [result] = strategy.retrieve(QUERY, top_k=5)
 
     assert result.chunk.chunk_id == "art-2"
-    assert result.chunk.text == "full article text"
+    assert result.chunk.source_text == "full article text"
     assert strategy.name == "parent-child"
 
 
 def test_a_result_without_a_parent_id_passes_through_unchanged() -> None:
     """An already article-level hit (no parent_id) is returned as-is."""
-    article = Chunk(chunk_id="art-1", text="article text", structural_ids=("art-1",))
+    article = Chunk(
+        chunk_id="art-1",
+        source_text="article text",
+        retrieval_text="article text",
+        structural_ids=("art-1",),
+    )
     inner = _FakeInner([_result(article)])
     strategy = ParentChildRetrieval(inner, _FakeStore({}))
 
@@ -61,16 +72,23 @@ def test_a_result_without_a_parent_id_passes_through_unchanged() -> None:
 
 def test_two_fragments_of_the_same_parent_collapse_into_one_result() -> None:
     """Expanding two fragments of the same article yields one result, not two."""
-    article = Chunk(chunk_id="art-2", text="full article", structural_ids=("art-2",))
+    article = Chunk(
+        chunk_id="art-2",
+        source_text="full article",
+        retrieval_text="full article",
+        structural_ids=("art-2",),
+    )
     fragment_1 = Chunk(
         chunk_id="art-2::par-1",
-        text="p1",
+        source_text="p1",
+        retrieval_text="p1",
         structural_ids=("art-2", "art-2::par-1"),
         parent_id="art-2",
     )
     fragment_2 = Chunk(
         chunk_id="art-2::par-2",
-        text="p2",
+        source_text="p2",
+        retrieval_text="p2",
         structural_ids=("art-2", "art-2::par-2"),
         parent_id="art-2",
     )
@@ -89,7 +107,8 @@ def test_falls_back_to_the_fragment_when_the_parent_is_not_indexed() -> None:
     """A dangling parent_id (parent not in the store) keeps the original fragment."""
     fragment = Chunk(
         chunk_id="art-2::par-1",
-        text="§ 1º fragment",
+        source_text="§ 1º fragment",
+        retrieval_text="§ 1º fragment",
         structural_ids=("art-2", "art-2::par-1"),
         parent_id="art-2",
     )

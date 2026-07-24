@@ -20,7 +20,9 @@ from ragforge.generation.gemini_answer_generator import (
 
 
 def _result(chunk_id: str, text: str, structural_ids: tuple[str, ...]) -> RetrievalResult:
-    chunk = Chunk(chunk_id=chunk_id, text=text, structural_ids=structural_ids)
+    chunk = Chunk(
+        chunk_id=chunk_id, source_text=text, retrieval_text=text, structural_ids=structural_ids
+    )
     return RetrievalResult(chunk=chunk, score=1.0, strategy="dense")
 
 

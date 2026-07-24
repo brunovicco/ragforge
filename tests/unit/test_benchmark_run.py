@@ -94,7 +94,9 @@ class _FakeReranker:
 
 def test_build_base_strategies_returns_all_five_labels() -> None:
     """Every base-index strategy is present, keyed by its benchmark-v01.yaml label."""
-    chunk = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+    )
     dense_store = _FakeDenseStore({"c1": chunk})
     sparse_store = _FakeSparseStore([chunk])
 
@@ -107,7 +109,9 @@ def test_build_base_strategies_returns_all_five_labels() -> None:
 
 def test_build_base_strategies_wires_each_strategy_to_retrieve_correctly() -> None:
     """Each returned strategy actually retrieves through its wired collaborators."""
-    chunk = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+    )
     dense_store = _FakeDenseStore({"c1": chunk})
     sparse_store = _FakeSparseStore([chunk])
 
@@ -124,7 +128,9 @@ def test_build_base_strategies_wires_each_strategy_to_retrieve_correctly() -> No
 
 def test_build_base_strategies_passes_rerank_pool_through() -> None:
     """The reranked strategy pools from the configured rerank_pool size."""
-    chunk = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+    )
     dense_store = _FakeDenseStore({"c1": chunk})
     sparse_store = _FakeSparseStore([chunk])
 
@@ -139,7 +145,12 @@ def test_build_base_strategies_passes_rerank_pool_through() -> None:
 
 def test_build_contextual_strategy_retrieves_through_hybrid() -> None:
     """The contextual strategy is a working Hybrid retrieval over the given stores."""
-    chunk = Chunk(chunk_id="c1", text="Contexto: Art. 1º", structural_ids=("s1",))
+    chunk = Chunk(
+        chunk_id="c1",
+        source_text="Contexto: Art. 1º",
+        retrieval_text="Contexto: Art. 1º",
+        structural_ids=("s1",),
+    )
     dense_store = _FakeDenseStore({"c1": chunk})
     sparse_store = _FakeSparseStore([chunk])
 
@@ -157,6 +168,7 @@ def test_format_results_table_includes_every_configured_strategy() -> None:
             "precision_at_k": 0.2,
             "ndcg_at_k": 0.7,
             "mrr": 0.6,
+            "drm_at_k": 0.1,
             "n": 5,
             "errors": 0,
         },
@@ -260,7 +272,12 @@ class _FakeStrategyForEvaluate:
     def retrieve(self, query: Query, top_k: int) -> list[RetrievalResult]:
         return [
             RetrievalResult(
-                chunk=Chunk(chunk_id=ART_1, text="chunk text", structural_ids=(ART_1,)),
+                chunk=Chunk(
+                    chunk_id=ART_1,
+                    source_text="chunk text",
+                    retrieval_text="chunk text",
+                    structural_ids=(ART_1,),
+                ),
                 score=1.0,
                 strategy="fake-strategy",
             )

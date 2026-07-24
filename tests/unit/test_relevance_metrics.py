@@ -24,7 +24,12 @@ NORM = "RES-CMN-4893/2021"
 
 
 def _result(chunk_id: str, structural_ids: tuple[str, ...]) -> RetrievalResult:
-    chunk = Chunk(chunk_id=chunk_id, text=chunk_id, structural_ids=structural_ids)
+    chunk = Chunk(
+        chunk_id=chunk_id,
+        source_text=chunk_id,
+        retrieval_text=chunk_id,
+        structural_ids=structural_ids,
+    )
     return RetrievalResult(chunk=chunk, score=1.0, strategy="dense")
 
 

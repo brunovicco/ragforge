@@ -59,7 +59,7 @@ def _format_context(results: list[RetrievalResult]) -> str:
     blocks = []
     for result in results:
         ids = ", ".join(result.chunk.structural_ids)
-        blocks.append(f"[structural_ids: {ids}]\n{result.chunk.text}")
+        blocks.append(f"[structural_ids: {ids}]\n{result.chunk.source_text}")
     return "\n\n".join(blocks)
 
 

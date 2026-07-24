@@ -58,14 +58,15 @@ def _summarize_level(
     summaries = []
     for group_index, start in enumerate(range(0, len(chunks), group_size)):
         group = chunks[start : start + group_size]
-        summary_text = summarizer.summarize([chunk.text for chunk in group])
+        summary_text = summarizer.summarize([chunk.source_text for chunk in group])
         structural_ids = tuple(
             dict.fromkeys(sid for chunk in group for sid in chunk.structural_ids)
         )
         summaries.append(
             Chunk(
                 chunk_id=f"{group[0].chunk_id}::raptor-l{level}-{group_index}",
-                text=summary_text,
+                source_text=summary_text,
+                retrieval_text=summary_text,
                 structural_ids=structural_ids,
                 metadata={"raptor_level": str(level)},
             )

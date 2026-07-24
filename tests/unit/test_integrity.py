@@ -127,7 +127,9 @@ class TestVerifySplitIntegrity:
 
 class TestVerifyStructuralReferences:
     def _chunk(self) -> Chunk:
-        return Chunk(chunk_id="c1", text="text", structural_ids=(ART_1,))
+        return Chunk(
+            chunk_id="c1", source_text="text", retrieval_text="text", structural_ids=(ART_1,)
+        )
 
     def test_passes_when_every_relevant_ref_resolves_in_the_indexed_corpus(self) -> None:
         judgments = [_judgment("q1", ART_1)]

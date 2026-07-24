@@ -26,7 +26,9 @@ def test_generates_a_grounded_cited_answer_for_a_real_question() -> None:
     generator = GeminiAnswerGenerator(_TEST_MODEL)
     chunk = Chunk(
         chunk_id="c1",
-        text="Art. 2º As instituições financeiras devem adotar controles de "
+        source_text="Art. 2º As instituições financeiras devem adotar controles de "
+        "segurança da informação proporcionais ao seu perfil de risco.",
+        retrieval_text="Art. 2º As instituições financeiras devem adotar controles de "
         "segurança da informação proporcionais ao seu perfil de risco.",
         structural_ids=("RES-CMN-4893/2021::art-2",),
     )

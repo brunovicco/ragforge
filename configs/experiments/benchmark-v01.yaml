@@ -13,6 +13,8 @@ strategies:
   - reranked
   - contextual
   - parent_child
+  - sac
+  - sac_contextual
   - raptor
   - graphrag
 embedding:

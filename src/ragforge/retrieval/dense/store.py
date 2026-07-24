@@ -35,7 +35,7 @@ class DenseChunkStore:
                 sql.SQL(
                     "CREATE TABLE IF NOT EXISTS {table} ("
                     "chunk_id TEXT PRIMARY KEY, "
-                    "text TEXT NOT NULL, "
+                    "source_text TEXT NOT NULL, "
                     "structural_ids TEXT[] NOT NULL, "
                     "parent_id TEXT, "
                     "metadata JSONB NOT NULL DEFAULT '{{}}'::jsonb, "
@@ -63,10 +63,11 @@ class DenseChunkStore:
             )
         table = sql.Identifier(self._table)
         statement = sql.SQL(
-            "INSERT INTO {table} (chunk_id, text, structural_ids, parent_id, metadata, embedding) "
+            "INSERT INTO {table} "
+            "(chunk_id, source_text, structural_ids, parent_id, metadata, embedding) "
             "VALUES (%s, %s, %s, %s, %s, %s) "
             "ON CONFLICT (chunk_id) DO UPDATE SET "
-            "text = EXCLUDED.text, "
+            "source_text = EXCLUDED.source_text, "
             "structural_ids = EXCLUDED.structural_ids, "
             "parent_id = EXCLUDED.parent_id, "
             "metadata = EXCLUDED.metadata, "
@@ -78,7 +79,7 @@ class DenseChunkStore:
                     statement,
                     (
                         chunk.chunk_id,
-                        chunk.text,
+                        chunk.source_text,
                         list(chunk.structural_ids),
                         chunk.parent_id,
                         Jsonb(chunk.metadata),
@@ -91,7 +92,7 @@ class DenseChunkStore:
         """Return the chunk with chunk_id, or None if it isn't indexed."""
         table = sql.Identifier(self._table)
         statement = sql.SQL(
-            "SELECT chunk_id, text, structural_ids, parent_id, metadata "
+            "SELECT chunk_id, source_text, structural_ids, parent_id, metadata "
             "FROM {table} WHERE chunk_id = %s"
         ).format(table=table)
         with self._conn.cursor() as cur:
@@ -101,7 +102,8 @@ class DenseChunkStore:
             return None
         return Chunk(
             chunk_id=row[0],
-            text=row[1],
+            source_text=row[1],
+            retrieval_text=row[1],
             structural_ids=tuple(row[2]),
             parent_id=row[3],
             metadata=row[4],
@@ -111,7 +113,7 @@ class DenseChunkStore:
         """Return the top_k chunks by cosine similarity to query_embedding."""
         table = sql.Identifier(self._table)
         statement = sql.SQL(
-            "SELECT chunk_id, text, structural_ids, parent_id, metadata, "
+            "SELECT chunk_id, source_text, structural_ids, parent_id, metadata, "
             "1 - (embedding <=> %s::vector) AS score "
             "FROM {table} ORDER BY embedding <=> %s::vector LIMIT %s"
         ).format(table=table)
@@ -122,7 +124,8 @@ class DenseChunkStore:
             RetrievalResult(
                 chunk=Chunk(
                     chunk_id=row[0],
-                    text=row[1],
+                    source_text=row[1],
+                    retrieval_text=row[1],
                     structural_ids=tuple(row[2]),
                     parent_id=row[3],
                     metadata=row[4],

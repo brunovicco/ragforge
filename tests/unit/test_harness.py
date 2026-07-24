@@ -47,7 +47,9 @@ class _FakeStrategy:
         structural_ids = self._hits_by_question.get(query.text, [])
         return [
             RetrievalResult(
-                chunk=Chunk(chunk_id=ref, text=ref, structural_ids=(ref,)),
+                chunk=Chunk(
+                    chunk_id=ref, source_text=ref, retrieval_text=ref, structural_ids=(ref,)
+                ),
                 score=1.0,
                 strategy="fake",
             )
@@ -95,6 +97,17 @@ def test_evaluate_strategy_reports_k_in_the_result() -> None:
     """The k used for the run is echoed back in the result dict."""
     result = evaluate_strategy(_FakeStrategy({"q1": [ART_1]}), [_judgment("q1", ART_1)], k=3)
     assert result.metrics["k"] == 3.0
+
+
+def test_evaluate_strategy_reports_drm_at_k_for_a_wrong_norm_hit() -> None:
+    """A retrieved chunk from an unrelated norm registers as document-level mismatch."""
+    strategy = _FakeStrategy({"q1": ["OTHER::art-1"]})
+    judgments = [_judgment("q1", ART_1)]
+
+    result = evaluate_strategy(strategy, judgments, k=5)
+
+    assert result.metrics["drm_at_k"] == 1.0
+    assert result.records[0].metrics["drm_at_k"] == 1.0
 
 
 def test_evaluate_strategy_raises_for_an_empty_judgment_list() -> None:

@@ -22,8 +22,12 @@ def _success(chunks_content: list[str]) -> dict[str, object]:
 
 def test_retrieve_maps_returned_content_back_to_indexed_chunks() -> None:
     """Each returned chunk's content is matched back to the real Chunk via the content index."""
-    chunk1 = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("s1",))
-    chunk2 = Chunk(chunk_id="c2", text="Art. 2º", structural_ids=("s2",))
+    chunk1 = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("s1",)
+    )
+    chunk2 = Chunk(
+        chunk_id="c2", source_text="Art. 2º", retrieval_text="Art. 2º", structural_ids=("s2",)
+    )
     rag = _FakeRag(_success(["Art. 1º", "Art. 2º"]))
     content_index = {"Art. 1º": chunk1, "Art. 2º": chunk2}
     strategy = GraphRagRetrieval(rag, content_index)
@@ -36,8 +40,8 @@ def test_retrieve_maps_returned_content_back_to_indexed_chunks() -> None:
 
 def test_retrieve_assigns_descending_rank_based_scores() -> None:
     """Results are scored 1/rank, preserving LightRAG's own return order."""
-    chunk1 = Chunk(chunk_id="c1", text="a", structural_ids=("s1",))
-    chunk2 = Chunk(chunk_id="c2", text="b", structural_ids=("s2",))
+    chunk1 = Chunk(chunk_id="c1", source_text="a", retrieval_text="a", structural_ids=("s1",))
+    chunk2 = Chunk(chunk_id="c2", source_text="b", retrieval_text="b", structural_ids=("s2",))
     rag = _FakeRag(_success(["a", "b"]))
     strategy = GraphRagRetrieval(rag, {"a": chunk1, "b": chunk2})
 
@@ -49,7 +53,7 @@ def test_retrieve_assigns_descending_rank_based_scores() -> None:
 
 def test_retrieve_skips_unmatched_content_without_raising() -> None:
     """A chunk LightRAG returns that isn't in the content index is dropped, not an error."""
-    chunk1 = Chunk(chunk_id="c1", text="a", structural_ids=("s1",))
+    chunk1 = Chunk(chunk_id="c1", source_text="a", retrieval_text="a", structural_ids=("s1",))
     rag = _FakeRag(_success(["a", "content not in our index"]))
     strategy = GraphRagRetrieval(rag, {"a": chunk1})
 
@@ -60,8 +64,8 @@ def test_retrieve_skips_unmatched_content_without_raising() -> None:
 
 def test_retrieve_truncates_to_top_k() -> None:
     """Only the first top_k returned chunks are considered."""
-    chunk1 = Chunk(chunk_id="c1", text="a", structural_ids=("s1",))
-    chunk2 = Chunk(chunk_id="c2", text="b", structural_ids=("s2",))
+    chunk1 = Chunk(chunk_id="c1", source_text="a", retrieval_text="a", structural_ids=("s1",))
+    chunk2 = Chunk(chunk_id="c2", source_text="b", retrieval_text="b", structural_ids=("s2",))
     rag = _FakeRag(_success(["a", "b"]))
     strategy = GraphRagRetrieval(rag, {"a": chunk1, "b": chunk2})
 

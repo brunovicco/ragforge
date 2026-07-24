@@ -16,7 +16,9 @@ class _FakeStore:
 
 def test_retrieve_searches_with_the_query_text_directly() -> None:
     """SparseRetrieval passes the query's raw text to the store - no embedding step."""
-    chunk = Chunk(chunk_id="c1", text="Art. 1º", structural_ids=("c1",))
+    chunk = Chunk(
+        chunk_id="c1", source_text="Art. 1º", retrieval_text="Art. 1º", structural_ids=("c1",)
+    )
     store = _FakeStore([RetrievalResult(chunk=chunk, score=3.2, strategy="sparse")])
     strategy = SparseRetrieval(store)
 
@@ -31,7 +33,9 @@ def test_retrieve_respects_top_k_from_the_store() -> None:
     """The strategy returns whatever the store returns, capped at top_k."""
     chunks = [
         RetrievalResult(
-            chunk=Chunk(chunk_id=f"c{i}", text="x", structural_ids=(f"c{i}",)),
+            chunk=Chunk(
+                chunk_id=f"c{i}", source_text="x", retrieval_text="x", structural_ids=(f"c{i}",)
+            ),
             score=10.0 - i,
             strategy="sparse",
         )

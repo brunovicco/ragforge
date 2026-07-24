@@ -5,6 +5,7 @@ from statistics import mean
 
 from ragforge.domain.models import Judgment
 from ragforge.domain.protocols import RetrievalStrategy
+from ragforge.evaluation.metrics.drm import document_level_retrieval_mismatch
 from ragforge.evaluation.metrics.relevance import mrr, ndcg_at_k, precision_at_k, recall_at_k
 from ragforge.evaluation.records import RetrievalRecord
 
@@ -54,6 +55,7 @@ def evaluate_strategy(
     precisions: list[float] = []
     ndcgs: list[float] = []
     reciprocal_ranks: list[float] = []
+    drms: list[float] = []
     errors = 0
     consecutive_errors = 0
     aborted = False
@@ -108,11 +110,13 @@ def evaluate_strategy(
                 "precision_at_k": precision_at_k(results, judgment, k),
                 "ndcg_at_k": ndcg_at_k(results, judgment, k),
                 "mrr": mrr(results, judgment),
+                "drm_at_k": document_level_retrieval_mismatch(results, judgment, k),
             }
             recalls.append(question_metrics["recall_at_k"])
             precisions.append(question_metrics["precision_at_k"])
             ndcgs.append(question_metrics["ndcg_at_k"])
             reciprocal_ranks.append(question_metrics["mrr"])
+            drms.append(question_metrics["drm_at_k"])
 
         records.append(
             RetrievalRecord(
@@ -130,6 +134,7 @@ def evaluate_strategy(
         "precision_at_k": mean(precisions) if precisions else 0.0,
         "ndcg_at_k": mean(ndcgs) if ndcgs else 0.0,
         "mrr": mean(reciprocal_ranks) if reciprocal_ranks else 0.0,
+        "drm_at_k": mean(drms) if drms else 0.0,
         "k": float(k),
         "n": float(len(recalls)),
         "errors": float(errors),

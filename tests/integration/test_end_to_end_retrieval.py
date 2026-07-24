@@ -42,7 +42,7 @@ def test_full_pipeline_indexes_and_retrieves_a_real_norm() -> None:
     chunks = ingest_norm(_NORM_ID, _CORPUS_PDF, text, expected_article_count=28)
 
     embedder = SentenceTransformerEmbedder("sentence-transformers/all-MiniLM-L6-v2")
-    embeddings = embedder.embed([chunk.text for chunk in chunks])
+    embeddings = embedder.embed([chunk.retrieval_text for chunk in chunks])
 
     conn = psycopg.connect(_DATABASE_URL)
     dense_store = DenseChunkStore(conn, table=_TEST_NAME)
