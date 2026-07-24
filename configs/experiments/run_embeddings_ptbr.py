@@ -210,7 +210,7 @@ def main() -> None:
         )
         print(f"\n{header}")
         for strategy in (dense, sparse, hybrid):
-            metrics = evaluate_strategy(strategy, judgments, k=args.k)
+            metrics = evaluate_strategy(strategy, judgments, k=args.k).metrics
             print(
                 f"{strategy.name:<10} {metrics['recall_at_k']:>9.3f} "
                 f"{metrics['precision_at_k']:>12.3f} {metrics['ndcg_at_k']:>8.3f} "

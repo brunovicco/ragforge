@@ -17,6 +17,7 @@ from ragforge.retrieval.graph.lightrag_gemini import (
 
 
 class _FakeEmbedder:
+    name = "fake-embedder"
     dimensions = 3
 
     def __init__(self) -> None:
@@ -30,7 +31,7 @@ class _FakeEmbedder:
 def test_gemini_embedding_func_wraps_the_sync_embedder() -> None:
     """The async embedding_func calls the sync embedder and returns a float32 array."""
     embedder = _FakeEmbedder()
-    embedding_func = build_gemini_embedding_func(embedder)  # type: ignore[arg-type]
+    embedding_func = build_gemini_embedding_func(embedder)
 
     result = asyncio.run(embedding_func.func(["texto um", "texto dois"]))
 

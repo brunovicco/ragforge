@@ -21,6 +21,7 @@ _MINIMAL_ENABLED_DOC = {
 
 
 def _write_manifest(tmp_path: Path, documents: list[dict[str, object]]) -> Path:
+    tmp_path.mkdir(parents=True, exist_ok=True)
     path = tmp_path / "corpus_manifest.yaml"
     path.write_text(
         yaml.safe_dump(
@@ -86,6 +87,46 @@ def test_enabled_document_without_source_sha256_is_rejected(tmp_path: Path) -> N
 
     with pytest.raises(ValueError, match="source_sha256"):
         load_corpus_manifest(path)
+
+
+def test_content_hash_is_the_same_regardless_of_document_order(tmp_path: Path) -> None:
+    """content_hash depends only on which documents are enabled, not YAML entry order."""
+    second_doc = {**_MINIMAL_ENABLED_DOC, "norm_id": "NORM/2001", "source_sha256": "b" * 64}
+    forward = load_corpus_manifest(
+        _write_manifest(tmp_path / "a", [_MINIMAL_ENABLED_DOC, second_doc])
+    )
+    reversed_manifest = load_corpus_manifest(
+        _write_manifest(tmp_path / "b", [second_doc, _MINIMAL_ENABLED_DOC])
+    )
+
+    assert forward.content_hash == reversed_manifest.content_hash
+
+
+def test_content_hash_changes_when_a_source_hash_changes(tmp_path: Path) -> None:
+    """A different pinned source hash for the same document changes content_hash."""
+    original = load_corpus_manifest(_write_manifest(tmp_path / "a", [_MINIMAL_ENABLED_DOC]))
+    changed_doc = {**_MINIMAL_ENABLED_DOC, "source_sha256": "c" * 64}
+    changed = load_corpus_manifest(_write_manifest(tmp_path / "b", [changed_doc]))
+
+    assert original.content_hash != changed.content_hash
+
+
+def test_content_hash_ignores_disabled_documents(tmp_path: Path) -> None:
+    """A disabled document's presence (or absence) doesn't affect content_hash."""
+    disabled_doc: dict[str, object] = {
+        "norm_id": "OLD/1900",
+        "source_path": "datasets/corpus/old.htm",
+        "extractor": "html",
+        "expected_article_count": None,
+        "source_sha256": None,
+        "enabled": False,
+    }
+    without_disabled = load_corpus_manifest(_write_manifest(tmp_path / "a", [_MINIMAL_ENABLED_DOC]))
+    with_disabled = load_corpus_manifest(
+        _write_manifest(tmp_path / "b", [_MINIMAL_ENABLED_DOC, disabled_doc])
+    )
+
+    assert without_disabled.content_hash == with_disabled.content_hash
 
 
 def test_load_real_corpus_manifest_has_five_enabled_documents() -> None:

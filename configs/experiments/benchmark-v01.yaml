@@ -16,12 +16,24 @@ strategies:
   - raptor
   - graphrag
 embedding:
-  # Frozen winner of the embeddings-ptbr experiment (ADR-0005). Dense
-  # recall@5=0.947 vs. BAAI/bge-m3's 0.789 on the real golden set - see
-  # configs/experiments/embeddings-ptbr.yaml and experiments/embeddings-ptbr/runs.jsonl.
-  model: gemini-embedding-001
-  provider: gemini
-  dimensions: 1536  # Matryoshka truncation; pgvector's HNSW index caps at 2000
+  # ADR-0013: local is the operational default - no credentials needed,
+  # provider-free execution - regardless of the embeddings-ptbr experiment's
+  # (ADR-0005) quality result (Dense recall@5=0.947 for gemini-embedding-001
+  # vs. BAAI/bge-m3's 0.789 on the real golden set; see
+  # configs/experiments/embeddings-ptbr.yaml and
+  # experiments/embeddings-ptbr/runs.jsonl). Qwen3-Embedding-0.6B is not a
+  # predeclared quality winner - the full RegRAG-BR experiment determines
+  # relative quality (ADR-0013's own acceptance criteria).
+  provider: local
+  model: Qwen/Qwen3-Embedding-0.6B
+  # Matryoshka truncation size; only used when provider: gemini (pgvector's
+  # HNSW index caps at 2000 dimensions). Ignored for provider: local - the
+  # model reports its own native dimension.
+  dimensions: 1536
+  # To use the hosted comparator instead:
+  #   provider: gemini
+  #   model: gemini-embedding-001
+  # (requires GEMINI_API_KEY or GOOGLE_API_KEY)
 generation:
   # Not chosen via a dedicated comparison (unlike the embedding model,
   # ADR-0005) - a placeholder, not a data-driven winner, matching the
