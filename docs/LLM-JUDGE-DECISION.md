@@ -1,4 +1,4 @@
-# LLM judge research note — 2026-07-24
+# LLM judge research note - 2026-07-24
 
 Canonical choice:
 

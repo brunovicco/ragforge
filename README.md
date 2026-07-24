@@ -13,7 +13,7 @@ Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG str
 ## Benchmarked strategies
 
 | # | Strategy | Approach | Status |
-|---|----------|----------|--------|
+| --- | ---------- | ---------- | -------- |
 | 1 | Dense (baseline) | pgvector, fixed top-k | Implemented |
 | 2 | Sparse BM25 | OpenSearch, `brazilian` analyzer | Implemented |
 | 3 | Hybrid + RRF | BM25 + dense + Reciprocal Rank Fusion | Implemented |

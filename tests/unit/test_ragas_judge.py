@@ -1,10 +1,12 @@
 """Tests for RagasJudge, using fake RAGAS metric objects (no network, no real RAGAS calls)."""
 
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pytest
 
+from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.evaluation.ragas_judge import RagasJudge
 from ragforge.generation.errors import GenerationError
 
@@ -88,3 +90,19 @@ def test_build_gemini_ragas_judge_raises_when_no_api_key_is_available(
 
     with pytest.raises(GenerationError, match="no Gemini API key"):
         build_gemini_ragas_judge("gemini-3.1-flash-lite", "gemini-embedding-001")
+
+
+def test_a_cache_hit_skips_the_metric_calls_entirely(tmp_path: Path) -> None:
+    """The second score() for the same triple reuses the cached metrics, no new metric calls."""
+    faithfulness = _FakeMetric(lambda **kwargs: _FakeMetricResult(0.9))
+    answer_relevancy = _FakeMetric(lambda **kwargs: _FakeMetricResult(0.8))
+    cache = FileLLMCache(tmp_path)
+    judge = RagasJudge(faithfulness, answer_relevancy, model_name="judge-model", cache=cache)
+
+    first = judge.score("pergunta", ["contexto"], "resposta")
+    second = judge.score("pergunta", ["contexto"], "resposta")
+
+    assert first == {"faithfulness": 0.9, "answer_relevancy": 0.8}
+    assert second == first
+    assert len(faithfulness.calls) == 1, "the second score() made no additional metric call"
+    assert len(answer_relevancy.calls) == 1

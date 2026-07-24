@@ -49,3 +49,11 @@ retrieval:
   rerank_pool: 50
 llm_cache:
   mode: cache  # cache | live (ADR-0004)
+execution:
+  # ADR-0014. Both optional - omitting this whole section falls back to the
+  # same defaults. Not the full execution.stages.* schema from the ADR (a
+  # workers block per stage): only these two values actually control
+  # anything today - answer generation + judge scoring (run_bounded) and the
+  # Gemini ProviderLimiter shared by the embedder/generator/judge.
+  answer_quality_workers: 5
+  gemini_max_in_flight: 4

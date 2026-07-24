@@ -2,12 +2,14 @@
 
 import time
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import pytest
 from google import genai
 from google.genai import errors
 
+from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.embeddings.errors import EmbeddingError
 from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
 
@@ -218,3 +220,44 @@ def test_raises_when_client_creation_fails(monkeypatch: pytest.MonkeyPatch) -> N
 
     with pytest.raises(EmbeddingError, match="failed to create Gemini client"):
         GoogleGeminiEmbedder("gemini-embedding-001", api_key="key")
+
+
+def test_a_cache_hit_skips_the_api_call_entirely(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The second embed() for the same text reuses the cached vector, no new API call."""
+    fake_client = _install_fake_client(
+        monkeypatch, lambda contents: _vector_response(len(contents))
+    )
+    cache = FileLLMCache(tmp_path)
+    embedder = GoogleGeminiEmbedder("gemini-embedding-001", api_key="key", cache=cache)
+    fake_client.models.calls.clear()  # drop the constructor's probe call
+
+    first = embedder.embed(["texto repetido"])
+    calls_after_first = len(fake_client.models.calls)
+    second = embedder.embed(["texto repetido"])
+
+    assert calls_after_first == 1
+    assert len(fake_client.models.calls) == 1, "the second embed() made no additional API call"
+    assert second == first
+
+
+def test_only_uncached_texts_reach_the_api_and_order_is_preserved(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """A mix of cached and new texts sends only the new ones, in original relative order."""
+    fake_client = _install_fake_client(
+        monkeypatch, lambda contents: _vector_response(len(contents))
+    )
+    cache = FileLLMCache(tmp_path)
+    embedder = GoogleGeminiEmbedder("gemini-embedding-001", api_key="key", cache=cache)
+    fake_client.models.calls.clear()
+
+    embedder.embed(["a", "b"])
+    fake_client.models.calls.clear()
+
+    vectors = embedder.embed(["a", "c", "b"])
+
+    assert len(vectors) == 3
+    sent_texts = [text for call in fake_client.models.calls for text in call["contents"]]
+    assert sent_texts == ["c"], "only the uncached text 'c' should reach the API"

@@ -2,7 +2,7 @@
 
 The target unit is the article. Articles longer than ``max_chars`` are
 subdivided into their top-level fragments (paragraphs/incisos), each carrying
-``parent_id`` pointing at the article — which is exactly the hierarchy the
+``parent_id`` pointing at the article - which is exactly the hierarchy the
 parent-child retrieval strategy needs. Every chunk carries ``structural_ids``,
 the provenance mapping required by evaluation (ADR-0002) and governance.
 """

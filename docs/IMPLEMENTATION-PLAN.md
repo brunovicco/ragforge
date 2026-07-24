@@ -2,17 +2,17 @@
 
 ## Current release
 
-1. ADR-0012 — benchmark integrity and end-to-end evaluation.
-2. ADR-0013 — provider-neutral embeddings with local default.
-3. ADR-0014 — bounded deterministic parallel execution.
-4. ADR-0015 — Summary-Augmented Chunking experiment.
-5. ADR-0018 — independent calibrated LLM judge.
-6. ADR-0016 — post-generation citation audit.
-7. ADR-0017 — auditable evidence lineage.
+1. ADR-0012 - benchmark integrity and end-to-end evaluation.
+2. ADR-0013 - provider-neutral embeddings with local default.
+3. ADR-0014 - bounded deterministic parallel execution.
+4. ADR-0015 - Summary-Augmented Chunking experiment.
+5. ADR-0018 - independent calibrated LLM judge.
+6. ADR-0016 - post-generation citation audit.
+7. ADR-0017 - auditable evidence lineage.
 
 ## Future release
 
-8. ADR-0019 — Temporal GraphRAG experimental strategy.
+8. ADR-0019 - Temporal GraphRAG experimental strategy.
 
 Temporal GraphRAG remains blocked by a versioned temporal corpus, exact version-qualified structural IDs, and a temporal golden set.
 
@@ -34,7 +34,7 @@ ADR-0012 + ADR-0016 + ADR-0017
 └── ADR-0019 Temporal GraphRAG
 ```
 
-## Increment 1 — Integrity foundation
+## Increment 1 - Integrity foundation
 
 - Add corpus manifest and split schema.
 - Remove hard-coded document discovery.
@@ -47,7 +47,7 @@ ADR-0012 + ADR-0016 + ADR-0017
 
 Exit gate: integrity failures stop before evaluation and all selected questions have explicit outcomes.
 
-## Increment 2 — Provider-free embeddings
+## Increment 2 - Provider-free embeddings
 
 - Add provider-neutral port.
 - Wrap Gemini.
@@ -58,7 +58,7 @@ Exit gate: integrity failures stop before evaluation and all selected questions 
 
 Exit gate: retrieval benchmark runs without an API key.
 
-## Increment 3 — Parallel runner
+## Increment 3 - Parallel runner
 
 - Implement serial reference scheduler.
 - Add one stage-aware `ThreadPoolExecutor`.
@@ -81,7 +81,7 @@ Use model-native batching for local embeddings. Do not create one thread per loc
 
 Exit gate: `workers=1` and `workers>1` produce equivalent metrics and deterministic artifacts.
 
-## Increment 4 — SAC
+## Increment 4 - SAC
 
 - Separate source text from retrieval text.
 - Generate and cache one summary per document version.
@@ -91,7 +91,7 @@ Exit gate: `workers=1` and `workers>1` produce equivalent metrics and determinis
 
 Exit gate: SAC is promoted only after measured full-split improvement.
 
-## Increment 5 — Canonical judge
+## Increment 5 - Canonical judge
 
 Use:
 
@@ -112,7 +112,7 @@ cache_mode: required
 
 Exit gate: weighted Cohen's kappa is at least 0.60, or the limitation is explicitly published and the leaderboard remains qualified.
 
-## Increment 6 — Citation auditor
+## Increment 6 - Citation auditor
 
 - Add claim segmentation.
 - Add deterministic syntax, existence, and context checks.
@@ -123,7 +123,7 @@ Exit gate: weighted Cohen's kappa is at least 0.60, or the limitation is explici
 
 Exit gate: unsupported material cannot pass unchanged.
 
-## Increment 7 — Evidence lineage
+## Increment 7 - Evidence lineage
 
 - Add immutable run manifest.
 - Add atomic per-question artifacts.
@@ -134,7 +134,7 @@ Exit gate: unsupported material cannot pass unchanged.
 
 Exit gate: every published score can be traced to exact inputs and configurations.
 
-## Future increment — Temporal GraphRAG
+## Future increment - Temporal GraphRAG
 
 - Curate versioned legal sources.
 - Replace ambiguous structural IDs with version-qualified evidence IDs.
