@@ -60,6 +60,18 @@ judge:
   #   model: gemini-3.1-flash-lite
   #   embedding_model: gemini-embedding-001
   # (requires GEMINI_API_KEY or GOOGLE_API_KEY)
+audit:
+  # ADR-0016: post-generation citation/support audit. Off by default - the
+  # semantic verifier + possible rewrite/re-audit measurably increase LLM
+  # cost and latency per question (the ADR's own stated negative
+  # consequence), on top of generation and judging. Set enabled: true to
+  # turn it on; requires OPENAI_API_KEY (openai is the only supported
+  # audit provider today, same independence rationale as the ADR-0018
+  # judge).
+  enabled: false
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  reasoning_effort: medium
 retrieval:
   top_k: 5
   rerank_pool: 50

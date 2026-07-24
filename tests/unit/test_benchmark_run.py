@@ -212,6 +212,9 @@ def test_build_run_record_includes_all_run_metadata() -> None:
         judge_provider="openai",
         judge_model="gpt-5.4-mini-2026-03-17",
         judge_reasoning_effort="medium",
+        audit_enabled=False,
+        audit_provider=None,
+        audit_model=None,
         corpus_version="0.2",
         split_dataset_version="0.2",
         n_chunks=465,
@@ -235,6 +238,9 @@ def test_build_run_record_includes_all_run_metadata() -> None:
     assert record["judge_model"] == "gpt-5.4-mini-2026-03-17"
     assert record["judge_reasoning_effort"] == "medium"
     assert record["judge_label"] is None
+    assert record["audit_enabled"] is False
+    assert record["audit_provider"] is None
+    assert record["audit_model"] is None
     assert record["corpus_version"] == "0.2"
     assert record["split_dataset_version"] == "0.2"
     assert record["n_chunks"] == 465
@@ -268,6 +274,9 @@ def test_build_run_record_labels_a_gemini_judge_as_exploratory() -> None:
         judge_provider="gemini",
         judge_model="gemini-3.1-flash-lite",
         judge_reasoning_effort=None,
+        audit_enabled=False,
+        audit_provider=None,
+        audit_model=None,
         corpus_version="0.2",
         split_dataset_version="0.2",
         n_chunks=465,
@@ -276,6 +285,43 @@ def test_build_run_record_labels_a_gemini_judge_as_exploratory() -> None:
     )
 
     assert record["judge_label"] == "exploratory_same_provider_judge"
+
+
+def test_build_run_record_states_audit_identity_when_enabled() -> None:
+    """audit_enabled/provider/model are always present, populated when auditing is on (ADR-0016)."""
+    identity = EmbeddingIdentity(
+        provider="local",
+        model="Qwen/Qwen3-Embedding-0.6B",
+        revision="main",
+        dimensions=1024,
+        normalize=True,
+        query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
+        runtime="local",
+    )
+
+    record = build_run_record(
+        run_id="20260101T000000Z",
+        mode="live",
+        config_path="configs/experiments/benchmark-v01.yaml",
+        embedding_identity=identity,
+        index_namespace="abc123",
+        generation_model="gemini-3.1-flash-lite",
+        judge_provider="openai",
+        judge_model="gpt-5.4-mini-2026-03-17",
+        judge_reasoning_effort="medium",
+        audit_enabled=True,
+        audit_provider="openai",
+        audit_model="gpt-5.4-mini-2026-03-17",
+        corpus_version="0.2",
+        split_dataset_version="0.2",
+        n_chunks=465,
+        top_k=5,
+        run_metrics={},
+    )
+
+    assert record["audit_enabled"] is True
+    assert record["audit_provider"] == "openai"
+    assert record["audit_model"] == "gpt-5.4-mini-2026-03-17"
 
 
 def test_format_answer_quality_table_includes_every_configured_strategy() -> None:
