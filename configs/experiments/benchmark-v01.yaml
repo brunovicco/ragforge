@@ -43,6 +43,9 @@ judge:
   model: gpt-5.4-mini-2026-03-17
   embedding_model: text-embedding-3-small
   reasoning_effort: medium
+  # Responses API budget includes hidden reasoning tokens and structured
+  # output. RAGAS's 1024-token default truncates long NLI judgments.
+  max_output_tokens: 8192
   # Development fallback when no OpenAI credential is available (ADR-0018) -
   # labeled "exploratory_same_provider_judge" in the run record, since
   # generation is also Gemini-based:

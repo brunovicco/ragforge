@@ -34,6 +34,7 @@ class ModelIdentity:
     model: str
     reasoning_effort: str | None
     output_schema_version: int
+    max_output_tokens: int | None = None
 
 
 @dataclass(frozen=True, slots=True)

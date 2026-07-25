@@ -454,6 +454,7 @@ def _run() -> None:
     judge_model = config["judge"]["model"]
     judge_embedding_model = config["judge"]["embedding_model"]
     judge_reasoning_effort = config["judge"].get("reasoning_effort", "medium")
+    judge_max_output_tokens = config["judge"].get("max_output_tokens", 8192)
     audit_config = config.get("audit", {})
     audit_enabled = audit_config.get("enabled", False)
     audit_provider = audit_config.get("provider", "openai")
@@ -613,6 +614,7 @@ def _run() -> None:
         judge_model,
         judge_embedding_model,
         judge_reasoning_effort,
+        judge_max_output_tokens,
         cache,
         gemini_max_in_flight,
     )
