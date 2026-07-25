@@ -53,8 +53,9 @@ evaluate() as a whole - the granularity available at this boundary.
 """
 
 import json
+import math
 import os
-from typing import Protocol, runtime_checkable
+from typing import Protocol, cast, runtime_checkable
 
 import instructor
 from google import genai
@@ -76,7 +77,8 @@ from ragforge.evaluation.judge_ports import (
 from ragforge.generation.errors import GenerationError
 
 _DEFAULT_MAX_IN_FLIGHT = 4
-_OUTPUT_SCHEMA_VERSION = 1
+_METRIC_SCORE_ATTEMPTS = 2
+_OUTPUT_SCHEMA_VERSION = 2
 ABSTENTION_PROMPT_VERSION = "abstention-ptbr-v1"
 
 _ABSTENTION_SYSTEM_PROMPT = """Você avalia se uma resposta legal/regulatória em português \
@@ -149,6 +151,12 @@ class _ScoredMetric(Protocol):
     """Shape shared by ragas.metrics.collections' single-turn metric classes."""
 
     def score(self, **kwargs: object) -> object: ...  # returns a ragas MetricResult (has .value)
+
+
+class _MetricResult(Protocol):
+    """Minimal result shape exposed by RAGAS collection metrics."""
+
+    value: float
 
 
 @runtime_checkable
@@ -227,13 +235,18 @@ class RagasJudge:
     def _evaluate_uncached(self, sample: JudgeSample) -> JudgeResult:
         try:
             with self._limiter:
-                faithfulness_result = self._faithfulness.score(
+                faithfulness_score = _score_metric(
+                    self._faithfulness,
+                    "faithfulness",
                     user_input=sample.question,
                     response=sample.answer,
                     retrieved_contexts=list(sample.contexts),
                 )
-                answer_relevancy_result = self._answer_relevancy.score(
-                    user_input=sample.question, response=sample.answer
+                answer_relevancy_score = _score_metric(
+                    self._answer_relevancy,
+                    "answer_relevancy",
+                    user_input=sample.question,
+                    response=sample.answer,
                 )
                 abstention = self._abstention_llm.generate(
                     _ABSTENTION_PROMPT_TEMPLATE.format(
@@ -248,12 +261,26 @@ class RagasJudge:
 
         return JudgeResult(
             schema_version=_OUTPUT_SCHEMA_VERSION,
-            faithfulness=MetricScore(score=float(faithfulness_result.value)),  # type: ignore[attr-defined]
-            answer_relevancy=MetricScore(score=float(answer_relevancy_result.value)),  # type: ignore[attr-defined]
+            faithfulness=MetricScore(score=faithfulness_score),
+            answer_relevancy=MetricScore(score=answer_relevancy_score),
             abstention=AbstentionJudgment(
                 appropriate=abstention.appropriate, rationale=abstention.rationale
             ),
         )
+
+
+def _score_metric(metric: _ScoredMetric, name: str, **kwargs: object) -> float:
+    """Return one valid bounded score, retrying a semantically invalid result once."""
+    invalid_value: float | None = None
+    for _attempt in range(_METRIC_SCORE_ATTEMPTS):
+        result = cast(_MetricResult, metric.score(**kwargs))
+        value = float(result.value)
+        if math.isfinite(value) and 0.0 <= value <= 1.0:
+            return value
+        invalid_value = value
+    raise ValueError(
+        f"{name} returned invalid score {invalid_value!r} after {_METRIC_SCORE_ATTEMPTS} attempts"
+    )
 
 
 def _serialize_result(result: JudgeResult) -> str:
@@ -264,7 +291,8 @@ def _serialize_result(result: JudgeResult) -> str:
             "answer_relevancy": result.answer_relevancy.score,
             "abstention_appropriate": result.abstention.appropriate,
             "abstention_rationale": result.abstention.rationale,
-        }
+        },
+        allow_nan=False,
     )
 
 
@@ -272,8 +300,8 @@ def _deserialize_result(raw: str) -> JudgeResult:
     payload = json.loads(raw)
     return JudgeResult(
         schema_version=payload["schema_version"],
-        faithfulness=MetricScore(score=payload["faithfulness"]),
-        answer_relevancy=MetricScore(score=payload["answer_relevancy"]),
+        faithfulness=MetricScore(score=float(payload["faithfulness"])),
+        answer_relevancy=MetricScore(score=float(payload["answer_relevancy"])),
         abstention=AbstentionJudgment(
             appropriate=payload["abstention_appropriate"], rationale=payload["abstention_rationale"]
         ),

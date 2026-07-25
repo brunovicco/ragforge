@@ -22,6 +22,7 @@ golden-set curation gap already documented in ragas_judge.py (ADR-0007) and
 unchanged here - Factual Correctness, which needs one, stays out of scope.
 """
 
+import math
 from dataclasses import dataclass
 from typing import Protocol, runtime_checkable
 
@@ -53,6 +54,11 @@ class MetricScore:
     """A single scalar RAGAS metric result."""
 
     score: float
+
+    def __post_init__(self) -> None:
+        """Reject values that cannot represent a bounded evaluation score."""
+        if not math.isfinite(self.score) or not 0.0 <= self.score <= 1.0:
+            raise ValueError("metric score must be finite and between 0 and 1")
 
 
 @dataclass(frozen=True, slots=True)
