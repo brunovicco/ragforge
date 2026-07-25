@@ -626,21 +626,46 @@ def test_build_judge_factory_constructs_an_openai_judge(monkeypatch: pytest.Monk
         model: str,
         embedding_model: str,
         reasoning_effort: str = "medium",
+        max_output_tokens: int = 8192,
         api_key: str | None = None,
         cache: object = None,
         max_in_flight: int = 4,
     ) -> str:
-        calls.append((model, embedding_model, reasoning_effort, cache, max_in_flight))
+        calls.append(
+            (
+                model,
+                embedding_model,
+                reasoning_effort,
+                max_output_tokens,
+                cache,
+                max_in_flight,
+            )
+        )
         return "fake-openai-judge"
 
     monkeypatch.setattr(run_strategies, "build_openai_ragas_judge", fake_build_openai_ragas_judge)
 
     factory = run_strategies._build_judge_factory(
-        "openai", "gpt-5.4-mini-2026-03-17", "text-embedding-3-small", "medium", None, 4
+        "openai",
+        "gpt-5.4-mini-2026-03-17",
+        "text-embedding-3-small",
+        "medium",
+        8192,
+        None,
+        4,
     )
     factory()
 
-    assert calls == [("gpt-5.4-mini-2026-03-17", "text-embedding-3-small", "medium", None, 4)]
+    assert calls == [
+        (
+            "gpt-5.4-mini-2026-03-17",
+            "text-embedding-3-small",
+            "medium",
+            8192,
+            None,
+            4,
+        )
+    ]
 
 
 def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -660,7 +685,13 @@ def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.Monke
     monkeypatch.setattr(run_strategies, "build_gemini_ragas_judge", fake_build_gemini_ragas_judge)
 
     factory = run_strategies._build_judge_factory(
-        "gemini", "gemini-3.1-flash-lite", "gemini-embedding-001", "medium", None, 4
+        "gemini",
+        "gemini-3.1-flash-lite",
+        "gemini-embedding-001",
+        "medium",
+        8192,
+        None,
+        4,
     )
     factory()
 
@@ -670,7 +701,7 @@ def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.Monke
 def test_build_judge_factory_fails_closed_for_an_unknown_provider() -> None:
     """An unrecognized provider fails fast rather than silently falling back to either adapter."""
     with pytest.raises(SystemExit, match="unknown judge provider"):
-        run_strategies._build_judge_factory("anthropic", "claude", "embed", "medium", None, 4)
+        run_strategies._build_judge_factory("anthropic", "claude", "embed", "medium", 8192, None, 4)
 
 
 def test_verify_resume_identity_passes_when_everything_matches() -> None:

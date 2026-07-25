@@ -194,6 +194,7 @@ def _build_judge_factory(
     model: str,
     embedding_model: str,
     reasoning_effort: str,
+    max_output_tokens: int,
     cache: LLMCache | None,
     max_in_flight: int,
 ) -> Callable[[], AnswerQualityJudge]:
@@ -217,6 +218,7 @@ def _build_judge_factory(
             model,
             embedding_model,
             reasoning_effort=reasoning_effort,
+            max_output_tokens=max_output_tokens,
             cache=cache,
             max_in_flight=max_in_flight,
         )

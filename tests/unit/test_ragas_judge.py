@@ -189,7 +189,7 @@ def test_versioned_gpt_snapshot_uses_responses_api_parameters() -> None:
     llm = object.__new__(_OpenAIResponsesInstructorLLM)
     llm.model = "gpt-5.4-mini-2026-03-17"
     llm.model_args = {
-        "max_tokens": 1024,
+        "max_tokens": 8192,
         "temperature": 0.01,
         "top_p": 0.1,
         "reasoning_effort": "medium",
@@ -198,9 +198,20 @@ def test_versioned_gpt_snapshot_uses_responses_api_parameters() -> None:
     mapped = llm._map_openai_params()
 
     assert mapped == {
-        "max_output_tokens": 1024,
+        "max_output_tokens": 8192,
         "reasoning": {"effort": "medium"},
     }
+
+
+def test_openai_judge_rejects_a_non_positive_output_budget() -> None:
+    """An invalid structured-output budget fails before client construction."""
+    with pytest.raises(ValueError, match="max_output_tokens must be positive"):
+        build_openai_ragas_judge(
+            "gpt-5.4-mini-2026-03-17",
+            "text-embedding-3-small",
+            max_output_tokens=0,
+            api_key="test-key",
+        )
 
 
 def test_openai_answer_relevancy_embeddings_use_an_async_client() -> None:
@@ -225,3 +236,42 @@ def test_a_cache_hit_skips_the_metric_and_abstention_calls_entirely(tmp_path: Pa
     assert len(faithfulness.calls) == 1, "the second evaluate() made no additional metric call"
     assert len(answer_relevancy.calls) == 1
     assert len(abstention_llm.calls) == 1
+
+
+def test_output_budget_participates_in_judge_cache_identity(tmp_path: Path) -> None:
+    """A larger structured-output budget cannot reuse a result produced under a smaller cap."""
+    cache = FileLLMCache(tmp_path)
+    first_identity = ModelIdentity(
+        provider="openai",
+        model="model",
+        reasoning_effort="medium",
+        output_schema_version=1,
+        max_output_tokens=4096,
+    )
+    second_identity = ModelIdentity(
+        provider="openai",
+        model="model",
+        reasoning_effort="medium",
+        output_schema_version=1,
+        max_output_tokens=8192,
+    )
+    first_faithfulness = _FakeMetric(lambda **kwargs: _FakeMetricResult(0.9))
+    second_faithfulness = _FakeMetric(lambda **kwargs: _FakeMetricResult(0.9))
+
+    RagasJudge(
+        first_faithfulness,
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(0.8)),
+        _FakeAbstentionLLM(),
+        first_identity,
+        cache=cache,
+    ).evaluate(_sample())
+    RagasJudge(
+        second_faithfulness,
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(0.8)),
+        _FakeAbstentionLLM(),
+        second_identity,
+        cache=cache,
+    ).evaluate(_sample())
+
+    assert len(first_faithfulness.calls) == 1
+    assert len(second_faithfulness.calls) == 1

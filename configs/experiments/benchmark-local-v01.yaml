@@ -35,6 +35,7 @@ judge:
   model: gpt-5.4-mini-2026-03-17
   embedding_model: text-embedding-3-small
   reasoning_effort: medium
+  max_output_tokens: 8192
 audit:
   enabled: false
   provider: openai

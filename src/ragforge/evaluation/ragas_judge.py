@@ -208,6 +208,7 @@ class RagasJudge:
             provider=self._identity.provider,
             model=self._identity.model,
             reasoning_effort=self._identity.reasoning_effort,
+            max_output_tokens=self._identity.max_output_tokens,
             output_schema_version=self._identity.output_schema_version,
             abstention_prompt_version=ABSTENTION_PROMPT_VERSION,
             question=sample.question,
@@ -351,6 +352,7 @@ def build_openai_ragas_judge(
     api_key: str | None = None,
     cache: LLMCache | None = None,
     max_in_flight: int = _DEFAULT_MAX_IN_FLIGHT,
+    max_output_tokens: int = 8192,
 ) -> RagasJudge:
     """Construct a RagasJudge backed by real OpenAI models via ragas + instructor (ADR-0018).
 
@@ -367,6 +369,9 @@ def build_openai_ragas_judge(
         reasoning_effort: Threaded straight into every underlying
             chat.completions.create() call (ragas.llms.InstructorLLM passes
             unknown kwargs through) - ADR-0018's "medium" default.
+        max_output_tokens: Responses API budget shared by hidden reasoning
+            and the structured output. RAGAS's 1024-token default is too
+            small for long NLI statement lists.
         api_key: Overrides OPENAI_API_KEY from the environment.
         cache: Optional LLMCache (ADR-0004), forwarded to the RagasJudge.
         max_in_flight: Bounds concurrent evaluate() calls to this provider,
@@ -380,6 +385,8 @@ def build_openai_ragas_judge(
         raise GenerationError(
             "no OpenAI API key found: set OPENAI_API_KEY, or pass api_key explicitly"
         )
+    if max_output_tokens <= 0:
+        raise ValueError("max_output_tokens must be positive")
     try:
         instructor_client = instructor.from_provider(
             f"openai/{llm_model_name}",
@@ -396,12 +403,14 @@ def build_openai_ragas_judge(
         model=llm_model_name,
         provider="openai",
         reasoning_effort=reasoning_effort,
+        max_tokens=max_output_tokens,
     )
     abstention_llm = _OpenAIResponsesInstructorLLM(
         client=instructor_client,
         model=llm_model_name,
         provider="openai",
         reasoning_effort=reasoning_effort,
+        max_tokens=max_output_tokens,
         system_prompt=_ABSTENTION_SYSTEM_PROMPT,
     )
     return RagasJudge(
@@ -413,6 +422,7 @@ def build_openai_ragas_judge(
             model=llm_model_name,
             reasoning_effort=reasoning_effort,
             output_schema_version=_OUTPUT_SCHEMA_VERSION,
+            max_output_tokens=max_output_tokens,
         ),
         cache=cache,
         max_in_flight=max_in_flight,
