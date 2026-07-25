@@ -18,24 +18,14 @@ strategies:
   - raptor
   - graphrag
 embedding:
-  # ADR-0013: local is the operational default - no credentials needed,
-  # provider-free execution - regardless of the embeddings-ptbr experiment's
-  # (ADR-0005) quality result (Dense recall@5=0.947 for gemini-embedding-001
-  # vs. BAAI/bge-m3's 0.789 on the real golden set; see
-  # configs/experiments/embeddings-ptbr.yaml and
-  # experiments/embeddings-ptbr/runs.jsonl). Qwen3-Embedding-0.6B is not a
-  # predeclared quality winner - the full RegRAG-BR experiment determines
-  # relative quality (ADR-0013's own acceptance criteria).
-  provider: local
-  model: Qwen/Qwen3-Embedding-0.6B
-  # Matryoshka truncation size; only used when provider: gemini (pgvector's
-  # HNSW index caps at 2000 dimensions). Ignored for provider: local - the
-  # model reports its own native dimension.
+  # Canonical publishable configuration (ADR-0005/ADR-0013): the isolated
+  # PT-BR comparison selected gemini-embedding-001 on retrieval quality.
+  # configs/experiments/benchmark-local-v01.yaml keeps Qwen as the
+  # credential-free operational alternative without relabeling it a winner.
+  provider: gemini
+  model: gemini-embedding-001
+  # Matryoshka truncation keeps the vector within pgvector HNSW's limit.
   dimensions: 1536
-  # To use the hosted comparator instead:
-  #   provider: gemini
-  #   model: gemini-embedding-001
-  # (requires GEMINI_API_KEY or GOOGLE_API_KEY)
 generation:
   # Not chosen via a dedicated comparison (unlike the embedding model,
   # ADR-0005) - a placeholder, not a data-driven winner, matching the
@@ -76,7 +66,7 @@ retrieval:
   top_k: 5
   rerank_pool: 50
 llm_cache:
-  mode: cache  # cache | live (ADR-0004)
+  mode: live  # full deterministic replay remains future ADR-0004 work
 execution:
   # ADR-0014. Both optional - omitting this whole section falls back to the
   # same defaults. Not the full execution.stages.* schema from the ADR (a
@@ -85,3 +75,11 @@ execution:
   # Gemini ProviderLimiter shared by the embedder/generator/judge.
   answer_quality_workers: 5
   gemini_max_in_flight: 4
+  embedding_cache_dir: .ragforge/cache/embeddings
+  index_cache_dir: .ragforge/cache/indexes
+pricing:
+  # Prices are deliberately declared by the experiment, never hard-coded in
+  # code. Fill these with the provider's dated prices to publish cost.
+  generation:
+    input_per_million_usd: null
+    output_per_million_usd: null

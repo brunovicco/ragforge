@@ -44,6 +44,22 @@ class SparseChunkStore:
             },
         )
 
+    def drop_index(self) -> None:
+        """Delete the bound index if it exists."""
+        self._client.indices.delete(index=self._index, ignore=[404])
+
+    def has_exact_chunk_ids(self, expected_ids: set[str]) -> bool:
+        """Return whether the index exists and contains exactly ``expected_ids``."""
+        if not self._client.indices.exists(index=self._index):
+            return False
+        if self._client.count(index=self._index)["count"] != len(expected_ids):
+            return False
+        response = self._client.mget(
+            index=self._index,
+            body={"ids": sorted(expected_ids)},
+        )
+        return all(document.get("found", False) for document in response["docs"])
+
     def index_chunks(self, chunks: list[Chunk]) -> None:
         """Bulk-index chunks, keyed by chunk_id so re-indexing overwrites in place."""
         actions = (

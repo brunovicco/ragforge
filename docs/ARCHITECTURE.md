@@ -2,7 +2,15 @@
 
 ## Context
 
-Describe the business capability owned by this service and its upstream and downstream dependencies.
+RAGForge is an experimental evaluation platform, not an end-user RAG service.
+It compares retrieval strategies over the versioned RegRAG-BR regulatory
+corpus, generates grounded answers, scores retrieval and answer quality, and
+produces tamper-evident evidence for every publishable run.
+
+External dependencies are official corpus snapshots, hosted Gemini/OpenAI
+model APIs, Postgres+pgvector, and OpenSearch. LightRAG uses repository-local
+storage. The future API, dashboard, adaptive router, and corrective workflow
+consume benchmark results but are not production entrypoints in v0.1.
 
 ## Layers
 
@@ -51,4 +59,20 @@ domain      -> no outer layer
 
 ## Diagrams
 
-Add C4 context/container diagrams and sequence diagrams for critical flows.
+```text
+corpus manifest + split + judgments
+  -> integrity gate
+  -> extraction and legal structural chunking
+  -> embedding and strategy-specific indexing
+  -> retrieval over the frozen test split
+  -> cited answer generation
+  -> independent judge and optional semantic audit
+  -> aggregate metrics + per-question evidence + checksums
+```
+
+The current composition root is `ragforge.evaluation.run`. `domain/` owns
+framework-free query, chunk, judgment, and retrieval contracts. Retrieval,
+generation, embedding, and storage packages implement boundary behavior.
+`evaluation/` coordinates the benchmark and owns its evidence/reporting
+contracts. `application/`, `entrypoints/`, and `apps/` remain scaffolding for
+future product surfaces.

@@ -15,6 +15,14 @@ The embedding comparison is an **isolated experiment**, not a dimension of the m
 2. The winner is **frozen** for all remaining strategies and the main benchmark matrix. The choice and its supporting numbers are recorded in `configs/experiments/embeddings-ptbr.yaml`.
 3. The main matrix reports a single embedding configuration, declared in the README.
 
+### Clarification after ADR-0013
+
+`gemini-embedding-001` remains the quality-selected embedding for the canonical,
+publishable matrix. ADR-0013 adds `Qwen/Qwen3-Embedding-0.6B` as a separate local
+operational configuration so the embedding stage can run without provider credentials.
+The local default is not a replacement winner and its results must carry a distinct
+configuration identity.
+
 ## Consequences
 
 - Controlled scope: one full indexing pass instead of two; RAPTOR and GraphRAG (highest-effort items) index once.

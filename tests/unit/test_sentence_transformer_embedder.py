@@ -19,6 +19,7 @@ class _FakeSentenceTransformer:
     """Records the arguments it was constructed with; encodes deterministically."""
 
     last_kwargs: ClassVar[dict[str, Any]] = {}
+    last_encode_kwargs: ClassVar[dict[str, Any]] = {}
 
     def __init__(
         self, model_name: str, device: str | None = None, revision: str | None = None
@@ -33,7 +34,15 @@ class _FakeSentenceTransformer:
     def get_embedding_dimension(self) -> int:
         return self._dimensions
 
-    def encode(self, texts: list[str], convert_to_numpy: bool, normalize_embeddings: bool) -> Any:
+    def encode(
+        self,
+        texts: list[str],
+        convert_to_numpy: bool,
+        normalize_embeddings: bool,
+        show_progress_bar: bool = False,
+    ) -> Any:
+        _FakeSentenceTransformer.last_encode_kwargs = {"show_progress_bar": show_progress_bar}
+
         class _FakeArray:
             def __init__(self, rows: int, cols: int) -> None:
                 self._rows, self._cols = rows, cols
@@ -84,6 +93,15 @@ def test_embed_returns_one_vector_per_text_matching_the_model_dimension() -> Non
 
     assert len(vectors) == 2
     assert all(len(vector) == 3 for vector in vectors)
+
+
+def test_embed_requests_a_progress_bar_so_a_long_cpu_encode_stays_observable() -> None:
+    """embed() asks encode() to render a progress bar - the only visibility into a slow CPU run."""
+    embedder = SentenceTransformerEmbedder("Qwen/Qwen3-Embedding-0.6B")
+
+    embedder.embed(["a", "b"])
+
+    assert _FakeSentenceTransformer.last_encode_kwargs["show_progress_bar"] is True
 
 
 def test_load_failure_is_translated_to_embedding_error(monkeypatch: pytest.MonkeyPatch) -> None:

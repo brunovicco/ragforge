@@ -94,3 +94,14 @@ def test_append_records_jsonl_writes_one_json_line_per_record(tmp_path: Path) ->
     assert parsed[0]["strategy"] == "dense"
     assert parsed[1]["strategy"] == "sparse_bm25"
     assert parsed[0]["metrics"] == {"recall_at_k": 1.0, "citation_accuracy": 1.0}
+
+
+def test_append_records_jsonl_is_idempotent_for_a_resumed_strategy(tmp_path: Path) -> None:
+    """Resume cannot duplicate an already persisted strategy/question record."""
+    path = tmp_path / "records.jsonl"
+    records = merge_question_records("dense", [_retrieval("q1")], [_answer("q1")])
+
+    append_records_jsonl(path, records)
+    append_records_jsonl(path, records)
+
+    assert len(path.read_text(encoding="utf-8").splitlines()) == 1

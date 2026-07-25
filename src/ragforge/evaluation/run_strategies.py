@@ -135,23 +135,28 @@ def _build_embedder(
     dimensions: int | None,
     cache: LLMCache | None,
     gemini_max_in_flight: int,
+    device: str | None = None,
 ) -> tuple[EmbeddingModel, EmbeddingIdentity]:
     """Construct the configured embedding provider and its identity (ADR-0013).
 
     ``provider: local`` is the operational default: no credentials needed,
     via SentenceTransformerEmbedder - ``dimensions`` is ignored since the
     model reports its own, and it has no hosted-call cache/limiter to wire
-    (there's no network call to skip). ``provider: gemini`` is the optional
-    hosted comparator, via GoogleGeminiEmbedder with ``dimensions``
-    requesting a truncated (Matryoshka) size, ``cache`` (ADR-0004) consulted
-    per text, and ``gemini_max_in_flight`` bounding concurrent calls
-    (ADR-0014). Never a silent fallback between the two.
+    (there's no network call to skip). ``device`` (cpu/mps/cuda) is a pure
+    execution knob, not part of ``EmbeddingIdentity`` - it selects hardware,
+    not a different embedding space, and defaults to sentence-transformers'
+    own auto-detection (``None``) when omitted, matching prior behavior.
+    ``provider: gemini`` is the optional hosted comparator, via
+    GoogleGeminiEmbedder with ``dimensions`` requesting a truncated
+    (Matryoshka) size, ``cache`` (ADR-0004) consulted per text, and
+    ``gemini_max_in_flight`` bounding concurrent calls (ADR-0014). Never a
+    silent fallback between the two.
 
     Raises:
         SystemExit: If ``provider`` isn't one of "local"/"gemini".
     """
     if provider == "local":
-        local_embedder = SentenceTransformerEmbedder(model)
+        local_embedder = SentenceTransformerEmbedder(model, device=device)
         identity = EmbeddingIdentity(
             provider="local",
             model=model,

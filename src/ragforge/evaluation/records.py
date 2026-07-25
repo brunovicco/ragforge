@@ -11,6 +11,7 @@ just an aggregate average that a failure could silently shrink.
 import json
 from dataclasses import dataclass
 from pathlib import Path
+from typing import cast
 
 
 @dataclass(frozen=True, slots=True)
@@ -112,8 +113,54 @@ def merge_question_records(
 
 
 def append_records_jsonl(path: Path, records: list[QuestionRecord]) -> None:
-    """Append each record as one JSON line to ``path`` (created if it does not exist)."""
+    """Append records not already present by strategy/question identity."""
+    existing_keys = (
+        {(record.strategy, record.question_id) for record in read_records_jsonl(path)}
+        if path.exists()
+        else set()
+    )
     with path.open("a", encoding="utf-8") as handle:
         for record in records:
+            if (record.strategy, record.question_id) in existing_keys:
+                continue
             handle.write(json.dumps(record.to_json_dict(), ensure_ascii=False))
             handle.write("\n")
+
+
+def read_records_jsonl(path: Path) -> list[QuestionRecord]:
+    """Load stored records, keeping the latest unique strategy/question pair."""
+    if not path.exists():
+        return []
+    records_by_key: dict[tuple[str, str], QuestionRecord] = {}
+    for line in path.read_text(encoding="utf-8").splitlines():
+        payload = cast(dict[str, object], json.loads(line))
+        metrics_payload = cast(dict[str, object], payload["metrics"])
+        metrics: dict[str, float] = {}
+        for key, value in metrics_payload.items():
+            if isinstance(value, bool) or not isinstance(value, (int, float)):
+                raise ValueError(f"record metric {key!r} must be numeric")
+            metrics[str(key)] = float(value)
+        record = QuestionRecord(
+            question_id=str(payload["question_id"]),
+            query_class=(
+                str(payload["query_class"]) if payload.get("query_class") is not None else None
+            ),
+            strategy=str(payload["strategy"]),
+            unanswerable=bool(payload["unanswerable"]),
+            retrieval_status=str(payload["retrieval_status"]),
+            generation_status=str(payload["generation_status"]),
+            judge_status=str(payload["judge_status"]),
+            retrieved_structural_ids=tuple(
+                str(value) for value in cast(list[object], payload["retrieved_structural_ids"])
+            ),
+            answer_text=(
+                str(payload["answer_text"]) if payload.get("answer_text") is not None else None
+            ),
+            answer_citations=tuple(
+                str(value) for value in cast(list[object], payload["answer_citations"])
+            ),
+            metrics=metrics,
+            errors=tuple(str(value) for value in cast(list[object], payload["errors"])),
+        )
+        records_by_key[(record.strategy, record.question_id)] = record
+    return list(records_by_key.values())

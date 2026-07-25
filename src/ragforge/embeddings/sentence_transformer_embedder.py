@@ -60,12 +60,18 @@ class SentenceTransformerEmbedder:
 
         Embeddings are L2-normalized so a plain dot product is equivalent to
         cosine similarity, matching pgvector's cosine distance operator.
+        ``show_progress_bar=True`` renders a tqdm bar to stderr - the only
+        visibility into this call's progress while it runs, which matters
+        because CPU-bound encoding of a full corpus can take a long time
+        with no other output in between.
 
         Raises:
             EmbeddingError: If encoding fails.
         """
         try:
-            vectors = self._model.encode(texts, convert_to_numpy=True, normalize_embeddings=True)
+            vectors = self._model.encode(
+                texts, convert_to_numpy=True, normalize_embeddings=True, show_progress_bar=True
+            )
         except Exception as exc:
             raise EmbeddingError(f"failed to encode {len(texts)} text(s): {exc}") from exc
         return cast(list[list[float]], vectors.tolist())

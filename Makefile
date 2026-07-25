@@ -1,4 +1,4 @@
-.PHONY: install lint type test quality bench bench-live api dashboard infra-up infra-down
+.PHONY: install lint type test quality bench bench-live bench-live-local api dashboard infra-up infra-down
 
 install:
 	uv sync --all-groups
@@ -23,6 +23,9 @@ bench:
 # Live benchmark: calls providers. Expect ±2pp tolerance vs README numbers (ADR-0004).
 bench-live:
 	uv run python -m ragforge.evaluation.run --mode live --config configs/experiments/benchmark-v01.yaml
+
+bench-live-local:
+	uv run python -m ragforge.evaluation.run --mode live --config configs/experiments/benchmark-local-v01.yaml
 
 api:
 	uv run uvicorn apps.api.main:app --reload

@@ -15,11 +15,11 @@ Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; 
 | [0009](0009-scaffold-via-engineering-harness.md) | Scaffold and quality gates via claude-python-engineering-harness | Accepted |
 | [0010](0010-graphrag-evaluation-scope.md) | GraphRAG evaluation scope and provenance recovery | Accepted |
 | [0011](0011-structural-id-collision-in-amended-norms.md) | Structural-ID collisions in amended norms | Accepted |
-| [0012](0012-benchmark-integrity-and-end-to-end-evaluation.md) | Enforce benchmark corpus integrity and end-to-end evaluation | Proposed |
-| [0013](0013-provider-neutral-embedding-backends.md) | Adopt provider-neutral embedding backends with a local default | Proposed |
-| [0014](0014-bounded-parallel-benchmark-execution.md) | Use bounded, deterministic parallel execution for benchmark stages | Proposed |
-| [0015](0015-summary-augmented-chunking.md) | Evaluate Summary-Augmented Chunking as a separate retrieval strategy | Proposed |
-| [0016](0016-post-generation-citation-audit.md) | Add bounded post-generation citation and support auditing | Proposed |
-| [0017](0017-auditable-evidence-lineage.md) | Produce auditable and tamper-evident evidence lineage for every run | Proposed |
-| [0018](0018-independent-llm-judge-provider.md) | Use an independent and calibrated OpenAI LLM judge | Proposed |
+| [0012](0012-benchmark-integrity-and-end-to-end-evaluation.md) | Enforce benchmark corpus integrity and end-to-end evaluation | Accepted |
+| [0013](0013-provider-neutral-embedding-backends.md) | Adopt provider-neutral embedding backends with a local default | Accepted |
+| [0014](0014-bounded-parallel-benchmark-execution.md) | Use bounded, deterministic parallel execution for benchmark stages | Accepted |
+| [0015](0015-summary-augmented-chunking.md) | Evaluate Summary-Augmented Chunking as a separate retrieval strategy | Accepted |
+| [0016](0016-post-generation-citation-audit.md) | Add bounded post-generation citation and support auditing | Accepted |
+| [0017](0017-auditable-evidence-lineage.md) | Produce auditable and tamper-evident evidence lineage for every run | Accepted |
+| [0018](0018-independent-llm-judge-provider.md) | Use an independent and calibrated OpenAI LLM judge | Accepted |
 | [0019](0019-temporal-graphrag-experimental-strategy.md) | Add Temporal GraphRAG only as a future experimental strategy | Proposed |

@@ -45,11 +45,12 @@ def test_all_ids_concatenates_every_partition_in_order(tmp_path: Path) -> None:
     assert split.all_ids == ("q1", "q2", "q3", "q4")
 
 
-def test_load_real_split_selects_all_230_questions_as_test() -> None:
-    """The real split puts every currently-curated question in the test partition."""
+def test_load_real_split_reserves_validation_without_losing_questions() -> None:
+    """The real split partitions all 230 curated questions without overlap."""
     split = load_split(REAL_SPLIT_PATH)
 
     assert split.train == ()
-    assert split.validation == ()
-    assert len(split.test) == 230
-    assert len(set(split.test)) == 230
+    assert len(split.validation) == 36
+    assert len(split.test) == 194
+    assert len(set(split.all_ids)) == 230
+    assert not set(split.validation) & set(split.test)

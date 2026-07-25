@@ -6,8 +6,14 @@ external adapter - every function here takes already-computed data and
 returns a string or a dict.
 """
 
+from collections import defaultdict
+from statistics import mean
+
+from ragforge.domain.models import Judgment
 from ragforge.embeddings.identity import EmbeddingIdentity
+from ragforge.evaluation.lineage_ports import GenerationLineage
 from ragforge.evaluation.ragas_judge import ABSTENTION_PROMPT_VERSION
+from ragforge.evaluation.records import QuestionRecord
 
 # No reranker model has been chosen via a dedicated comparison (unlike the
 # embedding model, ADR-0005); a placeholder, not a data-driven winner -
@@ -17,6 +23,85 @@ _CONTEXTUALIZER_MODEL = "gemini-3.1-flash-lite"
 _SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
 _GRAPHRAG_MODE = "local"
+
+
+def _aggregate_record_group(records: list[QuestionRecord]) -> dict[str, object]:
+    """Aggregate every available numeric metric with explicit coverage."""
+    values_by_metric: dict[str, list[float]] = defaultdict(list)
+    for record in records:
+        for metric, value in record.metrics.items():
+            values_by_metric[metric].append(value)
+    return {
+        "selected": len(records),
+        "retrieval_succeeded": sum(record.retrieval_status == "succeeded" for record in records),
+        "answer_succeeded": sum(record.generation_status == "succeeded" for record in records),
+        "metrics": {
+            metric: {"mean": mean(values), "n": len(values)}
+            for metric, values in sorted(values_by_metric.items())
+        },
+    }
+
+
+def build_metric_breakdowns(
+    records: list[QuestionRecord],
+    judgments: list[Judgment],
+) -> dict[str, object]:
+    """Aggregate per-strategy metrics by query class and relevant document."""
+    judgment_by_id = {judgment.question_id: judgment for judgment in judgments}
+    by_class: dict[tuple[str, str], list[QuestionRecord]] = defaultdict(list)
+    by_document: dict[tuple[str, str], list[QuestionRecord]] = defaultdict(list)
+    for record in records:
+        by_class[(record.strategy, record.query_class or "unknown")].append(record)
+        judgment = judgment_by_id[record.question_id]
+        documents = (
+            {judged.ref.norm for judged in judgment.relevant_refs}
+            if judgment.relevant_refs
+            else {"__unanswerable__"}
+        )
+        for document in documents:
+            by_document[(record.strategy, document)].append(record)
+
+    def _render(
+        grouped: dict[tuple[str, str], list[QuestionRecord]],
+    ) -> dict[str, dict[str, object]]:
+        rendered: dict[str, dict[str, object]] = {}
+        for (strategy, dimension), grouped_records in sorted(grouped.items()):
+            rendered.setdefault(strategy, {})[dimension] = _aggregate_record_group(grouped_records)
+        return rendered
+
+    return {
+        "by_query_class": _render(by_class),
+        "by_document": _render(by_document),
+    }
+
+
+def summarize_generation_usage(
+    lineage_by_strategy: dict[str, list[GenerationLineage]],
+    *,
+    input_price_per_million_usd: float | None,
+    output_price_per_million_usd: float | None,
+) -> dict[str, dict[str, float | int | None]]:
+    """Summarize generation-only latency, tokens, cache hits, and optional cost."""
+    summaries: dict[str, dict[str, float | int | None]] = {}
+    for strategy, entries in sorted(lineage_by_strategy.items()):
+        prompt_tokens = sum(entry.prompt_tokens or 0 for entry in entries)
+        completion_tokens = sum(entry.completion_tokens or 0 for entry in entries)
+        estimated_cost: float | None = None
+        if input_price_per_million_usd is not None and output_price_per_million_usd is not None:
+            estimated_cost = (
+                prompt_tokens * input_price_per_million_usd
+                + completion_tokens * output_price_per_million_usd
+            ) / 1_000_000
+        summaries[strategy] = {
+            "calls": len(entries),
+            "latency_seconds": sum(entry.latency_seconds for entry in entries),
+            "prompt_tokens": prompt_tokens,
+            "completion_tokens": completion_tokens,
+            "total_tokens": sum(entry.total_tokens or 0 for entry in entries),
+            "cache_hits": sum(entry.cache_hit for entry in entries),
+            "estimated_cost_usd": estimated_cost,
+        }
+    return summaries
 
 
 def format_results_table(
@@ -82,6 +167,9 @@ def build_run_record(
     n_chunks: int,
     top_k: int,
     run_metrics: dict[str, dict[str, float]],
+    metric_breakdowns: dict[str, object] | None = None,
+    stage_durations_seconds: dict[str, float] | None = None,
+    generation_usage: dict[str, dict[str, float | int | None]] | None = None,
 ) -> dict[str, object]:
     """Assemble the JSON-serializable run record written to experiments/<run_id>/results.json.
 
@@ -127,5 +215,8 @@ def build_run_record(
         "k": top_k,
         "n_chunks": n_chunks,
         "metrics": run_metrics,
+        "metric_breakdowns": metric_breakdowns or {},
+        "stage_durations_seconds": stage_durations_seconds or {},
+        "generation_usage": generation_usage or {},
         "records_path": "records.jsonl",
     }

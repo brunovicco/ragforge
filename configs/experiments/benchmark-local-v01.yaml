@@ -1,0 +1,56 @@
+# Provider-free embedding variant of benchmark-v01.yaml (ADR-0013).
+# It keeps the same corpus, split, strategies, generator, and independent
+# judge as the canonical benchmark; only the embedding backend changes.
+run_id: null
+corpus:
+  snapshot: datasets/corpus/
+  hash: null
+dataset:
+  path: datasets/regrag-br/
+  split: test
+strategies:
+  - dense
+  - sparse_bm25
+  - hybrid_rrf
+  - reranked
+  - contextual
+  - parent_child
+  - sac
+  - sac_contextual
+  - raptor
+  - graphrag
+embedding:
+  provider: local
+  model: Qwen/Qwen3-Embedding-0.6B
+  dimensions: 1024
+  # CPU is the stable default on the current development machine. Override
+  # with cuda on a compatible NVIDIA host; device is execution metadata, not
+  # a different semantic embedding identity.
+  device: cpu
+generation:
+  model: gemini-3.1-flash-lite
+  temperature: 0
+judge:
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  embedding_model: text-embedding-3-small
+  reasoning_effort: medium
+audit:
+  enabled: false
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  reasoning_effort: medium
+retrieval:
+  top_k: 5
+  rerank_pool: 50
+llm_cache:
+  mode: live
+execution:
+  answer_quality_workers: 5
+  gemini_max_in_flight: 4
+  embedding_cache_dir: .ragforge/cache/embeddings
+  index_cache_dir: .ragforge/cache/indexes
+pricing:
+  generation:
+    input_per_million_usd: null
+    output_per_million_usd: null
