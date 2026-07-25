@@ -15,11 +15,10 @@ library):
   async ascore() path raises if the wrapped client is synchronous.
 - ragas.llms.InstructorLLM.__init__ merges any extra keyword argument (e.g.
   ``reasoning_effort="medium"``) straight into the dict it eventually passes
-  to the underlying ``client.chat.completions.create(...)`` call, and its
-  ``_map_openai_params`` already detects reasoning models (o-series,
-  gpt-5+) by name and enforces their constraints (temperature=1.0, no
-  top_p, max_completion_tokens) - so ADR-0018's ``reasoning_effort``
-  threads through cleanly with no patching needed.
+  to the underlying ``client.chat.completions.create(...)`` call. Its
+  ``_map_openai_params`` targets Chat Completions and misclassifies decimal
+  snapshots such as ``gpt-5.4-mini-*``. This adapter uses Instructor's
+  Responses API transport and maps token/reasoning parameters explicitly.
 - ragas.metrics.collections.MetricResult (what Faithfulness/AnswerRelevancy
   return) exposes only a scalar ``.value`` - no structured rationale or
   claim breakdown. Reproducing ADR-0018's illustrative
@@ -59,7 +58,7 @@ from typing import Protocol, runtime_checkable
 
 import instructor
 from google import genai
-from openai import OpenAI
+from openai import AsyncOpenAI
 from pydantic import BaseModel
 from ragas.embeddings import GoogleEmbeddings, OpenAIEmbeddings
 from ragas.llms import InstructorLLM
@@ -109,6 +108,40 @@ class _AbstentionOutput(BaseModel):
 
     appropriate: bool
     rationale: str
+
+
+class _OpenAIResponsesInstructorLLM(InstructorLLM):
+    """Map RAGAS model arguments to the OpenAI Responses API contract.
+
+    RAGAS still models OpenAI arguments as Chat Completions parameters. The
+    Instructor client beneath this class is configured with
+    ``RESPONSES_TOOLS``, so token and reasoning fields must use the Responses
+    API names before the patched client forwards them.
+    """
+
+    def _map_openai_params(self) -> dict[str, object]:
+        mapped = super()._map_openai_params()
+        corrected: dict[str, object] = dict(mapped)
+        token_limit = corrected.pop(
+            "max_completion_tokens",
+            corrected.pop("max_tokens", None),
+        )
+        if token_limit is not None:
+            corrected["max_output_tokens"] = token_limit
+        reasoning_effort = corrected.pop("reasoning_effort", None)
+        if reasoning_effort is not None:
+            corrected["reasoning"] = {"effort": reasoning_effort}
+        corrected.pop("temperature", None)
+        corrected.pop("top_p", None)
+        return corrected
+
+
+def _build_async_openai_embeddings(
+    api_key: str,
+    model: str,
+) -> OpenAIEmbeddings:
+    """Build the async embedding adapter required by AnswerRelevancy.ascore()."""
+    return OpenAIEmbeddings(client=AsyncOpenAI(api_key=api_key), model=model)
 
 
 @runtime_checkable
@@ -349,27 +382,28 @@ def build_openai_ragas_judge(
         )
     try:
         instructor_client = instructor.from_provider(
-            f"openai/{llm_model_name}", async_client=True, api_key=key
+            f"openai/{llm_model_name}",
+            async_client=True,
+            api_key=key,
+            mode=instructor.Mode.RESPONSES_TOOLS,
         )
-        openai_client = OpenAI(api_key=key)
+        ragas_embeddings = _build_async_openai_embeddings(key, embedding_model_name)
     except Exception as exc:
         raise GenerationError(f"failed to create RAGAS judge client: {exc}") from exc
 
-    ragas_llm = InstructorLLM(
+    ragas_llm = _OpenAIResponsesInstructorLLM(
         client=instructor_client,
         model=llm_model_name,
         provider="openai",
         reasoning_effort=reasoning_effort,
     )
-    abstention_llm = InstructorLLM(
+    abstention_llm = _OpenAIResponsesInstructorLLM(
         client=instructor_client,
         model=llm_model_name,
         provider="openai",
         reasoning_effort=reasoning_effort,
         system_prompt=_ABSTENTION_SYSTEM_PROMPT,
     )
-    ragas_embeddings = OpenAIEmbeddings(client=openai_client, model=embedding_model_name)
-
     return RagasJudge(
         faithfulness=Faithfulness(llm=ragas_llm),
         answer_relevancy=AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),

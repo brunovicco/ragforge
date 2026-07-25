@@ -10,6 +10,8 @@ from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.evaluation.judge_ports import JudgeSample, ModelIdentity
 from ragforge.evaluation.ragas_judge import (
     RagasJudge,
+    _build_async_openai_embeddings,
+    _OpenAIResponsesInstructorLLM,
     build_gemini_ragas_judge,
     build_openai_ragas_judge,
 )
@@ -180,6 +182,32 @@ def test_build_openai_ragas_judge_raises_when_no_api_key_is_available(
 
     with pytest.raises(GenerationError, match="no OpenAI API key"):
         build_openai_ragas_judge("gpt-5.4-mini-2026-03-17", "text-embedding-3-small")
+
+
+def test_versioned_gpt_snapshot_uses_responses_api_parameters() -> None:
+    """A decimal GPT version is mapped to the Responses API reasoning contract."""
+    llm = object.__new__(_OpenAIResponsesInstructorLLM)
+    llm.model = "gpt-5.4-mini-2026-03-17"
+    llm.model_args = {
+        "max_tokens": 1024,
+        "temperature": 0.01,
+        "top_p": 0.1,
+        "reasoning_effort": "medium",
+    }
+
+    mapped = llm._map_openai_params()
+
+    assert mapped == {
+        "max_output_tokens": 1024,
+        "reasoning": {"effort": "medium"},
+    }
+
+
+def test_openai_answer_relevancy_embeddings_use_an_async_client() -> None:
+    """RAGAS AnswerRelevancy can call aembed_text() on the configured adapter."""
+    embeddings = _build_async_openai_embeddings("test-key", "text-embedding-3-small")
+
+    assert embeddings.is_async is True
 
 
 def test_a_cache_hit_skips_the_metric_and_abstention_calls_entirely(tmp_path: Path) -> None:
