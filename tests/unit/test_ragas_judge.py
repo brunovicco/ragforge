@@ -7,7 +7,7 @@ from typing import Any
 import pytest
 
 from ragforge.adapters.llm_cache import FileLLMCache
-from ragforge.evaluation.judge_ports import JudgeSample, ModelIdentity
+from ragforge.evaluation.judge_ports import JudgeSample, MetricScore, ModelIdentity
 from ragforge.evaluation.ragas_judge import (
     RagasJudge,
     _build_async_openai_embeddings,
@@ -18,7 +18,7 @@ from ragforge.evaluation.ragas_judge import (
 from ragforge.generation.errors import GenerationError
 
 _IDENTITY = ModelIdentity(
-    provider="test", model="test-model", reasoning_effort=None, output_schema_version=1
+    provider="test", model="test-model", reasoning_effort=None, output_schema_version=2
 )
 
 
@@ -81,7 +81,7 @@ def test_evaluate_returns_faithfulness_answer_relevancy_and_abstention() -> None
     assert result.answer_relevancy.score == 0.8
     assert result.abstention.appropriate is True
     assert result.abstention.rationale == "respondeu com base no contexto"
-    assert result.schema_version == 1
+    assert result.schema_version == 2
 
 
 def test_identity_property_returns_the_configured_identity() -> None:
@@ -143,6 +143,46 @@ def test_evaluate_raises_generation_error_when_faithfulness_fails() -> None:
 
     with pytest.raises(GenerationError, match="RAGAS judge scoring failed"):
         judge.evaluate(_sample())
+
+
+def test_evaluate_retries_a_non_finite_metric_score_once() -> None:
+    """A transient RAGAS NaN is retried and cannot contaminate aggregate results."""
+    values = iter((float("nan"), 0.9))
+    faithfulness = _FakeMetric(lambda **kwargs: _FakeMetricResult(next(values)))
+    judge = RagasJudge(
+        faithfulness,
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(0.8)),
+        _FakeAbstentionLLM(),
+        _IDENTITY,
+    )
+
+    result = judge.evaluate(_sample())
+
+    assert result.faithfulness.score == 0.9
+    assert len(faithfulness.calls) == 2
+
+
+def test_evaluate_rejects_a_persistently_non_finite_metric_score() -> None:
+    """Two invalid RAGAS values become an explicit sample error, never a successful NaN."""
+    faithfulness = _FakeMetric(lambda **kwargs: _FakeMetricResult(float("nan")))
+    judge = RagasJudge(
+        faithfulness,
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(0.8)),
+        _FakeAbstentionLLM(),
+        _IDENTITY,
+    )
+
+    with pytest.raises(GenerationError, match="faithfulness returned invalid score"):
+        judge.evaluate(_sample())
+
+    assert len(faithfulness.calls) == 2
+
+
+@pytest.mark.parametrize("score", [float("nan"), float("inf"), -0.1, 1.1])
+def test_metric_score_rejects_non_finite_or_out_of_range_values(score: float) -> None:
+    """The provider-neutral result contract prevents invalid metrics from crossing the boundary."""
+    with pytest.raises(ValueError, match="finite and between 0 and 1"):
+        MetricScore(score=score)
 
 
 def test_evaluate_raises_generation_error_when_the_abstention_call_fails() -> None:
