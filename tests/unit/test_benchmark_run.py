@@ -29,7 +29,13 @@ from ragforge.evaluation.judge_ports import (
     ModelIdentity,
 )
 from ragforge.evaluation.manifest import load_corpus_manifest
-from ragforge.evaluation.run import MANIFEST_PATH
+from ragforge.evaluation.run import (
+    MANIFEST_PATH,
+    _resolve_embedding_cache_dir,
+    _resolve_index_cache_dir,
+    _select_split_judgments,
+    _validate_requested_strategies,
+)
 from ragforge.evaluation.run_reporting import (
     build_run_record,
     format_answer_quality_table,
@@ -41,6 +47,7 @@ from ragforge.evaluation.run_strategies import (
     build_base_strategies,
     build_contextual_strategy,
 )
+from ragforge.evaluation.split import Split
 from ragforge.retrieval.reranked.strategy import RerankedRetrieval
 
 
@@ -59,6 +66,61 @@ def test_reject_cache_mode_allows_live() -> None:
     from ragforge.evaluation.run import _reject_cache_mode
 
     _reject_cache_mode("live")  # must not raise
+
+
+def test_resolve_embedding_cache_dir_rejects_a_path_outside_repository() -> None:
+    """Embedding cache data cannot be redirected outside the repository."""
+    with pytest.raises(SystemExit, match="inside the repository"):
+        _resolve_embedding_cache_dir("../outside")
+
+
+def test_resolve_index_cache_dir_rejects_a_path_outside_repository() -> None:
+    """Index completion metadata cannot be redirected outside the repository."""
+    with pytest.raises(SystemExit, match="inside the repository"):
+        _resolve_index_cache_dir("../outside")
+
+
+def test_validate_requested_strategies_preserves_valid_order() -> None:
+    """A valid subset remains in declarative configuration order."""
+    assert _validate_requested_strategies(["graphrag", "dense"]) == ("graphrag", "dense")
+
+
+@pytest.mark.parametrize(
+    "labels",
+    [
+        [],
+        ["dense", "dense"],
+        ["unknown"],
+        ["dense", 1],
+    ],
+)
+def test_validate_requested_strategies_rejects_invalid_labels(labels: object) -> None:
+    """Invalid strategy declarations fail before infrastructure is touched."""
+    with pytest.raises(SystemExit):
+        _validate_requested_strategies(labels)
+
+
+def test_select_split_judgments_uses_declared_partition_order() -> None:
+    """The runner evaluates only the configured split, in artifact order."""
+    judgments = [
+        Judgment(
+            question_id=question_id,
+            query=Query(text=question_id),
+            relevant_refs=(),
+        )
+        for question_id in ("q1", "q2", "q3")
+    ]
+    split = Split(
+        schema_version=1,
+        dataset_version="1",
+        train=(),
+        validation=("q2",),
+        test=("q3", "q1"),
+    )
+
+    selected = _select_split_judgments(split, judgments, "test")
+
+    assert [judgment.question_id for judgment in selected] == ["q3", "q1"]
 
 
 class _FakeEmbedder:
@@ -463,10 +525,11 @@ def test_evaluate_populates_candidate_lineage_when_embedding_identity_hash_is_gi
 class _FakeSentenceTransformerEmbedder:
     """Stands in for SentenceTransformerEmbedder - no real model load."""
 
-    def __init__(self, model_name: str) -> None:
+    def __init__(self, model_name: str, device: str | None = None) -> None:
         self.name = model_name
         self.dimensions = 1024
         self.revision = "main"
+        self.device = device
 
     def embed(self, texts: list[str]) -> list[list[float]]:
         return [[0.0] * self.dimensions for _ in texts]
@@ -510,6 +573,26 @@ def test_build_embedder_constructs_a_local_embedder_without_credentials(
     assert identity.dimensions == 1024
     assert identity.normalize is True
     assert identity.runtime == "local"
+
+
+def test_build_embedder_forwards_device_override_to_the_local_embedder(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """An explicit device (e.g. "cpu") reaches SentenceTransformerEmbedder, not silently dropped."""
+    calls: list[tuple[str, str | None]] = []
+
+    class _RecordingEmbedder(_FakeSentenceTransformerEmbedder):
+        def __init__(self, model_name: str, device: str | None = None) -> None:
+            calls.append((model_name, device))
+            super().__init__(model_name, device=device)
+
+    monkeypatch.setattr(run_strategies, "SentenceTransformerEmbedder", _RecordingEmbedder)
+
+    run_strategies._build_embedder(
+        "local", "Qwen/Qwen3-Embedding-0.6B", None, None, 4, device="cpu"
+    )
+
+    assert calls == [("Qwen/Qwen3-Embedding-0.6B", "cpu")]
 
 
 def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(

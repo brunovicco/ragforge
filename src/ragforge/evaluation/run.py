@@ -155,7 +155,7 @@ import asyncio
 import dataclasses
 import json
 import shutil
-import tempfile
+import time
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
@@ -166,8 +166,9 @@ from lightrag import LightRAG
 from opensearchpy import OpenSearch
 
 from ragforge.adapters.llm_cache import FileLLMCache
-from ragforge.domain.models import Chunk
+from ragforge.domain.models import Chunk, Judgment
 from ragforge.domain.protocols import RetrievalStrategy
+from ragforge.embeddings.caching import CachedEmbeddingModel
 from ragforge.evaluation.artifact_writer import (
     compute_checksums,
     write_atomic,
@@ -177,6 +178,7 @@ from ragforge.evaluation.audit_metrics import compute_audit_report
 from ragforge.evaluation.audit_ports import AuditResult
 from ragforge.evaluation.canonical_hash import canonical_json_hash
 from ragforge.evaluation.event_log import EventLog
+from ragforge.evaluation.index_cache import FileIndexRegistry, index_fingerprint
 from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
     IntegrityError,
@@ -187,21 +189,24 @@ from ragforge.evaluation.integrity import (
 from ragforge.evaluation.judgments import load_judgments
 from ragforge.evaluation.lineage_ports import GenerationLineage
 from ragforge.evaluation.manifest import load_corpus_manifest
-from ragforge.evaluation.records import append_records_jsonl
+from ragforge.evaluation.records import append_records_jsonl, read_records_jsonl
 from ragforge.evaluation.run_evidence import (
     reject_if_evidence_dir_already_completed,
     write_question_artifacts,
     write_summaries,
 )
+from ragforge.evaluation.run_lock import BenchmarkAlreadyRunningError, BenchmarkRunLock
 from ragforge.evaluation.run_manifest import (
     build_initial_manifest,
     finalize_manifest,
     resolve_git_sha,
 )
 from ragforge.evaluation.run_reporting import (
+    build_metric_breakdowns,
     build_run_record,
     format_answer_quality_table,
     format_results_table,
+    summarize_generation_usage,
 )
 from ragforge.evaluation.run_strategies import (
     _build_embedder,
@@ -213,7 +218,7 @@ from ragforge.evaluation.run_strategies import (
     build_base_strategies,
     build_contextual_strategy,
 )
-from ragforge.evaluation.split import load_split
+from ragforge.evaluation.split import Split, load_split
 from ragforge.generation.auditing_answer_generator import AuditingAnswerGenerator
 from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator
 from ragforge.generation.gemini_contextualizer import GeminiContextualizer
@@ -273,6 +278,18 @@ _RETRIEVAL_TEXT_SCHEMA_VERSION = "source-text-v1"
 _DEFAULT_ANSWER_QUALITY_WORKERS = 5
 # Overridable via execution.gemini_max_in_flight (ADR-0014).
 _DEFAULT_GEMINI_MAX_IN_FLIGHT = 4
+_DEFAULT_EMBEDDING_CACHE_DIR = ".ragforge/cache/embeddings"
+_DEFAULT_INDEX_CACHE_DIR = ".ragforge/cache/indexes"
+_BASE_STRATEGY_LABELS = (
+    "dense",
+    "sparse_bm25",
+    "hybrid_rrf",
+    "reranked",
+    "parent_child",
+)
+_SUPPORTED_STRATEGY_LABELS = frozenset(
+    (*_BASE_STRATEGY_LABELS, "contextual", "sac", "sac_contextual", "raptor", "graphrag")
+)
 
 
 def parse_args() -> argparse.Namespace:
@@ -304,6 +321,73 @@ def _reject_cache_mode(mode: str) -> None:
             "--mode cache is not implemented yet: it needs a versioned LLM call cache "
             "(ADR-0004) that does not exist in this codebase yet. Use --mode live."
         )
+
+
+def _resolve_embedding_cache_dir(configured_path: str | None) -> Path:
+    """Resolve a repository-local persistent embedding cache directory.
+
+    Configuration cannot redirect cached source-derived data outside the
+    repository. Absolute paths are accepted only when they still resolve
+    below ``ROOT``.
+
+    Raises:
+        SystemExit: If the configured path escapes the repository.
+    """
+    raw_path = Path(configured_path or _DEFAULT_EMBEDDING_CACHE_DIR)
+    resolved = (raw_path if raw_path.is_absolute() else ROOT / raw_path).resolve()
+    if not resolved.is_relative_to(ROOT):
+        raise SystemExit("execution.embedding_cache_dir must resolve inside the repository")
+    return resolved
+
+
+def _resolve_index_cache_dir(configured_path: str | None) -> Path:
+    """Resolve the repository-local reusable-index marker directory."""
+    raw_path = Path(configured_path or _DEFAULT_INDEX_CACHE_DIR)
+    resolved = (raw_path if raw_path.is_absolute() else ROOT / raw_path).resolve()
+    if not resolved.is_relative_to(ROOT):
+        raise SystemExit("execution.index_cache_dir must resolve inside the repository")
+    return resolved
+
+
+def _validate_requested_strategies(raw_labels: object) -> tuple[str, ...]:
+    """Validate and preserve the configured benchmark strategy order.
+
+    Raises:
+        SystemExit: If labels are absent, duplicated, non-string, or unsupported.
+    """
+    if not isinstance(raw_labels, list) or not raw_labels:
+        raise SystemExit("strategies must be a non-empty list")
+    if any(not isinstance(label, str) for label in raw_labels):
+        raise SystemExit("every strategy label must be a string")
+    labels = tuple(raw_labels)
+    if len(labels) != len(set(labels)):
+        raise SystemExit("strategies must not contain duplicate labels")
+    unknown = sorted(set(labels) - _SUPPORTED_STRATEGY_LABELS)
+    if unknown:
+        raise SystemExit(f"unknown strategies: {', '.join(unknown)}")
+    return labels
+
+
+def _select_split_judgments(
+    split: Split,
+    judgments: list[Judgment],
+    split_name: str,
+) -> list[Judgment]:
+    """Return judgments in the declared split order.
+
+    Raises:
+        SystemExit: If ``split_name`` is not a supported partition.
+    """
+    split_ids_by_name = {
+        "train": split.train,
+        "validation": split.validation,
+        "test": split.test,
+    }
+    split_ids = split_ids_by_name.get(split_name)
+    if split_ids is None:
+        raise SystemExit("dataset.split must be one of train, validation, or test")
+    by_id = {judgment.question_id: judgment for judgment in judgments}
+    return [by_id[question_id] for question_id in split_ids]
 
 
 def _verify_resume_identity(
@@ -349,18 +433,22 @@ def _verify_resume_identity(
         )
 
 
-def main() -> None:
+def _run() -> None:
     """Index the real corpus with every strategy and score each against the golden set."""
     args = parse_args()
     _reject_cache_mode(args.mode)
     args.config = args.config.resolve()
 
     config = yaml.safe_load(args.config.read_text(encoding="utf-8"))
+    requested_strategies = _validate_requested_strategies(config.get("strategies"))
+    requested_strategy_set = set(requested_strategies)
+    split_name = config["dataset"]["split"]
     top_k = config["retrieval"]["top_k"]
     rerank_pool = config["retrieval"]["rerank_pool"]
     embedding_provider = config["embedding"]["provider"]
     embedding_model = config["embedding"]["model"]
     embedding_dimensions = config["embedding"].get("dimensions")
+    embedding_device = config["embedding"].get("device")
     generation_model = config["generation"]["model"]
     judge_provider = config["judge"]["provider"]
     judge_model = config["judge"]["model"]
@@ -371,6 +459,9 @@ def main() -> None:
     audit_provider = audit_config.get("provider", "openai")
     audit_model = audit_config.get("model")
     audit_reasoning_effort = audit_config.get("reasoning_effort", "medium")
+    pricing_config = config.get("pricing", {}).get("generation", {})
+    generation_input_price = pricing_config.get("input_per_million_usd")
+    generation_output_price = pricing_config.get("output_per_million_usd")
     execution_config = config.get("execution", {})
     answer_quality_workers = execution_config.get(
         "answer_quality_workers", _DEFAULT_ANSWER_QUALITY_WORKERS
@@ -378,6 +469,8 @@ def main() -> None:
     gemini_max_in_flight = execution_config.get(
         "gemini_max_in_flight", _DEFAULT_GEMINI_MAX_IN_FLIGHT
     )
+    embedding_cache_dir = _resolve_embedding_cache_dir(execution_config.get("embedding_cache_dir"))
+    index_cache_dir = _resolve_index_cache_dir(execution_config.get("index_cache_dir"))
 
     manifest = load_corpus_manifest(MANIFEST_PATH)
     split = load_split(SPLIT_PATH)
@@ -389,6 +482,7 @@ def main() -> None:
         verify_split_integrity(split, judgments)
     except IntegrityError as exc:
         raise SystemExit(f"preflight integrity check failed:\n{exc}") from exc
+    judgments = _select_split_judgments(split, judgments, split_name)
 
     run_id = args.resume or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     run_dir = RESULTS_DIR / run_id
@@ -416,9 +510,19 @@ def main() -> None:
 
     print(f"Loading embedding model {embedding_model} (provider={embedding_provider})...")
     embedder, embedding_identity = _build_embedder(
-        embedding_provider, embedding_model, embedding_dimensions, cache, gemini_max_in_flight
+        embedding_provider,
+        embedding_model,
+        embedding_dimensions,
+        cache,
+        gemini_max_in_flight,
+        device=embedding_device,
     )
     embedding_identity_hash = canonical_json_hash(dataclasses.asdict(embedding_identity))
+    embedder = CachedEmbeddingModel(
+        embedder,
+        embedding_identity,
+        FileLLMCache(embedding_cache_dir / embedding_identity_hash),
+    )
     index_namespace = derive_index_namespace(
         manifest.content_hash,
         _CHUNKING_CONFIG_VERSION,
@@ -430,6 +534,7 @@ def main() -> None:
     sac_table = f"bench_v01_sac_{index_namespace}"
     sac_contextual_table = f"bench_v01_sac_contextual_{index_namespace}"
     raptor_table = f"bench_v01_raptor_{index_namespace}"
+    index_registry = FileIndexRegistry(index_cache_dir / index_namespace)
 
     run_metrics: dict[str, dict[str, float]] = {}
     results_path = run_dir / "results.json"
@@ -440,6 +545,7 @@ def main() -> None:
         )
         run_metrics = previous["metrics"]
         print(f"Resuming {run_id}: {sorted(run_metrics)} already scored.")
+    pending_strategy_set = requested_strategy_set - set(run_metrics)
 
     print("Writing ADR-0017 evidence manifest and snapshots...")
     run_manifest = build_initial_manifest(
@@ -455,7 +561,7 @@ def main() -> None:
             "judge": f"{judge_provider}/{judge_model}",
             "audit": f"{audit_provider}/{audit_model}" if audit_enabled else "disabled",
         },
-        strategies=tuple(config["strategies"]),
+        strategies=requested_strategies,
         execution=dict(execution_config),
     )
     write_atomic(
@@ -513,13 +619,96 @@ def main() -> None:
 
     conn = psycopg.connect(DATABASE_URL)
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
-    graphrag_dir = Path(tempfile.mkdtemp(prefix="ragforge-bench-graphrag-"))
-    tables = [base_table, contextual_table, sac_table, sac_contextual_table, raptor_table]
     generation_lineage_by_strategy: dict[str, list[GenerationLineage]] = {}
     audit_results_by_strategy: dict[str, list[AuditResult]] = {}
+    stage_durations_seconds: dict[str, float] = {}
+    stage_started_at: dict[str, float] = {}
+
+    def _stage_started(event_stage: str, stage: str) -> None:
+        """Record and emit the start of one benchmark stage."""
+        key = f"{event_stage}:{stage}"
+        stage_started_at[key] = time.monotonic()
+        event_log.emit(event_stage, "started", {"stage": stage})
+
+    def _stage_completed(event_stage: str, stage: str) -> None:
+        """Record and emit successful completion with monotonic duration."""
+        key = f"{event_stage}:{stage}"
+        duration = time.monotonic() - stage_started_at.pop(key)
+        stage_durations_seconds[key] = duration
+        event_log.emit(
+            event_stage,
+            "completed",
+            {"stage": stage, "duration_seconds": duration},
+        )
+
+    def _ensure_reusable_index(
+        *,
+        stage: str,
+        chunks: list[Chunk],
+        dense_store: DenseChunkStore,
+        sparse_store: SparseChunkStore | None,
+        derivation_identity: str,
+    ) -> None:
+        """Reuse a complete exact index or rebuild and atomically mark it complete."""
+        fingerprint = index_fingerprint(
+            stage=stage,
+            index_namespace=index_namespace,
+            chunks=chunks,
+            derivation_identity=derivation_identity,
+        )
+        expected_ids = {chunk.chunk_id for chunk in chunks}
+        expects_sparse = sparse_store is not None
+        marker_matches = index_registry.matches(
+            stage=stage,
+            fingerprint=fingerprint,
+            chunk_count=len(chunks),
+            dense=True,
+            sparse=expects_sparse,
+        )
+        stores_match = dense_store.has_exact_chunk_ids(expected_ids) and (
+            sparse_store is None or sparse_store.has_exact_chunk_ids(expected_ids)
+        )
+        if marker_matches and stores_match:
+            stage_durations_seconds[f"indexing:{stage}"] = 0.0
+            event_log.emit(
+                "indexing",
+                "reused",
+                {"stage": stage, "fingerprint": fingerprint, "chunk_count": len(chunks)},
+            )
+            return
+
+        index_registry.invalidate(stage)
+        _stage_started("indexing", stage)
+        dense_store.drop_schema()
+        if sparse_store is not None:
+            sparse_store.drop_index()
+        embeddings = embedder.embed([chunk.retrieval_text for chunk in chunks])
+        dense_store.create_schema(dimensions=embedder.dimensions)
+        dense_store.upsert_chunks(chunks, embeddings)
+        dense_store.create_search_index()
+        if sparse_store is not None:
+            sparse_store.create_index()
+            sparse_store.index_chunks(chunks)
+        index_registry.mark_complete(
+            stage=stage,
+            fingerprint=fingerprint,
+            chunk_count=len(chunks),
+            dense=True,
+            sparse=expects_sparse,
+        )
+        _stage_completed("indexing", stage)
 
     def _checkpoint() -> None:
         """Write the run record as computed so far - survives a later strategy crashing."""
+        metric_breakdowns = build_metric_breakdowns(
+            read_records_jsonl(records_path),
+            judgments,
+        )
+        generation_usage = summarize_generation_usage(
+            generation_lineage_by_strategy,
+            input_price_per_million_usd=generation_input_price,
+            output_price_per_million_usd=generation_output_price,
+        )
         record = build_run_record(
             run_id=run_id,
             mode=args.mode,
@@ -538,31 +727,41 @@ def main() -> None:
             n_chunks=len(all_chunks),
             top_k=top_k,
             run_metrics=run_metrics,
+            metric_breakdowns=metric_breakdowns,
+            stage_durations_seconds=stage_durations_seconds,
+            generation_usage=generation_usage,
         )
         results_path.write_text(json.dumps(record, ensure_ascii=False, indent=2))
 
     def _evaluate_and_checkpoint(label: str, strategy: RetrievalStrategy) -> None:
         """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json.
 
-        A no-op when ``label`` is already in ``run_metrics`` (--resume): the
-        stage's indexing above this call still runs regardless (contextual/
-        RAPTOR construction isn't cache-wired in this increment), but the
-        expensive per-question generation+judge calls are skipped entirely
-        rather than merely cache-hit.
+        A no-op when ``label`` is already in ``run_metrics`` (--resume).
+        The outer orchestration also excludes completed labels from stage
+        construction, so neither indexing nor per-question calls are repeated.
         """
         if label in run_metrics:
             print(f"  skipping {label} (already scored, --resume)")
             return
+        started = time.monotonic()
         event_log.emit("strategy", "started", {"label": label})
-        metrics, records, candidate_lineage = _evaluate(
-            strategy,
-            judgments,
-            generator,
-            judge_factory,
-            top_k,
-            answer_quality_workers,
-            embedding_identity_hash=embedding_identity_hash,
-        )
+        try:
+            metrics, records, candidate_lineage = _evaluate(
+                strategy,
+                judgments,
+                generator,
+                judge_factory,
+                top_k,
+                answer_quality_workers,
+                embedding_identity_hash=embedding_identity_hash,
+            )
+        except BaseException:
+            event_log.emit(
+                "strategy",
+                "failed",
+                {"label": label, "duration_seconds": time.monotonic() - started},
+            )
+            raise
         generation_lineage = base_generator.drain_generation_lineage()
         generation_lineage_by_strategy[label] = generation_lineage
         if auditing_generator is not None:
@@ -572,152 +771,230 @@ def main() -> None:
         run_metrics[label] = metrics
         append_records_jsonl(records_path, records)
         write_question_artifacts(artifacts_dir, label, records, candidate_lineage)
+        write_summaries(
+            artifacts_dir,
+            run_metrics,
+            generation_lineage_by_strategy,
+            audit_results_by_strategy,
+            metric_breakdowns=build_metric_breakdowns(
+                read_records_jsonl(records_path),
+                judgments,
+            ),
+            generation_usage=summarize_generation_usage(
+                generation_lineage_by_strategy,
+                input_price_per_million_usd=generation_input_price,
+                output_price_per_million_usd=generation_output_price,
+            ),
+        )
         _checkpoint()
-        event_log.emit("strategy", "completed", {"label": label, "n": metrics.get("n", 0.0)})
+        duration = time.monotonic() - started
+        stage_durations_seconds[f"strategy:{label}"] = duration
+        event_log.emit(
+            "strategy",
+            "completed",
+            {"label": label, "n": metrics.get("n", 0.0), "duration_seconds": duration},
+        )
 
     try:
-        print("\n[1/6] Indexing the base chunks (dense + sparse)...")
-        event_log.emit("indexing", "started", {"stage": "base"})
-        base_dense_store = DenseChunkStore(conn, table=base_table)
-        base_sparse_store = SparseChunkStore(os_client, index=base_table)
-        base_embeddings = embedder.embed([chunk.retrieval_text for chunk in all_chunks])
-        base_dense_store.create_schema(dimensions=embedder.dimensions)
-        base_dense_store.upsert_chunks(all_chunks, base_embeddings)
-        base_sparse_store.create_index()
-        base_sparse_store.index_chunks(all_chunks)
-
-        base_strategies = build_base_strategies(
-            base_dense_store,
-            base_sparse_store,
-            embedder,
-            CrossEncoderReranker(_RERANKER_MODEL),
-            rerank_pool,
-        )
-        for label, strategy in base_strategies.items():
-            print(f"  evaluating {label}...")
-            _evaluate_and_checkpoint(label, strategy)
-        event_log.emit("indexing", "completed", {"stage": "base"})
-
-        print("\n[2/6] Building the Contextual Retrieval index (1 LLM call per chunk)...")
-        event_log.emit("indexing", "started", {"stage": "contextual"})
-        contextualizer = GeminiContextualizer(_CONTEXTUALIZER_MODEL)
-        contextual_chunks_by_norm = {
-            norm_id: contextualize_chunks(full_text, chunks, contextualizer)
-            for norm_id, (full_text, chunks) in documents.items()
-        }
-        contextual_chunks = [
-            chunk for chunks in contextual_chunks_by_norm.values() for chunk in chunks
+        requested_base_labels = [
+            label for label in _BASE_STRATEGY_LABELS if label in pending_strategy_set
         ]
-        contextual_dense_store = DenseChunkStore(conn, table=contextual_table)
-        contextual_sparse_store = SparseChunkStore(os_client, index=contextual_table)
-        contextual_embeddings = embedder.embed(
-            [chunk.retrieval_text for chunk in contextual_chunks]
-        )
-        contextual_dense_store.create_schema(dimensions=embedder.dimensions)
-        contextual_dense_store.upsert_chunks(contextual_chunks, contextual_embeddings)
-        contextual_sparse_store.create_index()
-        contextual_sparse_store.index_chunks(contextual_chunks)
-        contextual_strategy = build_contextual_strategy(
-            contextual_dense_store, contextual_sparse_store, embedder
-        )
-        print("  evaluating contextual...")
-        _evaluate_and_checkpoint("contextual", contextual_strategy)
-        event_log.emit("indexing", "completed", {"stage": "contextual"})
-
-        print("\n[3/6] Building the SAC index (1 LLM call per document)...")
-        event_log.emit("indexing", "started", {"stage": "sac"})
-        document_summarizer = GeminiDocumentSummarizer(
-            _DOCUMENT_SUMMARIZER_MODEL, cache=cache, max_in_flight=gemini_max_in_flight
-        )
-        document_summaries = _summarize_documents(
-            documents, document_versions, document_summarizer, answer_quality_workers
-        )
-        sac_chunks = [
-            sac_chunk
-            for norm_id, (_, chunks) in documents.items()
-            for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
-        ]
-        sac_dense_store = DenseChunkStore(conn, table=sac_table)
-        sac_embeddings = embedder.embed([chunk.retrieval_text for chunk in sac_chunks])
-        sac_dense_store.create_schema(dimensions=embedder.dimensions)
-        sac_dense_store.upsert_chunks(sac_chunks, sac_embeddings)
-        sac_strategy = DenseRetrieval(sac_dense_store, embedder)
-        print("  evaluating sac...")
-        _evaluate_and_checkpoint("sac", sac_strategy)
-        event_log.emit("indexing", "completed", {"stage": "sac"})
-
-        print(
-            "\n[4/6] Building the SAC+Contextual index "
-            "(document summary + per-chunk context, no extra LLM calls)..."
-        )
-        event_log.emit("indexing", "started", {"stage": "sac_contextual"})
-        sac_contextual_chunks = [
-            sac_chunk
-            for norm_id, chunks in contextual_chunks_by_norm.items()
-            for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
-        ]
-        sac_contextual_dense_store = DenseChunkStore(conn, table=sac_contextual_table)
-        sac_contextual_embeddings = embedder.embed(
-            [chunk.retrieval_text for chunk in sac_contextual_chunks]
-        )
-        sac_contextual_dense_store.create_schema(dimensions=embedder.dimensions)
-        sac_contextual_dense_store.upsert_chunks(sac_contextual_chunks, sac_contextual_embeddings)
-        sac_contextual_strategy = DenseRetrieval(sac_contextual_dense_store, embedder)
-        print("  evaluating sac_contextual...")
-        _evaluate_and_checkpoint("sac_contextual", sac_contextual_strategy)
-        event_log.emit("indexing", "completed", {"stage": "sac_contextual"})
-
-        print("\n[5/6] Building the RAPTOR tree (1 LLM call per group, per level, per document)...")
-        event_log.emit("indexing", "started", {"stage": "raptor"})
-        summarizer = GeminiSummarizer(_SUMMARIZER_MODEL)
-        raptor_chunks: list[Chunk] = []
-        for _, chunks in documents.values():
-            raptor_chunks.extend(build_raptor_tree(chunks, summarizer))
-        raptor_dense_store = DenseChunkStore(conn, table=raptor_table)
-        raptor_embeddings = embedder.embed([chunk.retrieval_text for chunk in raptor_chunks])
-        raptor_dense_store.create_schema(dimensions=embedder.dimensions)
-        raptor_dense_store.upsert_chunks(raptor_chunks, raptor_embeddings)
-        raptor_strategy = DenseRetrieval(raptor_dense_store, embedder)
-        print("  evaluating raptor...")
-        _evaluate_and_checkpoint("raptor", raptor_strategy)
-        event_log.emit("indexing", "completed", {"stage": "raptor"})
-
-        print(
-            f"\n[6/6] Building the GraphRAG (LightRAG, mode={_GRAPHRAG_MODE}) index "
-            "(multiple LLM calls per chunk)..."
-        )
-        event_log.emit("indexing", "started", {"stage": "graphrag"})
-        rag = LightRAG(
-            working_dir=str(graphrag_dir),
-            embedding_func=build_gemini_embedding_func(embedder),
-            llm_model_func=build_gemini_llm_model_func(_GRAPHRAG_LLM_MODEL),
-        )
-        asyncio.run(rag.initialize_storages())
-        try:
-            for norm_id, (_, chunks) in documents.items():
-                index_norm(rag, norm_id, chunks)
-            graphrag_strategy = GraphRagRetrieval(
-                rag, build_content_index(all_chunks), mode=_GRAPHRAG_MODE
+        if requested_base_labels:
+            print("\n[1/6] Indexing the base chunks (dense + sparse)...")
+            base_dense_store = DenseChunkStore(conn, table=base_table)
+            base_sparse_store = SparseChunkStore(os_client, index=base_table)
+            _ensure_reusable_index(
+                stage="base",
+                chunks=all_chunks,
+                dense_store=base_dense_store,
+                sparse_store=base_sparse_store,
+                derivation_identity=_RETRIEVAL_TEXT_SCHEMA_VERSION,
             )
-            print("  evaluating graphrag...")
-            _evaluate_and_checkpoint("graphrag", graphrag_strategy)
-            event_log.emit("indexing", "completed", {"stage": "graphrag"})
-        finally:
-            asyncio.run(rag.finalize_storages())
-    finally:
-        print("\nCleaning up disposable tables/indices...")
-        conn.rollback()
-        with conn.cursor() as cur:
-            for table in tables:
-                cur.execute(f"DROP TABLE IF EXISTS {table}")
-        conn.commit()
-        conn.close()
-        for table in tables:
-            os_client.indices.delete(index=table, ignore=[404])
-        shutil.rmtree(graphrag_dir, ignore_errors=True)
 
-    results_table = format_results_table(config["strategies"], run_metrics)
-    answer_quality_table = format_answer_quality_table(config["strategies"], run_metrics)
+            base_strategies = build_base_strategies(
+                base_dense_store,
+                base_sparse_store,
+                embedder,
+                CrossEncoderReranker(_RERANKER_MODEL),
+                rerank_pool,
+            )
+            for label in requested_base_labels:
+                print(f"  evaluating {label}...")
+                _evaluate_and_checkpoint(label, base_strategies[label])
+
+        contextual_chunks_by_norm: dict[str, list[Chunk]] = {}
+        needs_contextual_chunks = bool({"contextual", "sac_contextual"} & pending_strategy_set)
+        if needs_contextual_chunks:
+            print("\n[2/6] Building contextual retrieval text (1 LLM call per chunk)...")
+            _stage_started("contextualization", "contextual")
+            contextualizer = GeminiContextualizer(_CONTEXTUALIZER_MODEL)
+            contextual_chunks_by_norm = {
+                norm_id: contextualize_chunks(full_text, chunks, contextualizer)
+                for norm_id, (full_text, chunks) in documents.items()
+            }
+            _stage_completed("contextualization", "contextual")
+
+        if "contextual" in pending_strategy_set:
+            contextual_chunks = [
+                chunk for chunks in contextual_chunks_by_norm.values() for chunk in chunks
+            ]
+            contextual_dense_store = DenseChunkStore(conn, table=contextual_table)
+            contextual_sparse_store = SparseChunkStore(os_client, index=contextual_table)
+            _ensure_reusable_index(
+                stage="contextual",
+                chunks=contextual_chunks,
+                dense_store=contextual_dense_store,
+                sparse_store=contextual_sparse_store,
+                derivation_identity=_CONTEXTUALIZER_MODEL,
+            )
+            contextual_strategy = build_contextual_strategy(
+                contextual_dense_store, contextual_sparse_store, embedder
+            )
+            print("  evaluating contextual...")
+            _evaluate_and_checkpoint("contextual", contextual_strategy)
+
+        document_summaries: dict[str, str] = {}
+        if {"sac", "sac_contextual"} & pending_strategy_set:
+            print("\n[3/6] Summarizing documents for SAC (1 LLM call per document)...")
+            _stage_started("summarization", "sac")
+            document_summarizer = GeminiDocumentSummarizer(
+                _DOCUMENT_SUMMARIZER_MODEL, cache=cache, max_in_flight=gemini_max_in_flight
+            )
+            document_summaries = _summarize_documents(
+                documents, document_versions, document_summarizer, answer_quality_workers
+            )
+            _stage_completed("summarization", "sac")
+
+        if "sac" in pending_strategy_set:
+            sac_chunks = [
+                sac_chunk
+                for norm_id, (_, chunks) in documents.items()
+                for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
+            ]
+            sac_dense_store = DenseChunkStore(conn, table=sac_table)
+            _ensure_reusable_index(
+                stage="sac",
+                chunks=sac_chunks,
+                dense_store=sac_dense_store,
+                sparse_store=None,
+                derivation_identity=_DOCUMENT_SUMMARIZER_MODEL,
+            )
+            sac_strategy = DenseRetrieval(sac_dense_store, embedder)
+            print("  evaluating sac...")
+            _evaluate_and_checkpoint("sac", sac_strategy)
+
+        if "sac_contextual" in pending_strategy_set:
+            print("\n[4/6] Building the SAC+Contextual index...")
+            sac_contextual_chunks = [
+                sac_chunk
+                for norm_id, chunks in contextual_chunks_by_norm.items()
+                for sac_chunk in apply_document_summary(document_summaries[norm_id], chunks)
+            ]
+            sac_contextual_dense_store = DenseChunkStore(conn, table=sac_contextual_table)
+            _ensure_reusable_index(
+                stage="sac_contextual",
+                chunks=sac_contextual_chunks,
+                dense_store=sac_contextual_dense_store,
+                sparse_store=None,
+                derivation_identity=f"{_DOCUMENT_SUMMARIZER_MODEL}+{_CONTEXTUALIZER_MODEL}",
+            )
+            sac_contextual_strategy = DenseRetrieval(sac_contextual_dense_store, embedder)
+            print("  evaluating sac_contextual...")
+            _evaluate_and_checkpoint("sac_contextual", sac_contextual_strategy)
+
+        if "raptor" in pending_strategy_set:
+            print(
+                "\n[5/6] Building the RAPTOR tree "
+                "(1 LLM call per group, per level, per document)..."
+            )
+            summarizer = GeminiSummarizer(_SUMMARIZER_MODEL)
+            raptor_chunks: list[Chunk] = []
+            for _, chunks in documents.values():
+                raptor_chunks.extend(build_raptor_tree(chunks, summarizer))
+            raptor_dense_store = DenseChunkStore(conn, table=raptor_table)
+            _ensure_reusable_index(
+                stage="raptor",
+                chunks=raptor_chunks,
+                dense_store=raptor_dense_store,
+                sparse_store=None,
+                derivation_identity=_SUMMARIZER_MODEL,
+            )
+            raptor_strategy = DenseRetrieval(raptor_dense_store, embedder)
+            print("  evaluating raptor...")
+            _evaluate_and_checkpoint("raptor", raptor_strategy)
+
+        if "graphrag" in pending_strategy_set:
+            print(
+                f"\n[6/6] Building the GraphRAG (LightRAG, mode={_GRAPHRAG_MODE}) index "
+                "(multiple LLM calls per chunk)..."
+            )
+            graph_fingerprint = index_fingerprint(
+                stage="graphrag",
+                index_namespace=index_namespace,
+                chunks=all_chunks,
+                derivation_identity=f"{_GRAPHRAG_LLM_MODEL}:{_GRAPHRAG_MODE}",
+            )
+            graphrag_dir = index_cache_dir / index_namespace / "graphrag-data" / graph_fingerprint
+            graph_reusable = (
+                index_registry.matches(
+                    stage="graphrag",
+                    fingerprint=graph_fingerprint,
+                    chunk_count=len(all_chunks),
+                    dense=False,
+                    sparse=False,
+                )
+                and graphrag_dir.is_dir()
+                and any(graphrag_dir.iterdir())
+            )
+            if graph_reusable:
+                stage_durations_seconds["indexing:graphrag"] = 0.0
+                event_log.emit(
+                    "indexing",
+                    "reused",
+                    {
+                        "stage": "graphrag",
+                        "fingerprint": graph_fingerprint,
+                        "chunk_count": len(all_chunks),
+                    },
+                )
+            else:
+                index_registry.invalidate("graphrag")
+                shutil.rmtree(graphrag_dir, ignore_errors=True)
+                _stage_started("indexing", "graphrag")
+            graphrag_dir.mkdir(parents=True, exist_ok=True)
+            rag = LightRAG(
+                working_dir=str(graphrag_dir),
+                embedding_func=build_gemini_embedding_func(embedder),
+                llm_model_func=build_gemini_llm_model_func(_GRAPHRAG_LLM_MODEL),
+            )
+            asyncio.run(rag.initialize_storages())
+            try:
+                if not graph_reusable:
+                    for norm_id, (_, chunks) in documents.items():
+                        index_norm(rag, norm_id, chunks)
+                    index_registry.mark_complete(
+                        stage="graphrag",
+                        fingerprint=graph_fingerprint,
+                        chunk_count=len(all_chunks),
+                        dense=False,
+                        sparse=False,
+                    )
+                    _stage_completed("indexing", "graphrag")
+                graphrag_strategy = GraphRagRetrieval(
+                    rag, build_content_index(all_chunks), mode=_GRAPHRAG_MODE
+                )
+                print("  evaluating graphrag...")
+                _evaluate_and_checkpoint("graphrag", graphrag_strategy)
+            finally:
+                asyncio.run(rag.finalize_storages())
+    finally:
+        print("\nClosing reusable index connections...")
+        conn.rollback()
+        conn.close()
+        os_client.close()
+
+    results_table = format_results_table(list(requested_strategies), run_metrics)
+    answer_quality_table = format_answer_quality_table(list(requested_strategies), run_metrics)
     print(f"\n{results_table}")
     print(f"\n{answer_quality_table}")
 
@@ -725,8 +1002,20 @@ def main() -> None:
     print(f"\nRun record written to {run_dir.relative_to(ROOT)}/results.json")
 
     print("\nFinalizing ADR-0017 evidence directory...")
-    write_summaries(
-        artifacts_dir, run_metrics, generation_lineage_by_strategy, audit_results_by_strategy
+    merged_generation_usage = write_summaries(
+        artifacts_dir,
+        run_metrics,
+        generation_lineage_by_strategy,
+        audit_results_by_strategy,
+        metric_breakdowns=build_metric_breakdowns(
+            read_records_jsonl(records_path),
+            judgments,
+        ),
+        generation_usage=summarize_generation_usage(
+            generation_lineage_by_strategy,
+            input_price_per_million_usd=generation_input_price,
+            output_price_per_million_usd=generation_output_price,
+        ),
     )
     report_record = build_run_record(
         run_id=run_id,
@@ -746,6 +1035,16 @@ def main() -> None:
         n_chunks=len(all_chunks),
         top_k=top_k,
         run_metrics=run_metrics,
+        metric_breakdowns=build_metric_breakdowns(
+            read_records_jsonl(records_path),
+            judgments,
+        ),
+        stage_durations_seconds=stage_durations_seconds,
+        generation_usage=merged_generation_usage,
+    )
+    write_atomic(
+        results_path,
+        json.dumps(report_record, ensure_ascii=False, indent=2),
     )
     write_atomic(
         artifacts_dir / "report.json", json.dumps(report_record, ensure_ascii=False, indent=2)
@@ -765,6 +1064,15 @@ def main() -> None:
         json.dumps(dataclasses.asdict(final_manifest), ensure_ascii=False, indent=2),
     )
     print(f"Evidence directory finalized at {artifacts_dir.relative_to(ROOT)}/")
+
+
+def main() -> None:
+    """Run one benchmark at a time for the repository's shared indexes."""
+    try:
+        with BenchmarkRunLock(ROOT / ".ragforge" / "benchmark.lock"):
+            _run()
+    except BenchmarkAlreadyRunningError as exc:
+        raise SystemExit(str(exc)) from exc
 
 
 if __name__ == "__main__":

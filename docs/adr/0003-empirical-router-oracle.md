@@ -11,7 +11,11 @@ The original plan defined the "oracle" as the a-priori mapping `query class → 
 
 1. **Empirical per-question oracle.** Since the benchmark already runs all 8 strategies over all questions, the oracle is defined *ex post*: for each question, the strategy with the best composite score (RAGAS quality primary; cost as tie-breaker). The a-priori class mapping is demoted to a **testable hypothesis** - and the "where intuition was wrong" table becomes a report section.
 2. **Router metrics:** routing accuracy vs the empirical oracle; **regret** (per-question quality delta between chosen strategy and oracle); comparison of three policies: adaptive router vs best-fixed-strategy vs oracle (ceiling).
-3. **Anti-leakage split.** Before curation, a stratified-by-class split: `dev` (~15%, sole source of few-shot examples and rule tuning) and `test` (~85%, frozen; all README numbers come from it). Versioned in `datasets/regrag-br/splits.json`.
+3. **Anti-leakage split.** A deterministic stratified-by-class split:
+   `validation` (~15%, treated as dev and the sole source of future few-shot
+   examples/rule tuning) and `test` (~85%, frozen; all README numbers come
+   from it). Versioned in `datasets/regrag-br/split.json`; `train` remains
+   empty until a learned router is introduced.
 
 ## Consequences
 

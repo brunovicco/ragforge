@@ -70,7 +70,11 @@ Provider SDK types SHALL remain in adapters.
 | Local control | `intfloat/multilingual-e5-large-instruct` | Local |
 | Hosted comparator | configured stable Gemini embedding model | Gemini API |
 
-The local default is not a predeclared quality winner. The full RegRAG-BR experiment determines relative quality.
+The local default is not a predeclared quality winner. ADR-0005's isolated
+Dense/Hybrid comparison selected `gemini-embedding-001` for the canonical
+publishable matrix. Qwen is the separately configured operational default for
+provider-free embedding runs. A future full RegRAG-BR embedding comparison may
+change that quality decision, but must do so through a new recorded experiment.
 
 ### Exact model revision
 

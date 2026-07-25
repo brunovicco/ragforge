@@ -27,9 +27,8 @@ class DenseChunkStore:
         self._table = table
 
     def create_schema(self, dimensions: int) -> None:
-        """Create the chunk table and its HNSW cosine index if they don't exist."""
+        """Create the chunk table if it doesn't exist."""
         table = sql.Identifier(self._table)
-        index = sql.Identifier(f"{self._table}_embedding_idx")
         with self._conn.cursor() as cur:
             cur.execute(
                 sql.SQL(
@@ -43,6 +42,13 @@ class DenseChunkStore:
                     ")"
                 ).format(table=table, dimensions=sql.Literal(dimensions))
             )
+        self._conn.commit()
+
+    def create_search_index(self) -> None:
+        """Create the HNSW index after bulk data loading."""
+        table = sql.Identifier(self._table)
+        index = sql.Identifier(f"{self._table}_embedding_idx")
+        with self._conn.cursor() as cur:
             cur.execute(
                 sql.SQL(
                     "CREATE INDEX IF NOT EXISTS {index} ON {table} "
@@ -50,6 +56,23 @@ class DenseChunkStore:
                 ).format(index=index, table=table)
             )
         self._conn.commit()
+
+    def drop_schema(self) -> None:
+        """Drop the bound table and its dependent index."""
+        with self._conn.cursor() as cur:
+            cur.execute(sql.SQL("DROP TABLE IF EXISTS {}").format(sql.Identifier(self._table)))
+        self._conn.commit()
+
+    def has_exact_chunk_ids(self, expected_ids: set[str]) -> bool:
+        """Return whether the table exists and contains exactly ``expected_ids``."""
+        with self._conn.cursor() as cur:
+            cur.execute("SELECT to_regclass(%s)", (self._table,))
+            registration = cur.fetchone()
+            if registration is None or registration[0] is None:
+                return False
+            cur.execute(sql.SQL("SELECT chunk_id FROM {}").format(sql.Identifier(self._table)))
+            actual_ids = {row[0] for row in cur.fetchall()}
+        return actual_ids == expected_ids
 
     def upsert_chunks(self, chunks: list[Chunk], embeddings: list[list[float]]) -> None:
         """Insert or update chunks and their embeddings, keyed by chunk_id.
@@ -73,19 +96,19 @@ class DenseChunkStore:
             "metadata = EXCLUDED.metadata, "
             "embedding = EXCLUDED.embedding"
         ).format(table=table)
+        values = [
+            (
+                chunk.chunk_id,
+                chunk.source_text,
+                list(chunk.structural_ids),
+                chunk.parent_id,
+                Jsonb(chunk.metadata),
+                embedding,
+            )
+            for chunk, embedding in zip(chunks, embeddings, strict=True)
+        ]
         with self._conn.cursor() as cur:
-            for chunk, embedding in zip(chunks, embeddings, strict=True):
-                cur.execute(
-                    statement,
-                    (
-                        chunk.chunk_id,
-                        chunk.source_text,
-                        list(chunk.structural_ids),
-                        chunk.parent_id,
-                        Jsonb(chunk.metadata),
-                        embedding,
-                    ),
-                )
+            cur.executemany(statement, values)
         self._conn.commit()
 
     def get(self, chunk_id: str) -> Chunk | None:

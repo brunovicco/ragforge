@@ -16,6 +16,16 @@ from ragforge.evaluation.lineage_ports import GenerationLineage, RetrievalCandid
 from ragforge.evaluation.records import QuestionRecord
 
 
+def _load_json_object(path: Path) -> dict[str, object]:
+    """Load an existing summary object, or return an empty mapping."""
+    if not path.exists():
+        return {}
+    payload: object = json.loads(path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError(f"summary {path} must contain a JSON object")
+    return {str(key): value for key, value in payload.items()}
+
+
 def reject_if_evidence_dir_already_completed(artifacts_dir: Path) -> None:
     """Fail closed if ``artifacts_dir``'s manifest.json already says status="completed" (ADR-0017).
 
@@ -75,7 +85,10 @@ def write_summaries(
     run_metrics: dict[str, dict[str, float]],
     generation_lineage_by_strategy: dict[str, list[GenerationLineage]],
     audit_results_by_strategy: dict[str, list[AuditResult]],
-) -> None:
+    *,
+    metric_breakdowns: dict[str, object] | None = None,
+    generation_usage: dict[str, dict[str, float | int | None]] | None = None,
+) -> dict[str, dict[str, float | int | None]]:
     """Write ``summaries/retrieval.json``, ``summaries/generation.json``, ``summaries/audit.json``.
 
     The same per-strategy aggregates already computed for
@@ -86,25 +99,48 @@ def write_summaries(
         artifacts_dir / "summaries" / "retrieval.json",
         json.dumps(run_metrics, ensure_ascii=False, indent=2),
     )
-    write_atomic(
-        artifacts_dir / "summaries" / "generation.json",
-        json.dumps(
-            {
-                label: [dataclasses.asdict(entry) for entry in entries]
-                for label, entries in generation_lineage_by_strategy.items()
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
+    generation_path = artifacts_dir / "summaries" / "generation.json"
+    generation_payload = _load_json_object(generation_path)
+    generation_payload.update(
+        {
+            label: [dataclasses.asdict(entry) for entry in entries]
+            for label, entries in generation_lineage_by_strategy.items()
+        }
     )
     write_atomic(
-        artifacts_dir / "summaries" / "audit.json",
-        json.dumps(
-            {
-                label: compute_audit_report(results)
-                for label, results in audit_results_by_strategy.items()
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
+        generation_path,
+        json.dumps(generation_payload, ensure_ascii=False, indent=2),
     )
+    audit_path = artifacts_dir / "summaries" / "audit.json"
+    audit_payload = _load_json_object(audit_path)
+    audit_payload.update(
+        {
+            label: compute_audit_report(results)
+            for label, results in audit_results_by_strategy.items()
+        }
+    )
+    write_atomic(
+        audit_path,
+        json.dumps(audit_payload, ensure_ascii=False, indent=2),
+    )
+    write_atomic(
+        artifacts_dir / "summaries" / "breakdowns.json",
+        json.dumps(metric_breakdowns or {}, ensure_ascii=False, indent=2),
+    )
+    usage_path = artifacts_dir / "summaries" / "usage.json"
+    usage_payload = _load_json_object(usage_path)
+    usage_payload.update(generation_usage or {})
+    write_atomic(usage_path, json.dumps(usage_payload, ensure_ascii=False, indent=2))
+    merged_usage: dict[str, dict[str, float | int | None]] = {}
+    for strategy, raw_summary in usage_payload.items():
+        if not isinstance(raw_summary, dict):
+            raise ValueError(f"usage summary for {strategy!r} must be an object")
+        normalized: dict[str, float | int | None] = {}
+        for key, value in raw_summary.items():
+            if value is not None and (
+                isinstance(value, bool) or not isinstance(value, (int, float))
+            ):
+                raise ValueError(f"usage value {strategy}.{key} must be numeric or null")
+            normalized[str(key)] = value
+        merged_usage[strategy] = normalized
+    return merged_usage
