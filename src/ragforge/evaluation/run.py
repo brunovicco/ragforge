@@ -125,10 +125,6 @@ ADR-0013). --mode cache (bit-for-bit replay from a versioned LLM call cache,
 ADR-0004) needs a cache-recording/replay layer that does not exist yet in
 this codebase and is intentionally out of scope here.
 
-No reranker model has been chosen via a dedicated comparison (unlike the
-embedding model, ADR-0005); _RERANKER_MODEL is a placeholder, not a data-
-driven winner - already used and verified in test_cross_encoder_reranker.py.
-
 Bounded parallel execution and a minimal LLM cache (ADR-0014 + ADR-0004):
 a FileLLMCache under experiments/<run_id>/llm-cache/ is shared by the
 embedder, GeminiAnswerGenerator, and the judge (Gemini or OpenAI) - a call
@@ -147,6 +143,11 @@ some of that stage's strategies remain unscored - contextualize_chunks and
 build_raptor_tree are not cache-wired in this increment, only the embedder
 and the two per-question LLM calls are; see docs/adr/0014 for the fuller,
 deferred scope (RPM/TPM limits, `Retry-After`, cross-process coalescing).
+
+This module is the CLI entrypoint and top-level orchestration only:
+strategy/embedder/judge composition lives in run_strategies.py, table
+rendering and the run-record schema in run_reporting.py, and ADR-0017
+evidence-directory writes in run_evidence.py.
 """
 
 import argparse
@@ -155,24 +156,18 @@ import dataclasses
 import json
 import shutil
 import tempfile
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from datetime import UTC, datetime
 from pathlib import Path
-from typing import Protocol
 
 import psycopg
 import yaml
 from lightrag import LightRAG
 from opensearchpy import OpenSearch
 
-from ragforge.adapters.llm_cache import FileLLMCache, LLMCache
-from ragforge.domain.models import Chunk, Judgment
+from ragforge.adapters.llm_cache import FileLLMCache
+from ragforge.domain.models import Chunk
 from ragforge.domain.protocols import RetrievalStrategy
-from ragforge.embeddings.google_gemini_embedder import GoogleGeminiEmbedder
-from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
-from ragforge.embeddings.ports import EmbeddingModel
-from ragforge.embeddings.sentence_transformer_embedder import SentenceTransformerEmbedder
-from ragforge.evaluation.answer_harness import evaluate_answer_quality
 from ragforge.evaluation.artifact_writer import (
     compute_checksums,
     write_atomic,
@@ -182,7 +177,6 @@ from ragforge.evaluation.audit_metrics import compute_audit_report
 from ragforge.evaluation.audit_ports import AuditResult
 from ragforge.evaluation.canonical_hash import canonical_json_hash
 from ragforge.evaluation.event_log import EventLog
-from ragforge.evaluation.harness import evaluate_strategy
 from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
     IntegrityError,
@@ -190,22 +184,35 @@ from ragforge.evaluation.integrity import (
     verify_split_integrity,
     verify_structural_references,
 )
-from ragforge.evaluation.judge_ports import AnswerQualityJudge
 from ragforge.evaluation.judgments import load_judgments
-from ragforge.evaluation.lineage_ports import GenerationLineage, RetrievalCandidateLineage
-from ragforge.evaluation.manifest import CorpusManifest, load_corpus_manifest
-from ragforge.evaluation.ragas_judge import (
-    ABSTENTION_PROMPT_VERSION,
-    build_gemini_ragas_judge,
-    build_openai_ragas_judge,
+from ragforge.evaluation.lineage_ports import GenerationLineage
+from ragforge.evaluation.manifest import load_corpus_manifest
+from ragforge.evaluation.records import append_records_jsonl
+from ragforge.evaluation.run_evidence import (
+    reject_if_evidence_dir_already_completed,
+    write_question_artifacts,
+    write_summaries,
 )
-from ragforge.evaluation.records import QuestionRecord, append_records_jsonl, merge_question_records
 from ragforge.evaluation.run_manifest import (
     build_initial_manifest,
     finalize_manifest,
     resolve_git_sha,
 )
-from ragforge.evaluation.scheduler import run_bounded
+from ragforge.evaluation.run_reporting import (
+    build_run_record,
+    format_answer_quality_table,
+    format_results_table,
+)
+from ragforge.evaluation.run_strategies import (
+    _build_embedder,
+    _build_judge_factory,
+    _document_versions,
+    _evaluate,
+    _load_documents,
+    _summarize_documents,
+    build_base_strategies,
+    build_contextual_strategy,
+)
 from ragforge.evaluation.split import load_split
 from ragforge.generation.auditing_answer_generator import AuditingAnswerGenerator
 from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator
@@ -215,13 +222,9 @@ from ragforge.generation.gemini_summarizer import GeminiSummarizer
 from ragforge.generation.openai_answer_rewriter import OpenAIAnswerRewriter
 from ragforge.generation.openai_semantic_verifier import OpenAISemanticSupportVerifier
 from ragforge.generation.ports import AnswerGenerator
-from ragforge.ingestion.html_extractor import HtmlTextExtractor
-from ragforge.ingestion.pipeline import ingest_norm
-from ragforge.ingestion.pymupdf_extractor import PyMuPdfExtractor
 from ragforge.ingestion.snapshot import snapshot_hash
 from ragforge.reranking.cross_encoder_reranker import CrossEncoderReranker
 from ragforge.retrieval.contextual.pipeline import contextualize_chunks
-from ragforge.retrieval.dense.ports import ChunkSearchStore
 from ragforge.retrieval.dense.store import DenseChunkStore
 from ragforge.retrieval.dense.strategy import DenseRetrieval
 from ragforge.retrieval.graph.indexing import build_content_index, index_norm
@@ -230,17 +233,9 @@ from ragforge.retrieval.graph.lightrag_gemini import (
     build_gemini_llm_model_func,
 )
 from ragforge.retrieval.graph.strategy import GraphRagRetrieval
-from ragforge.retrieval.hierarchical.ports import ChunkFetchStore
-from ragforge.retrieval.hierarchical.strategy import ParentChildRetrieval
-from ragforge.retrieval.hybrid.strategy import HybridRetrieval
 from ragforge.retrieval.raptor.pipeline import build_raptor_tree
-from ragforge.retrieval.reranked.ports import Reranker
-from ragforge.retrieval.reranked.strategy import RerankedRetrieval
 from ragforge.retrieval.sac.pipeline import apply_document_summary
-from ragforge.retrieval.sac.ports import DocumentSummarizer
-from ragforge.retrieval.sparse.ports import TextSearchStore
 from ragforge.retrieval.sparse.store import SparseChunkStore
-from ragforge.retrieval.sparse.strategy import SparseRetrieval
 
 ROOT = Path(__file__).resolve().parents[3]
 MANIFEST_PATH = ROOT / "datasets/regrag-br/corpus_manifest.yaml"
@@ -253,15 +248,13 @@ RESULTS_DIR = ROOT / "experiments"
 ARTIFACTS_DIR = ROOT / "artifacts" / "runs"
 DATABASE_URL = "postgresql://ragforge:ragforge@localhost:5432/ragforge"
 
+_GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
+_GRAPHRAG_MODE = "local"
 _RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
 _CONTEXTUALIZER_MODEL = "gemini-3.1-flash-lite"
 _SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
 _DOCUMENT_SUMMARIZER_MODEL = "gemini-3.1-flash-lite"
-_GRAPHRAG_LLM_MODEL = "gemini-3.1-flash-lite"
-_GRAPHRAG_MODE = "local"
 
-_EMBEDDING_PROVIDERS = ("local", "gemini")
-_JUDGE_PROVIDERS = ("openai", "gemini")
 # Bumped only when the chunking logic (ragforge.chunking) or a retrieval-text
 # derivation (contextualize_chunks, sac.pipeline.apply_document_summary)
 # changes meaningfully enough that a prior index must not be mistaken for
@@ -280,14 +273,6 @@ _RETRIEVAL_TEXT_SCHEMA_VERSION = "source-text-v1"
 _DEFAULT_ANSWER_QUALITY_WORKERS = 5
 # Overridable via execution.gemini_max_in_flight (ADR-0014).
 _DEFAULT_GEMINI_MAX_IN_FLIGHT = 4
-
-# Composition-root mapping from the manifest's `extractor` key to the actual
-# extraction callable - kept here, not in evaluation.manifest, so that module
-# never needs to import an ingestion adapter.
-_EXTRACTORS: dict[str, Callable[[Path], str]] = {
-    "html": HtmlTextExtractor().extract,
-    "pymupdf": PyMuPdfExtractor().extract,
-}
 
 
 def parse_args() -> argparse.Namespace:
@@ -319,361 +304,6 @@ def _reject_cache_mode(mode: str) -> None:
             "--mode cache is not implemented yet: it needs a versioned LLM call cache "
             "(ADR-0004) that does not exist in this codebase yet. Use --mode live."
         )
-
-
-def _load_documents(manifest: CorpusManifest) -> dict[str, tuple[str, list[Chunk]]]:
-    """Extract and chunk every enabled manifest document; return ``{norm_id: (full_text, chunks)}``.
-
-    ``ingest_norm`` already fails closed (ArticleCountMismatchError) on a
-    parsed article count that disagrees with the manifest's curated
-    ``expected_article_count``, so that gate needs no duplication here.
-    """
-    documents = {}
-    for doc in manifest.enabled_documents:
-        if doc.expected_article_count is None:
-            msg = (
-                f"{doc.norm_id}: enabled document loaded without an expected_article_count "
-                "- load_corpus_manifest should have rejected this"
-            )
-            raise ValueError(msg)
-        path = ROOT / doc.source_path
-        extract = _EXTRACTORS[doc.extractor]
-        text = extract(path)
-        chunks = ingest_norm(
-            doc.norm_id, path, text, expected_article_count=doc.expected_article_count
-        )
-        documents[doc.norm_id] = (text, chunks)
-    return documents
-
-
-def _document_versions(manifest: CorpusManifest) -> dict[str, str]:
-    """Return ``{norm_id: source_sha256}`` for every enabled document (ADR-0015 cache identity).
-
-    ``load_corpus_manifest`` already rejects an enabled document missing
-    ``source_sha256``, so every value here is guaranteed non-None.
-    """
-    versions = {}
-    for doc in manifest.enabled_documents:
-        if doc.source_sha256 is None:
-            msg = (
-                f"{doc.norm_id}: enabled document loaded without a source_sha256 "
-                "- load_corpus_manifest should have rejected this"
-            )
-            raise ValueError(msg)
-        versions[doc.norm_id] = doc.source_sha256
-    return versions
-
-
-def _summarize_documents(
-    documents: dict[str, tuple[str, list[Chunk]]],
-    document_versions: dict[str, str],
-    summarizer: DocumentSummarizer,
-    max_workers: int,
-) -> dict[str, str]:
-    """Return ``{norm_id: summary_text}``, one Gemini call per document, bounded and cached.
-
-    Raises the first summarization failure rather than tolerating it: like
-    contextualize_chunks and build_raptor_tree, this index-building step has
-    no per-item failure isolation (ADR-0014's circuit breaker is for the
-    per-question evaluation loop, not index construction) - a missing
-    summary means the sac/sac_contextual index for that document simply
-    cannot be built.
-    """
-    norm_ids = list(documents)
-
-    def _summarize_one(norm_id: str) -> str:
-        full_text, _ = documents[norm_id]
-        summary = summarizer.summarize_document(norm_id, document_versions[norm_id], full_text)
-        return summary.summary
-
-    outcomes = run_bounded(norm_ids, _summarize_one, max_workers=max_workers)
-    summaries: dict[str, str] = {}
-    for norm_id, outcome in zip(norm_ids, outcomes, strict=True):
-        if isinstance(outcome, BaseException):
-            raise outcome
-        summaries[norm_id] = outcome
-    return summaries
-
-
-def _build_embedder(
-    provider: str,
-    model: str,
-    dimensions: int | None,
-    cache: LLMCache | None,
-    gemini_max_in_flight: int,
-) -> tuple[EmbeddingModel, EmbeddingIdentity]:
-    """Construct the configured embedding provider and its identity (ADR-0013).
-
-    ``provider: local`` is the operational default: no credentials needed,
-    via SentenceTransformerEmbedder - ``dimensions`` is ignored since the
-    model reports its own, and it has no hosted-call cache/limiter to wire
-    (there's no network call to skip). ``provider: gemini`` is the optional
-    hosted comparator, via GoogleGeminiEmbedder with ``dimensions``
-    requesting a truncated (Matryoshka) size, ``cache`` (ADR-0004) consulted
-    per text, and ``gemini_max_in_flight`` bounding concurrent calls
-    (ADR-0014). Never a silent fallback between the two.
-
-    Raises:
-        SystemExit: If ``provider`` isn't one of "local"/"gemini".
-    """
-    if provider == "local":
-        local_embedder = SentenceTransformerEmbedder(model)
-        identity = EmbeddingIdentity(
-            provider="local",
-            model=model,
-            revision=local_embedder.revision,
-            dimensions=local_embedder.dimensions,
-            normalize=True,
-            query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
-            runtime="local",
-        )
-        return local_embedder, identity
-    if provider == "gemini":
-        gemini_embedder = GoogleGeminiEmbedder(
-            model,
-            output_dimensionality=dimensions,
-            cache=cache,
-            max_in_flight=gemini_max_in_flight,
-        )
-        identity = EmbeddingIdentity(
-            provider="gemini",
-            model=model,
-            revision="api",
-            dimensions=gemini_embedder.dimensions,
-            normalize=False,
-            query_instruction_hash=NO_QUERY_INSTRUCTION_HASH,
-            runtime="hosted",
-        )
-        return gemini_embedder, identity
-    raise SystemExit(
-        f"unknown embedding provider {provider!r}; expected one of {_EMBEDDING_PROVIDERS}"
-    )
-
-
-def _build_judge_factory(
-    provider: str,
-    model: str,
-    embedding_model: str,
-    reasoning_effort: str,
-    cache: LLMCache | None,
-    max_in_flight: int,
-) -> Callable[[], AnswerQualityJudge]:
-    """Return a zero-arg factory building the configured judge (ADR-0018).
-
-    ``provider: openai`` is canonical for publishable results, independent
-    from the Gemini answer generator. ``provider: gemini`` is a development
-    fallback - callers should label a run using it (main() does, via
-    "judge_label": "exploratory_same_provider_judge") since the answer
-    generator is also Gemini-based. Never a silent fallback between the two.
-
-    A factory, not an already-built judge: evaluate_answer_quality calls
-    this once per worker thread (RagasJudge's underlying sync wrapper isn't
-    safe to share across threads - see answer_harness.py).
-
-    Raises:
-        SystemExit: If ``provider`` isn't one of "openai"/"gemini".
-    """
-    if provider == "openai":
-        return lambda: build_openai_ragas_judge(
-            model,
-            embedding_model,
-            reasoning_effort=reasoning_effort,
-            cache=cache,
-            max_in_flight=max_in_flight,
-        )
-    if provider == "gemini":
-        return lambda: build_gemini_ragas_judge(
-            model, embedding_model, cache=cache, max_in_flight=max_in_flight
-        )
-    raise SystemExit(f"unknown judge provider {provider!r}; expected one of {_JUDGE_PROVIDERS}")
-
-
-class BaseDenseStore(ChunkSearchStore, ChunkFetchStore, Protocol):
-    """A dense store usable both for vector search and parent-chunk lookup.
-
-    DenseChunkStore satisfies this by having both methods; the base index
-    needs both because parent_child expands a search hit to its parent via
-    the same store it was searched from.
-    """
-
-
-def build_base_strategies(
-    dense_store: BaseDenseStore,
-    sparse_store: TextSearchStore,
-    embedder: EmbeddingModel,
-    reranker: Reranker,
-    rerank_pool: int,
-) -> dict[str, RetrievalStrategy]:
-    """Wire dense/sparse/hybrid/reranked/parent_child from already-indexed stores.
-
-    ``dense_store`` doubles as the parent-fetch source for parent_child, since
-    the base index carries every chunk - fragments and their parent articles
-    alike (ADR-0006).
-    """
-    dense = DenseRetrieval(dense_store, embedder)
-    sparse = SparseRetrieval(sparse_store)
-    hybrid = HybridRetrieval(dense, sparse)
-    reranked = RerankedRetrieval(hybrid, reranker, pool_size=rerank_pool)
-    parent_child = ParentChildRetrieval(dense, dense_store)
-    return {
-        "dense": dense,
-        "sparse_bm25": sparse,
-        "hybrid_rrf": hybrid,
-        "reranked": reranked,
-        "parent_child": parent_child,
-    }
-
-
-def build_contextual_strategy(
-    dense_store: ChunkSearchStore, sparse_store: TextSearchStore, embedder: EmbeddingModel
-) -> RetrievalStrategy:
-    """Wire Hybrid retrieval over an already-indexed contextualized-chunk store."""
-    return HybridRetrieval(DenseRetrieval(dense_store, embedder), SparseRetrieval(sparse_store))
-
-
-def format_results_table(
-    strategy_labels: list[str], run_metrics: dict[str, dict[str, float]]
-) -> str:
-    """Render a fixed-width recall/precision/nDCG/MRR/DRM@k table for the given strategy order."""
-    header = (
-        f"{'strategy':<14} {'recall@k':>9} {'precision@k':>12} {'ndcg@k':>8} {'mrr':>6} "
-        f"{'drm@k':>7} {'n':>4} {'errors':>6}"
-    )
-    lines = [header]
-    for label in strategy_labels:
-        metrics = run_metrics.get(label)
-        if metrics is None:
-            lines.append(f"{label:<14} (not run)")
-            continue
-        lines.append(
-            f"{label:<14} {metrics['recall_at_k']:>9.3f} {metrics['precision_at_k']:>12.3f} "
-            f"{metrics['ndcg_at_k']:>8.3f} {metrics['mrr']:>6.3f} {metrics['drm_at_k']:>7.3f} "
-            f"{metrics['n']:>4.0f} {metrics['errors']:>6.0f}"
-        )
-    return "\n".join(lines)
-
-
-def format_answer_quality_table(
-    strategy_labels: list[str], run_metrics: dict[str, dict[str, float]]
-) -> str:
-    """Render a Citation Accuracy/Faithfulness/Relevancy/abstention table (ADR-0007/ADR-0018)."""
-    header = (
-        f"{'strategy':<14} {'citation_acc':>12} {'faithfulness':>12} {'relevancy':>10} "
-        f"{'abstention':>10} {'n':>4} {'errors':>6}"
-    )
-    lines = [header]
-    for label in strategy_labels:
-        metrics = run_metrics.get(label)
-        if metrics is None or "citation_accuracy" not in metrics:
-            lines.append(f"{label:<14} (not run)")
-            continue
-        lines.append(
-            f"{label:<14} {metrics['citation_accuracy']:>12.3f} {metrics['faithfulness']:>12.3f} "
-            f"{metrics['answer_relevancy']:>10.3f} {metrics['abstention_appropriate']:>10.3f} "
-            f"{metrics['answer_n']:>4.0f} {metrics['answer_errors']:>6.0f}"
-        )
-    return "\n".join(lines)
-
-
-def _evaluate(
-    strategy: RetrievalStrategy,
-    judgments: list[Judgment],
-    generator: AnswerGenerator,
-    judge_factory: Callable[[], AnswerQualityJudge],
-    top_k: int,
-    answer_quality_workers: int,
-    embedding_identity_hash: str | None = None,
-) -> tuple[dict[str, float], list[QuestionRecord], list[RetrievalCandidateLineage]]:
-    """Score ``strategy`` for retrieval ranking and answer quality alike (ADR-0002/0007).
-
-    Merges evaluate_strategy's and evaluate_answer_quality's per-question
-    records into one QuestionRecord per judgment (ADR-0012), alongside the
-    same aggregate metrics dict this returned before. ``embedding_identity_hash``
-    (ADR-0017), when given, is forwarded to evaluate_strategy to populate
-    per-candidate retrieval lineage.
-    """
-    retrieval_result = evaluate_strategy(
-        strategy, judgments, k=top_k, embedding_identity_hash=embedding_identity_hash
-    )
-    answer_result = evaluate_answer_quality(
-        strategy,
-        judgments,
-        generator,
-        judge_factory,
-        k=top_k,
-        max_workers=answer_quality_workers,
-    )
-    records = merge_question_records(strategy.name, retrieval_result.records, answer_result.records)
-    metrics = {**retrieval_result.metrics, **answer_result.metrics}
-    return metrics, records, retrieval_result.candidate_lineage
-
-
-def build_run_record(
-    *,
-    run_id: str,
-    mode: str,
-    config_path: str,
-    embedding_identity: EmbeddingIdentity,
-    index_namespace: str,
-    generation_model: str,
-    judge_provider: str,
-    judge_model: str,
-    judge_reasoning_effort: str | None,
-    audit_enabled: bool,
-    audit_provider: str | None,
-    audit_model: str | None,
-    corpus_version: str,
-    split_dataset_version: str,
-    n_chunks: int,
-    top_k: int,
-    run_metrics: dict[str, dict[str, float]],
-) -> dict[str, object]:
-    """Assemble the JSON-serializable run record written to experiments/<run_id>/results.json.
-
-    ``judge_label`` is "exploratory_same_provider_judge" whenever
-    ``judge_provider == "gemini"`` (ADR-0018): the answer generator is always
-    Gemini-based (GeminiAnswerGenerator), so a Gemini judge is never
-    independent from it. ``None`` for the canonical "openai" judge.
-
-    ``audit_enabled``/``audit_provider``/``audit_model`` are always present
-    (ADR-0016: audit calls must be identified) - ``provider``/``model`` are
-    ``None`` when auditing is off, never silently omitted.
-    """
-    judge_label = "exploratory_same_provider_judge" if judge_provider == "gemini" else None
-    return {
-        "run_id": run_id,
-        "mode": mode,
-        "config_path": config_path,
-        "embedding": {
-            "provider": embedding_identity.provider,
-            "model": embedding_identity.model,
-            "revision": embedding_identity.revision,
-            "dimensions": embedding_identity.dimensions,
-            "normalize": embedding_identity.normalize,
-            "runtime": embedding_identity.runtime,
-        },
-        "index_namespace": index_namespace,
-        "reranker_model": _RERANKER_MODEL,
-        "contextualizer_model": _CONTEXTUALIZER_MODEL,
-        "summarizer_model": _SUMMARIZER_MODEL,
-        "graphrag_llm_model": _GRAPHRAG_LLM_MODEL,
-        "graphrag_mode": _GRAPHRAG_MODE,
-        "generation_model": generation_model,
-        "judge_provider": judge_provider,
-        "judge_model": judge_model,
-        "judge_reasoning_effort": judge_reasoning_effort,
-        "judge_prompt_version": ABSTENTION_PROMPT_VERSION,
-        "judge_label": judge_label,
-        "audit_enabled": audit_enabled,
-        "audit_provider": audit_provider,
-        "audit_model": audit_model,
-        "corpus_version": corpus_version,
-        "split_dataset_version": split_dataset_version,
-        "k": top_k,
-        "n_chunks": n_chunks,
-        "metrics": run_metrics,
-        "records_path": "records.jsonl",
-    }
 
 
 def _verify_resume_identity(
@@ -716,28 +346,6 @@ def _verify_resume_identity(
         raise SystemExit(
             "--resume identity mismatch (changing model/corpus/split creates a new run):\n"
             + "\n".join(f"- {mismatch}" for mismatch in mismatches)
-        )
-
-
-def _reject_if_evidence_dir_already_completed(artifacts_dir: Path) -> None:
-    """Fail closed if ``artifacts_dir``'s manifest.json already says status="completed" (ADR-0017).
-
-    No manifest yet (a genuinely new run_id, or one whose evidence directory
-    was never started) is not an error - only an already-completed one is
-    rejected, matching "a completed directory SHALL not be overwritten".
-
-    Raises:
-        SystemExit: If a manifest exists there with status "completed".
-    """
-    manifest_path = artifacts_dir / "manifest.json"
-    if not manifest_path.exists():
-        return
-    previous = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if previous.get("status") == "completed":
-        raise SystemExit(
-            f"run {previous.get('run_id')!r} already has a completed evidence directory at "
-            f"{artifacts_dir} - a completed artifacts/runs/<run_id>/ is never overwritten; "
-            "use a new run_id"
         )
 
 
@@ -789,7 +397,7 @@ def main() -> None:
     cache = FileLLMCache(run_dir / "llm-cache")
 
     artifacts_dir = ARTIFACTS_DIR / run_id
-    _reject_if_evidence_dir_already_completed(artifacts_dir)
+    reject_if_evidence_dir_already_completed(artifacts_dir)
 
     print("Extracting and chunking real corpus documents...")
     documents = _load_documents(manifest)
@@ -933,36 +541,6 @@ def main() -> None:
         )
         results_path.write_text(json.dumps(record, ensure_ascii=False, indent=2))
 
-    def _write_question_artifacts(
-        label: str,
-        records: list[QuestionRecord],
-        candidate_lineage: list[RetrievalCandidateLineage],
-    ) -> None:
-        """Write ``questions/<question_id>/<label>.json`` (ADR-0017): QuestionRecord + its lineage.
-
-        Only retrieval candidate lineage is embedded here - it is reliably
-        correlatable by ``question_id``. Generation/audit lineage is
-        produced in worker-thread completion order (run_bounded), not
-        canonical question order, so attaching it to a specific question
-        file here would risk mislabeling; it is reported per-strategy in
-        summaries/generation.json and summaries/audit.json instead.
-        """
-        lineage_by_question: dict[str, list[RetrievalCandidateLineage]] = {}
-        for entry in candidate_lineage:
-            lineage_by_question.setdefault(entry.query_id, []).append(entry)
-        for record in records:
-            payload = {
-                "question_record": record.to_json_dict(),
-                "candidate_lineage": [
-                    dataclasses.asdict(entry)
-                    for entry in lineage_by_question.get(record.question_id, [])
-                ],
-            }
-            write_atomic(
-                artifacts_dir / "questions" / record.question_id / f"{label}.json",
-                json.dumps(payload, ensure_ascii=False, indent=2),
-            )
-
     def _evaluate_and_checkpoint(label: str, strategy: RetrievalStrategy) -> None:
         """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json.
 
@@ -993,7 +571,7 @@ def main() -> None:
             metrics = {**metrics, **compute_audit_report(audit_results)}
         run_metrics[label] = metrics
         append_records_jsonl(records_path, records)
-        _write_question_artifacts(label, records, candidate_lineage)
+        write_question_artifacts(artifacts_dir, label, records, candidate_lineage)
         _checkpoint()
         event_log.emit("strategy", "completed", {"label": label, "n": metrics.get("n", 0.0)})
 
@@ -1147,31 +725,8 @@ def main() -> None:
     print(f"\nRun record written to {run_dir.relative_to(ROOT)}/results.json")
 
     print("\nFinalizing ADR-0017 evidence directory...")
-    write_atomic(
-        artifacts_dir / "summaries" / "retrieval.json",
-        json.dumps(run_metrics, ensure_ascii=False, indent=2),
-    )
-    write_atomic(
-        artifacts_dir / "summaries" / "generation.json",
-        json.dumps(
-            {
-                label: [dataclasses.asdict(entry) for entry in entries]
-                for label, entries in generation_lineage_by_strategy.items()
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
-    )
-    write_atomic(
-        artifacts_dir / "summaries" / "audit.json",
-        json.dumps(
-            {
-                label: compute_audit_report(results)
-                for label, results in audit_results_by_strategy.items()
-            },
-            ensure_ascii=False,
-            indent=2,
-        ),
+    write_summaries(
+        artifacts_dir, run_metrics, generation_lineage_by_strategy, audit_results_by_strategy
     )
     report_record = build_run_record(
         run_id=run_id,

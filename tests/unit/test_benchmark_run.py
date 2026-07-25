@@ -20,7 +20,7 @@ from ragforge.domain.models import (
     StructuralRef,
 )
 from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIdentity
-from ragforge.evaluation import run
+from ragforge.evaluation import run, run_strategies
 from ragforge.evaluation.judge_ports import (
     AbstentionJudgment,
     JudgeResult,
@@ -29,15 +29,17 @@ from ragforge.evaluation.judge_ports import (
     ModelIdentity,
 )
 from ragforge.evaluation.manifest import load_corpus_manifest
-from ragforge.evaluation.run import (
-    MANIFEST_PATH,
+from ragforge.evaluation.run import MANIFEST_PATH
+from ragforge.evaluation.run_reporting import (
+    build_run_record,
+    format_answer_quality_table,
+    format_results_table,
+)
+from ragforge.evaluation.run_strategies import (
     _evaluate,
     _load_documents,
     build_base_strategies,
     build_contextual_strategy,
-    build_run_record,
-    format_answer_quality_table,
-    format_results_table,
 )
 from ragforge.retrieval.reranked.strategy import RerankedRetrieval
 
@@ -493,9 +495,13 @@ def test_build_embedder_constructs_a_local_embedder_without_credentials(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """provider: local builds SentenceTransformerEmbedder and a matching identity."""
-    monkeypatch.setattr(run, "SentenceTransformerEmbedder", _FakeSentenceTransformerEmbedder)
+    monkeypatch.setattr(
+        run_strategies, "SentenceTransformerEmbedder", _FakeSentenceTransformerEmbedder
+    )
 
-    embedder, identity = run._build_embedder("local", "Qwen/Qwen3-Embedding-0.6B", None, None, 4)
+    embedder, identity = run_strategies._build_embedder(
+        "local", "Qwen/Qwen3-Embedding-0.6B", None, None, 4
+    )
 
     assert embedder.dimensions == 1024
     assert identity.provider == "local"
@@ -510,9 +516,11 @@ def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """provider: gemini builds GoogleGeminiEmbedder, passing dimensions through as truncation."""
-    monkeypatch.setattr(run, "GoogleGeminiEmbedder", _FakeGoogleGeminiEmbedder)
+    monkeypatch.setattr(run_strategies, "GoogleGeminiEmbedder", _FakeGoogleGeminiEmbedder)
 
-    embedder, identity = run._build_embedder("gemini", "gemini-embedding-001", 1536, None, 4)
+    embedder, identity = run_strategies._build_embedder(
+        "gemini", "gemini-embedding-001", 1536, None, 4
+    )
 
     assert embedder.dimensions == 1536
     assert identity.provider == "gemini"
@@ -524,7 +532,7 @@ def test_build_embedder_constructs_a_gemini_embedder_with_output_dimensionality(
 def test_build_embedder_fails_closed_for_an_unknown_provider() -> None:
     """An unrecognized provider fails fast rather than silently falling back to either adapter."""
     with pytest.raises(SystemExit, match="unknown embedding provider"):
-        run._build_embedder("openai", "text-embedding-3", None, None, 4)
+        run_strategies._build_embedder("openai", "text-embedding-3", None, None, 4)
 
 
 def test_build_judge_factory_constructs_an_openai_judge(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -542,9 +550,9 @@ def test_build_judge_factory_constructs_an_openai_judge(monkeypatch: pytest.Monk
         calls.append((model, embedding_model, reasoning_effort, cache, max_in_flight))
         return "fake-openai-judge"
 
-    monkeypatch.setattr(run, "build_openai_ragas_judge", fake_build_openai_ragas_judge)
+    monkeypatch.setattr(run_strategies, "build_openai_ragas_judge", fake_build_openai_ragas_judge)
 
-    factory = run._build_judge_factory(
+    factory = run_strategies._build_judge_factory(
         "openai", "gpt-5.4-mini-2026-03-17", "text-embedding-3-small", "medium", None, 4
     )
     factory()
@@ -566,9 +574,9 @@ def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.Monke
         calls.append((model, embedding_model, cache, max_in_flight))
         return "fake-gemini-judge"
 
-    monkeypatch.setattr(run, "build_gemini_ragas_judge", fake_build_gemini_ragas_judge)
+    monkeypatch.setattr(run_strategies, "build_gemini_ragas_judge", fake_build_gemini_ragas_judge)
 
-    factory = run._build_judge_factory(
+    factory = run_strategies._build_judge_factory(
         "gemini", "gemini-3.1-flash-lite", "gemini-embedding-001", "medium", None, 4
     )
     factory()
@@ -579,7 +587,7 @@ def test_build_judge_factory_constructs_a_gemini_judge(monkeypatch: pytest.Monke
 def test_build_judge_factory_fails_closed_for_an_unknown_provider() -> None:
     """An unrecognized provider fails fast rather than silently falling back to either adapter."""
     with pytest.raises(SystemExit, match="unknown judge provider"):
-        run._build_judge_factory("anthropic", "claude", "embed", "medium", None, 4)
+        run_strategies._build_judge_factory("anthropic", "claude", "embed", "medium", None, 4)
 
 
 def test_verify_resume_identity_passes_when_everything_matches() -> None:
