@@ -1,10 +1,11 @@
-"""Aggregate evaluation harness: run a strategy against a judgment set (ADR-0002/0003)."""
+"""Aggregate evaluation harness: run a strategy against a judgment set (ADR-0002/0003/0017)."""
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from statistics import mean
 
 from ragforge.domain.models import Judgment
 from ragforge.domain.protocols import RetrievalStrategy
+from ragforge.evaluation.lineage_ports import RetrievalCandidateLineage
 from ragforge.evaluation.metrics.drm import document_level_retrieval_mismatch
 from ragforge.evaluation.metrics.relevance import mrr, ndcg_at_k, precision_at_k, recall_at_k
 from ragforge.evaluation.records import RetrievalRecord
@@ -14,14 +15,24 @@ _MAX_CONSECUTIVE_ERRORS = 5
 
 @dataclass(frozen=True, slots=True)
 class EvaluationResult:
-    """Aggregate retrieval metrics plus one RetrievalRecord per judgment (ADR-0012)."""
+    """Aggregate retrieval metrics plus one RetrievalRecord per judgment (ADR-0012).
+
+    ``candidate_lineage`` (ADR-0017) is additive and empty by default -
+    every existing caller/test from Increment 1 keeps working unchanged;
+    only run.py (Increment 7) passes ``embedding_identity_hash`` to
+    populate it.
+    """
 
     metrics: dict[str, float]
     records: list[RetrievalRecord]
+    candidate_lineage: list[RetrievalCandidateLineage] = field(default_factory=list)
 
 
 def evaluate_strategy(
-    strategy: RetrievalStrategy, judgments: list[Judgment], k: int = 5
+    strategy: RetrievalStrategy,
+    judgments: list[Judgment],
+    k: int = 5,
+    embedding_identity_hash: str | None = None,
 ) -> EvaluationResult:
     """Run ``strategy`` against every judgment's query; average metrics and record every outcome.
 
@@ -45,6 +56,13 @@ def evaluate_strategy(
     unattempted questions still get a "skipped" record rather than silently
     disappearing from coverage.
 
+    ``embedding_identity_hash`` (ADR-0017), when given, populates
+    ``EvaluationResult.candidate_lineage`` with one RetrievalCandidateLineage
+    per candidate a successful retrieve() call returns - rank is the
+    candidate's position in that returned list. Left ``None`` (the default),
+    no lineage is collected - existing callers that don't need it pay
+    nothing extra.
+
     Raises:
         ValueError: If judgments is empty.
     """
@@ -60,6 +78,7 @@ def evaluate_strategy(
     consecutive_errors = 0
     aborted = False
     records: list[RetrievalRecord] = []
+    candidate_lineage: list[RetrievalCandidateLineage] = []
 
     for judgment in judgments:
         query_class = judgment.query.query_class.value if judgment.query.query_class else None
@@ -100,6 +119,19 @@ def evaluate_strategy(
             continue
 
         consecutive_errors = 0
+        if embedding_identity_hash is not None:
+            candidate_lineage.extend(
+                RetrievalCandidateLineage(
+                    query_id=judgment.question_id,
+                    strategy=strategy.name,
+                    embedding_identity_hash=embedding_identity_hash,
+                    candidate_rank=rank,
+                    chunk_id=result.chunk.chunk_id,
+                    structural_ids=result.chunk.structural_ids,
+                    raw_score=result.score,
+                )
+                for rank, result in enumerate(results)
+            )
         retrieved_ids = tuple(
             dict.fromkeys(ref for result in results for ref in result.chunk.structural_ids)
         )
@@ -139,4 +171,4 @@ def evaluate_strategy(
         "n": float(len(recalls)),
         "errors": float(errors),
     }
-    return EvaluationResult(metrics=metrics, records=records)
+    return EvaluationResult(metrics=metrics, records=records, candidate_lineage=candidate_lineage)

@@ -15,18 +15,31 @@ adapter in this project. An optional LLMCache (ADR-0004) keys on model +
 prompt, so an identical (query, context) pair reuses its prior answer
 instead of calling the API again; a ProviderLimiter (ADR-0014) bounds
 concurrent in-flight generate_content calls process-wide.
+
+Also captures ADR-0017 "Generation lineage" (token usage, latency,
+cache hit, prompt/answer hashes) via ``drain_generation_lineage()`` - a
+lock-guarded buffer, same pattern as
+``generation.auditing_answer_generator.AuditingAnswerGenerator``'s audit
+buffer. This is the one adapter that needs this: the ADR's own field list
+scopes token usage/latency to the answer generator, not to the judge or
+auditor (see lineage_ports.py's module docstring).
 """
 
 import json
 import os
+import threading
+import time
 
 from google import genai
 from google.genai import types
+from google.genai.types import GenerateContentResponseUsageMetadata
 
 from ragforge.adapters.gemini_retry import call_with_retry
 from ragforge.adapters.llm_cache import LLMCache, cache_key, cached_call
 from ragforge.adapters.provider_limiter import get_limiter
 from ragforge.domain.models import Answer, Query, RetrievalResult
+from ragforge.evaluation.canonical_hash import canonical_json_hash
+from ragforge.evaluation.lineage_ports import GenerationLineage
 from ragforge.generation.citation_parsing import extract_citations
 from ragforge.generation.errors import GenerationError
 
@@ -60,6 +73,14 @@ def _format_context(results: list[RetrievalResult]) -> str:
         ids = ", ".join(result.chunk.structural_ids)
         blocks.append(f"[structural_ids: {ids}]\n{result.chunk.source_text}")
     return "\n\n".join(blocks)
+
+
+class _CallState:
+    """Per-generate()-call mutable state for lineage capture (ADR-0017): never shared or reused."""
+
+    def __init__(self) -> None:
+        self.cache_hit = True
+        self.usage: GenerateContentResponseUsageMetadata | None = None
 
 
 class GeminiAnswerGenerator:
@@ -99,6 +120,8 @@ class GeminiAnswerGenerator:
         self.name = model_name
         self._cache = cache
         self._limiter = get_limiter(_PROVIDER, max_in_flight)
+        self._lineage_lock = threading.Lock()
+        self._generation_lineage: list[GenerationLineage] = []
 
     def generate(self, query: Query, results: list[RetrievalResult]) -> Answer:
         """Return an answer to ``query``, grounded only in ``results``.
@@ -111,10 +134,24 @@ class GeminiAnswerGenerator:
         key = cache_key(
             provider=_PROVIDER, model=self.name, system_prompt=_SYSTEM_PROMPT, prompt=prompt
         )
-        return cached_call(
+
+        # Populated by _generate_uncached only on a real cache miss; stays
+        # at its "hit" defaults otherwise - a fresh local instance per call,
+        # so concurrent generate() calls from different worker threads never
+        # share this state (unlike an instance attribute would).
+        call_state = _CallState()
+
+        def _generate_and_record() -> Answer:
+            call_state.cache_hit = False
+            answer, usage = self._generate_uncached(prompt)
+            call_state.usage = usage
+            return answer
+
+        started = time.monotonic()
+        answer = cached_call(
             self._cache,
             key,
-            lambda: self._generate_uncached(prompt),
+            _generate_and_record,
             serialize=lambda answer: json.dumps(
                 {"text": answer.text, "citations": list(answer.citations)}
             ),
@@ -122,8 +159,45 @@ class GeminiAnswerGenerator:
                 text=json.loads(raw)["text"], citations=tuple(json.loads(raw)["citations"])
             ),
         )
+        latency_seconds = time.monotonic() - started
 
-    def _generate_uncached(self, prompt: str) -> Answer:
+        usage = call_state.usage
+        lineage = GenerationLineage(
+            provider=_PROVIDER,
+            model=self.name,
+            prompt_hash=key,
+            input_chunk_ids=tuple(result.chunk.chunk_id for result in results),
+            input_source_hashes=tuple(
+                canonical_json_hash(result.chunk.source_text) for result in results
+            ),
+            answer_hash=canonical_json_hash(answer.text),
+            parsed_citations=answer.citations,
+            prompt_tokens=usage.prompt_token_count if usage is not None else None,
+            completion_tokens=usage.candidates_token_count if usage is not None else None,
+            total_tokens=usage.total_token_count if usage is not None else None,
+            latency_seconds=latency_seconds,
+            cache_hit=call_state.cache_hit,
+        )
+        with self._lineage_lock:
+            self._generation_lineage.append(lineage)
+
+        return answer
+
+    def drain_generation_lineage(self) -> list[GenerationLineage]:
+        """Return every GenerationLineage produced since the last drain, then clear the buffer.
+
+        Same swap-and-clear pattern as
+        ``AuditingAnswerGenerator.drain_audit_results()`` - callers drain
+        after each strategy finishes, before the next one reuses this
+        instance.
+        """
+        with self._lineage_lock:
+            lineage, self._generation_lineage = self._generation_lineage, []
+        return lineage
+
+    def _generate_uncached(
+        self, prompt: str
+    ) -> tuple[Answer, GenerateContentResponseUsageMetadata | None]:
         config = types.GenerateContentConfig(
             system_instruction=_SYSTEM_PROMPT,
             temperature=_TEMPERATURE,
@@ -145,4 +219,4 @@ class GeminiAnswerGenerator:
         if not response.text:
             raise GenerationError(f"Gemini returned no text for {self.name!r}")
         text = response.text.strip()
-        return Answer(text=text, citations=extract_citations(text))
+        return Answer(text=text, citations=extract_citations(text)), response.usage_metadata

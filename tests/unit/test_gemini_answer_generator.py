@@ -46,9 +46,22 @@ def test_raises_when_no_api_key_is_available(monkeypatch: pytest.MonkeyPatch) ->
         GeminiAnswerGenerator("gemini-3.1-flash-lite")
 
 
+class _FakeUsageMetadata:
+    def __init__(
+        self,
+        prompt_token_count: int = 10,
+        candidates_token_count: int = 5,
+        total_token_count: int = 15,
+    ) -> None:
+        self.prompt_token_count = prompt_token_count
+        self.candidates_token_count = candidates_token_count
+        self.total_token_count = total_token_count
+
+
 class _FakeResponse:
-    def __init__(self, text: str | None) -> None:
+    def __init__(self, text: str | None, usage_metadata: _FakeUsageMetadata | None = None) -> None:
         self.text = text
+        self.usage_metadata = usage_metadata if usage_metadata is not None else _FakeUsageMetadata()
 
 
 class _FakeModels:
@@ -165,3 +178,68 @@ def test_a_cache_hit_skips_the_api_call_entirely(
     assert calls_after_first == 1
     assert len(fake_client.models.calls) == 1, "the second generate() made no additional API call"
     assert second == first
+
+
+def test_drain_generation_lineage_captures_token_usage_and_cache_miss(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A real (uncached) call records real token counts and cache_hit=False (ADR-0017)."""
+    _install_fake_client(
+        monkeypatch,
+        lambda contents: _FakeResponse(
+            "Resposta [LC-105/2001::art-10].",
+            usage_metadata=_FakeUsageMetadata(
+                prompt_token_count=100, candidates_token_count=20, total_token_count=120
+            ),
+        ),
+    )
+    generator = GeminiAnswerGenerator("gemini-3.1-flash-lite", api_key="key")
+    results = [_result("c1", "Texto.", ("LC-105/2001::art-10",))]
+
+    answer = generator.generate(Query(text="pergunta"), results)
+    [lineage] = generator.drain_generation_lineage()
+
+    assert lineage.provider == "gemini"
+    assert lineage.model == "gemini-3.1-flash-lite"
+    assert lineage.input_chunk_ids == ("c1",)
+    assert lineage.parsed_citations == answer.citations
+    assert lineage.prompt_tokens == 100
+    assert lineage.completion_tokens == 20
+    assert lineage.total_tokens == 120
+    assert lineage.cache_hit is False
+    assert lineage.latency_seconds >= 0.0
+
+
+def test_drain_generation_lineage_reports_cache_hit_with_no_token_usage(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """The second (cached) generate() reports cache_hit=True and no token counts."""
+    _install_fake_client(
+        monkeypatch, lambda contents: _FakeResponse("Resposta [LC-105/2001::art-10].")
+    )
+    cache = FileLLMCache(tmp_path)
+    generator = GeminiAnswerGenerator("gemini-3.1-flash-lite", api_key="key", cache=cache)
+    results = [_result("c1", "Texto.", ("LC-105/2001::art-10",))]
+
+    generator.generate(Query(text="pergunta"), results)
+    generator.generate(Query(text="pergunta"), results)
+    first_lineage, second_lineage = generator.drain_generation_lineage()
+
+    assert first_lineage.cache_hit is False
+    assert second_lineage.cache_hit is True
+    assert second_lineage.prompt_tokens is None
+    assert second_lineage.completion_tokens is None
+    assert second_lineage.total_tokens is None
+
+
+def test_drain_generation_lineage_clears_the_buffer(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Draining resets the buffer - a second drain with no new call in between is empty."""
+    _install_fake_client(monkeypatch, lambda contents: _FakeResponse("ok"))
+    generator = GeminiAnswerGenerator("gemini-3.1-flash-lite", api_key="key")
+
+    generator.generate(Query(text="pergunta"), [])
+    first_drain = generator.drain_generation_lineage()
+    second_drain = generator.drain_generation_lineage()
+
+    assert len(first_drain) == 1
+    assert second_drain == []

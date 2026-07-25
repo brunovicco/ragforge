@@ -8,6 +8,25 @@ recall/precision/nDCG/MRR@k per strategy plus, per ADR-0007, a generated
 answer's Citation Accuracy/Faithfulness/Answer Relevancy - and writing a
 versioned run record to experiments/<run_id>/results.json.
 
+Also produces an auditable, tamper-evident evidence directory (ADR-0017) at
+artifacts/runs/<run_id>/ - manifest.json (hash-identified corpus/dataset/
+split/config, git SHA), events.jsonl (hash-chained stage events),
+questions/<question_id>/<strategy>.json (per-question retrieval candidate
+lineage), summaries/*.json (per-strategy generation/audit rollups),
+checksums.sha256, and report.json/report.md - alongside, never replacing,
+experiments/<run_id>/. Verify with `uv run python scripts/verify_run.py
+<run_id>`. Generation lineage (token usage, latency, cache hit) is captured
+only for GeminiAnswerGenerator - the ADR's own field list scopes those three
+fields to the answer generator, not to the judge or auditor, whose
+lineage is built entirely from already-computed AuditResult/JudgeResult
+data instead (see lineage_ports.py). Per-question files carry retrieval
+candidate lineage (reliably correlatable by question_id) but not per-
+question generation/audit lineage - those are only captured in completion
+order inside worker threads, not canonical question order, so attaching
+them to a specific question file would risk mislabeling; they are
+reported per-strategy in summaries/generation.json and summaries/audit.json
+instead, a deliberate, documented scope boundary.
+
 Document discovery, expected article counts, and source hashes come only
 from the corpus manifest (datasets/regrag-br/corpus_manifest.yaml) and the
 question selection only from the versioned split
@@ -132,6 +151,7 @@ deferred scope (RPM/TPM limits, `Retry-After`, cross-process coalescing).
 
 import argparse
 import asyncio
+import dataclasses
 import json
 import shutil
 import tempfile
@@ -153,7 +173,15 @@ from ragforge.embeddings.identity import NO_QUERY_INSTRUCTION_HASH, EmbeddingIde
 from ragforge.embeddings.ports import EmbeddingModel
 from ragforge.embeddings.sentence_transformer_embedder import SentenceTransformerEmbedder
 from ragforge.evaluation.answer_harness import evaluate_answer_quality
+from ragforge.evaluation.artifact_writer import (
+    compute_checksums,
+    write_atomic,
+    write_checksums_file,
+)
 from ragforge.evaluation.audit_metrics import compute_audit_report
+from ragforge.evaluation.audit_ports import AuditResult
+from ragforge.evaluation.canonical_hash import canonical_json_hash
+from ragforge.evaluation.event_log import EventLog
 from ragforge.evaluation.harness import evaluate_strategy
 from ragforge.evaluation.index_namespace import derive_index_namespace
 from ragforge.evaluation.integrity import (
@@ -164,6 +192,7 @@ from ragforge.evaluation.integrity import (
 )
 from ragforge.evaluation.judge_ports import AnswerQualityJudge
 from ragforge.evaluation.judgments import load_judgments
+from ragforge.evaluation.lineage_ports import GenerationLineage, RetrievalCandidateLineage
 from ragforge.evaluation.manifest import CorpusManifest, load_corpus_manifest
 from ragforge.evaluation.ragas_judge import (
     ABSTENTION_PROMPT_VERSION,
@@ -171,6 +200,11 @@ from ragforge.evaluation.ragas_judge import (
     build_openai_ragas_judge,
 )
 from ragforge.evaluation.records import QuestionRecord, append_records_jsonl, merge_question_records
+from ragforge.evaluation.run_manifest import (
+    build_initial_manifest,
+    finalize_manifest,
+    resolve_git_sha,
+)
 from ragforge.evaluation.scheduler import run_bounded
 from ragforge.evaluation.split import load_split
 from ragforge.generation.auditing_answer_generator import AuditingAnswerGenerator
@@ -184,6 +218,7 @@ from ragforge.generation.ports import AnswerGenerator
 from ragforge.ingestion.html_extractor import HtmlTextExtractor
 from ragforge.ingestion.pipeline import ingest_norm
 from ragforge.ingestion.pymupdf_extractor import PyMuPdfExtractor
+from ragforge.ingestion.snapshot import snapshot_hash
 from ragforge.reranking.cross_encoder_reranker import CrossEncoderReranker
 from ragforge.retrieval.contextual.pipeline import contextualize_chunks
 from ragforge.retrieval.dense.ports import ChunkSearchStore
@@ -212,6 +247,10 @@ MANIFEST_PATH = ROOT / "datasets/regrag-br/corpus_manifest.yaml"
 SPLIT_PATH = ROOT / "datasets/regrag-br/split.json"
 JUDGMENTS_PATH = ROOT / "datasets/regrag-br/judgments.json"
 RESULTS_DIR = ROOT / "experiments"
+# ADR-0017 evidence directory, alongside (never replacing) RESULTS_DIR -
+# same run_id used for both, so a reviewer never has to reconcile two IDs
+# for one run.
+ARTIFACTS_DIR = ROOT / "artifacts" / "runs"
 DATABASE_URL = "postgresql://ragforge:ragforge@localhost:5432/ragforge"
 
 _RERANKER_MODEL = "cross-encoder/ms-marco-MiniLM-L-6-v2"
@@ -543,14 +582,19 @@ def _evaluate(
     judge_factory: Callable[[], AnswerQualityJudge],
     top_k: int,
     answer_quality_workers: int,
-) -> tuple[dict[str, float], list[QuestionRecord]]:
+    embedding_identity_hash: str | None = None,
+) -> tuple[dict[str, float], list[QuestionRecord], list[RetrievalCandidateLineage]]:
     """Score ``strategy`` for retrieval ranking and answer quality alike (ADR-0002/0007).
 
     Merges evaluate_strategy's and evaluate_answer_quality's per-question
     records into one QuestionRecord per judgment (ADR-0012), alongside the
-    same aggregate metrics dict this returned before.
+    same aggregate metrics dict this returned before. ``embedding_identity_hash``
+    (ADR-0017), when given, is forwarded to evaluate_strategy to populate
+    per-candidate retrieval lineage.
     """
-    retrieval_result = evaluate_strategy(strategy, judgments, k=top_k)
+    retrieval_result = evaluate_strategy(
+        strategy, judgments, k=top_k, embedding_identity_hash=embedding_identity_hash
+    )
     answer_result = evaluate_answer_quality(
         strategy,
         judgments,
@@ -560,7 +604,8 @@ def _evaluate(
         max_workers=answer_quality_workers,
     )
     records = merge_question_records(strategy.name, retrieval_result.records, answer_result.records)
-    return {**retrieval_result.metrics, **answer_result.metrics}, records
+    metrics = {**retrieval_result.metrics, **answer_result.metrics}
+    return metrics, records, retrieval_result.candidate_lineage
 
 
 def build_run_record(
@@ -674,6 +719,28 @@ def _verify_resume_identity(
         )
 
 
+def _reject_if_evidence_dir_already_completed(artifacts_dir: Path) -> None:
+    """Fail closed if ``artifacts_dir``'s manifest.json already says status="completed" (ADR-0017).
+
+    No manifest yet (a genuinely new run_id, or one whose evidence directory
+    was never started) is not an error - only an already-completed one is
+    rejected, matching "a completed directory SHALL not be overwritten".
+
+    Raises:
+        SystemExit: If a manifest exists there with status "completed".
+    """
+    manifest_path = artifacts_dir / "manifest.json"
+    if not manifest_path.exists():
+        return
+    previous = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if previous.get("status") == "completed":
+        raise SystemExit(
+            f"run {previous.get('run_id')!r} already has a completed evidence directory at "
+            f"{artifacts_dir} - a completed artifacts/runs/<run_id>/ is never overwritten; "
+            "use a new run_id"
+        )
+
+
 def main() -> None:
     """Index the real corpus with every strategy and score each against the golden set."""
     args = parse_args()
@@ -721,6 +788,9 @@ def main() -> None:
     records_path = run_dir / "records.jsonl"
     cache = FileLLMCache(run_dir / "llm-cache")
 
+    artifacts_dir = ARTIFACTS_DIR / run_id
+    _reject_if_evidence_dir_already_completed(artifacts_dir)
+
     print("Extracting and chunking real corpus documents...")
     documents = _load_documents(manifest)
     all_chunks = [chunk for _, chunks in documents.values() for chunk in chunks]
@@ -740,6 +810,7 @@ def main() -> None:
     embedder, embedding_identity = _build_embedder(
         embedding_provider, embedding_model, embedding_dimensions, cache, gemini_max_in_flight
     )
+    embedding_identity_hash = canonical_json_hash(dataclasses.asdict(embedding_identity))
     index_namespace = derive_index_namespace(
         manifest.content_hash,
         _CHUNKING_CONFIG_VERSION,
@@ -762,13 +833,44 @@ def main() -> None:
         run_metrics = previous["metrics"]
         print(f"Resuming {run_id}: {sorted(run_metrics)} already scored.")
 
+    print("Writing ADR-0017 evidence manifest and snapshots...")
+    run_manifest = build_initial_manifest(
+        run_id=run_id,
+        git_sha=resolve_git_sha(),
+        corpus_hash=manifest.content_hash,
+        dataset_hash=snapshot_hash(JUDGMENTS_PATH),
+        split_hash=snapshot_hash(SPLIT_PATH),
+        configuration_hash=canonical_json_hash(config),
+        models={
+            "embedding": f"{embedding_provider}/{embedding_model}",
+            "generation": generation_model,
+            "judge": f"{judge_provider}/{judge_model}",
+            "audit": f"{audit_provider}/{audit_model}" if audit_enabled else "disabled",
+        },
+        strategies=tuple(config["strategies"]),
+        execution=dict(execution_config),
+    )
+    write_atomic(
+        artifacts_dir / "manifest.json",
+        json.dumps(dataclasses.asdict(run_manifest), ensure_ascii=False, indent=2),
+    )
+    write_atomic(
+        artifacts_dir / "configuration.resolved.yaml", args.config.read_text(encoding="utf-8")
+    )
+    write_atomic(
+        artifacts_dir / "corpus-manifest.snapshot.yaml", MANIFEST_PATH.read_text(encoding="utf-8")
+    )
+    write_atomic(artifacts_dir / "split.snapshot.json", SPLIT_PATH.read_text(encoding="utf-8"))
+    event_log = EventLog(run_id, artifacts_dir / "events.jsonl")
+
     print(
         f"Loading generation model {generation_model} and "
         f"judge model {judge_model} (provider={judge_provider})..."
     )
-    generator: AnswerGenerator = GeminiAnswerGenerator(
+    base_generator = GeminiAnswerGenerator(
         generation_model, cache=cache, max_in_flight=gemini_max_in_flight
     )
+    generator: AnswerGenerator = base_generator
     auditing_generator: AuditingAnswerGenerator | None = None
     if audit_enabled:
         if audit_model is None:
@@ -805,6 +907,8 @@ def main() -> None:
     os_client = OpenSearch(hosts=["http://localhost:9200"], use_ssl=False, verify_certs=False)
     graphrag_dir = Path(tempfile.mkdtemp(prefix="ragforge-bench-graphrag-"))
     tables = [base_table, contextual_table, sac_table, sac_contextual_table, raptor_table]
+    generation_lineage_by_strategy: dict[str, list[GenerationLineage]] = {}
+    audit_results_by_strategy: dict[str, list[AuditResult]] = {}
 
     def _checkpoint() -> None:
         """Write the run record as computed so far - survives a later strategy crashing."""
@@ -829,6 +933,36 @@ def main() -> None:
         )
         results_path.write_text(json.dumps(record, ensure_ascii=False, indent=2))
 
+    def _write_question_artifacts(
+        label: str,
+        records: list[QuestionRecord],
+        candidate_lineage: list[RetrievalCandidateLineage],
+    ) -> None:
+        """Write ``questions/<question_id>/<label>.json`` (ADR-0017): QuestionRecord + its lineage.
+
+        Only retrieval candidate lineage is embedded here - it is reliably
+        correlatable by ``question_id``. Generation/audit lineage is
+        produced in worker-thread completion order (run_bounded), not
+        canonical question order, so attaching it to a specific question
+        file here would risk mislabeling; it is reported per-strategy in
+        summaries/generation.json and summaries/audit.json instead.
+        """
+        lineage_by_question: dict[str, list[RetrievalCandidateLineage]] = {}
+        for entry in candidate_lineage:
+            lineage_by_question.setdefault(entry.query_id, []).append(entry)
+        for record in records:
+            payload = {
+                "question_record": record.to_json_dict(),
+                "candidate_lineage": [
+                    dataclasses.asdict(entry)
+                    for entry in lineage_by_question.get(record.question_id, [])
+                ],
+            }
+            write_atomic(
+                artifacts_dir / "questions" / record.question_id / f"{label}.json",
+                json.dumps(payload, ensure_ascii=False, indent=2),
+            )
+
     def _evaluate_and_checkpoint(label: str, strategy: RetrievalStrategy) -> None:
         """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json.
 
@@ -841,17 +975,31 @@ def main() -> None:
         if label in run_metrics:
             print(f"  skipping {label} (already scored, --resume)")
             return
-        metrics, records = _evaluate(
-            strategy, judgments, generator, judge_factory, top_k, answer_quality_workers
+        event_log.emit("strategy", "started", {"label": label})
+        metrics, records, candidate_lineage = _evaluate(
+            strategy,
+            judgments,
+            generator,
+            judge_factory,
+            top_k,
+            answer_quality_workers,
+            embedding_identity_hash=embedding_identity_hash,
         )
+        generation_lineage = base_generator.drain_generation_lineage()
+        generation_lineage_by_strategy[label] = generation_lineage
         if auditing_generator is not None:
-            metrics = {**metrics, **compute_audit_report(auditing_generator.drain_audit_results())}
+            audit_results = auditing_generator.drain_audit_results()
+            audit_results_by_strategy[label] = audit_results
+            metrics = {**metrics, **compute_audit_report(audit_results)}
         run_metrics[label] = metrics
         append_records_jsonl(records_path, records)
+        _write_question_artifacts(label, records, candidate_lineage)
         _checkpoint()
+        event_log.emit("strategy", "completed", {"label": label, "n": metrics.get("n", 0.0)})
 
     try:
         print("\n[1/6] Indexing the base chunks (dense + sparse)...")
+        event_log.emit("indexing", "started", {"stage": "base"})
         base_dense_store = DenseChunkStore(conn, table=base_table)
         base_sparse_store = SparseChunkStore(os_client, index=base_table)
         base_embeddings = embedder.embed([chunk.retrieval_text for chunk in all_chunks])
@@ -870,8 +1018,10 @@ def main() -> None:
         for label, strategy in base_strategies.items():
             print(f"  evaluating {label}...")
             _evaluate_and_checkpoint(label, strategy)
+        event_log.emit("indexing", "completed", {"stage": "base"})
 
         print("\n[2/6] Building the Contextual Retrieval index (1 LLM call per chunk)...")
+        event_log.emit("indexing", "started", {"stage": "contextual"})
         contextualizer = GeminiContextualizer(_CONTEXTUALIZER_MODEL)
         contextual_chunks_by_norm = {
             norm_id: contextualize_chunks(full_text, chunks, contextualizer)
@@ -894,8 +1044,10 @@ def main() -> None:
         )
         print("  evaluating contextual...")
         _evaluate_and_checkpoint("contextual", contextual_strategy)
+        event_log.emit("indexing", "completed", {"stage": "contextual"})
 
         print("\n[3/6] Building the SAC index (1 LLM call per document)...")
+        event_log.emit("indexing", "started", {"stage": "sac"})
         document_summarizer = GeminiDocumentSummarizer(
             _DOCUMENT_SUMMARIZER_MODEL, cache=cache, max_in_flight=gemini_max_in_flight
         )
@@ -914,11 +1066,13 @@ def main() -> None:
         sac_strategy = DenseRetrieval(sac_dense_store, embedder)
         print("  evaluating sac...")
         _evaluate_and_checkpoint("sac", sac_strategy)
+        event_log.emit("indexing", "completed", {"stage": "sac"})
 
         print(
             "\n[4/6] Building the SAC+Contextual index "
             "(document summary + per-chunk context, no extra LLM calls)..."
         )
+        event_log.emit("indexing", "started", {"stage": "sac_contextual"})
         sac_contextual_chunks = [
             sac_chunk
             for norm_id, chunks in contextual_chunks_by_norm.items()
@@ -933,8 +1087,10 @@ def main() -> None:
         sac_contextual_strategy = DenseRetrieval(sac_contextual_dense_store, embedder)
         print("  evaluating sac_contextual...")
         _evaluate_and_checkpoint("sac_contextual", sac_contextual_strategy)
+        event_log.emit("indexing", "completed", {"stage": "sac_contextual"})
 
         print("\n[5/6] Building the RAPTOR tree (1 LLM call per group, per level, per document)...")
+        event_log.emit("indexing", "started", {"stage": "raptor"})
         summarizer = GeminiSummarizer(_SUMMARIZER_MODEL)
         raptor_chunks: list[Chunk] = []
         for _, chunks in documents.values():
@@ -946,11 +1102,13 @@ def main() -> None:
         raptor_strategy = DenseRetrieval(raptor_dense_store, embedder)
         print("  evaluating raptor...")
         _evaluate_and_checkpoint("raptor", raptor_strategy)
+        event_log.emit("indexing", "completed", {"stage": "raptor"})
 
         print(
             f"\n[6/6] Building the GraphRAG (LightRAG, mode={_GRAPHRAG_MODE}) index "
             "(multiple LLM calls per chunk)..."
         )
+        event_log.emit("indexing", "started", {"stage": "graphrag"})
         rag = LightRAG(
             working_dir=str(graphrag_dir),
             embedding_func=build_gemini_embedding_func(embedder),
@@ -965,6 +1123,7 @@ def main() -> None:
             )
             print("  evaluating graphrag...")
             _evaluate_and_checkpoint("graphrag", graphrag_strategy)
+            event_log.emit("indexing", "completed", {"stage": "graphrag"})
         finally:
             asyncio.run(rag.finalize_storages())
     finally:
@@ -979,11 +1138,78 @@ def main() -> None:
             os_client.indices.delete(index=table, ignore=[404])
         shutil.rmtree(graphrag_dir, ignore_errors=True)
 
-    print(f"\n{format_results_table(config['strategies'], run_metrics)}")
-    print(f"\n{format_answer_quality_table(config['strategies'], run_metrics)}")
+    results_table = format_results_table(config["strategies"], run_metrics)
+    answer_quality_table = format_answer_quality_table(config["strategies"], run_metrics)
+    print(f"\n{results_table}")
+    print(f"\n{answer_quality_table}")
 
     _checkpoint()
     print(f"\nRun record written to {run_dir.relative_to(ROOT)}/results.json")
+
+    print("\nFinalizing ADR-0017 evidence directory...")
+    write_atomic(
+        artifacts_dir / "summaries" / "retrieval.json",
+        json.dumps(run_metrics, ensure_ascii=False, indent=2),
+    )
+    write_atomic(
+        artifacts_dir / "summaries" / "generation.json",
+        json.dumps(
+            {
+                label: [dataclasses.asdict(entry) for entry in entries]
+                for label, entries in generation_lineage_by_strategy.items()
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
+    write_atomic(
+        artifacts_dir / "summaries" / "audit.json",
+        json.dumps(
+            {
+                label: compute_audit_report(results)
+                for label, results in audit_results_by_strategy.items()
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
+    report_record = build_run_record(
+        run_id=run_id,
+        mode=args.mode,
+        config_path=str(args.config.relative_to(ROOT)),
+        embedding_identity=embedding_identity,
+        index_namespace=index_namespace,
+        generation_model=generation_model,
+        judge_provider=judge_provider,
+        judge_model=judge_model,
+        judge_reasoning_effort=judge_reasoning_effort if judge_provider == "openai" else None,
+        audit_enabled=audit_enabled,
+        audit_provider=audit_provider if audit_enabled else None,
+        audit_model=audit_model if audit_enabled else None,
+        corpus_version=manifest.corpus_version,
+        split_dataset_version=split.dataset_version,
+        n_chunks=len(all_chunks),
+        top_k=top_k,
+        run_metrics=run_metrics,
+    )
+    write_atomic(
+        artifacts_dir / "report.json", json.dumps(report_record, ensure_ascii=False, indent=2)
+    )
+    write_atomic(
+        artifacts_dir / "report.md",
+        f"# RAGForge benchmark report - {run_id}\n\n"
+        f"## Retrieval\n\n```\n{results_table}\n```\n\n"
+        f"## Answer quality\n\n```\n{answer_quality_table}\n```\n",
+    )
+
+    artifact_checksums = compute_checksums(artifacts_dir)
+    write_checksums_file(artifacts_dir)
+    final_manifest = finalize_manifest(run_manifest, canonical_json_hash(artifact_checksums))
+    write_atomic(
+        artifacts_dir / "manifest.json",
+        json.dumps(dataclasses.asdict(final_manifest), ensure_ascii=False, indent=2),
+    )
+    print(f"Evidence directory finalized at {artifacts_dir.relative_to(ROOT)}/")
 
 
 if __name__ == "__main__":

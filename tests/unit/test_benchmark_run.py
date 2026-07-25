@@ -412,7 +412,7 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
         )
     ]
 
-    metrics, records = _evaluate(
+    metrics, records, candidate_lineage = _evaluate(
         _FakeStrategyForEvaluate(),
         judgments,
         _FakeGeneratorForEvaluate(),
@@ -427,6 +427,35 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
     assert records[0].strategy == "fake-strategy"
     assert records[0].retrieval_status == "succeeded"
     assert records[0].generation_status == "succeeded"
+    assert candidate_lineage == [], "no embedding_identity_hash was passed, so no lineage collected"
+
+
+def test_evaluate_populates_candidate_lineage_when_embedding_identity_hash_is_given() -> None:
+    """_evaluate forwards embedding_identity_hash through to evaluate_strategy (ADR-0017)."""
+    judgments = [
+        Judgment(
+            question_id="q1",
+            query=Query(text="q1"),
+            relevant_refs=(
+                JudgedRef(ref=StructuralRef.parse(ART_1), grade=RelevanceGrade.RELEVANT),
+            ),
+        )
+    ]
+
+    _, _, candidate_lineage = _evaluate(
+        _FakeStrategyForEvaluate(),
+        judgments,
+        _FakeGeneratorForEvaluate(),
+        lambda: _FakeJudgeForEvaluate(),
+        top_k=5,
+        answer_quality_workers=1,
+        embedding_identity_hash="embhash123",
+    )
+
+    assert len(candidate_lineage) == 1
+    assert candidate_lineage[0].query_id == "q1"
+    assert candidate_lineage[0].embedding_identity_hash == "embhash123"
+    assert candidate_lineage[0].chunk_id == ART_1
 
 
 class _FakeSentenceTransformerEmbedder:
