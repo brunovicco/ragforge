@@ -12,6 +12,7 @@ from collections.abc import Callable
 from concurrent.futures import CancelledError
 from dataclasses import dataclass
 from statistics import mean
+from typing import Protocol, runtime_checkable
 
 from ragforge.domain.models import Answer, Judgment, RetrievalResult
 from ragforge.domain.protocols import RetrievalStrategy
@@ -23,6 +24,13 @@ from ragforge.generation.ports import AnswerGenerator
 
 _MAX_CONSECUTIVE_ERRORS = 5
 _DEFAULT_MAX_WORKERS = 5
+
+
+@runtime_checkable
+class _ClosableJudge(Protocol):
+    """Optional lifecycle exposed by judges that own network clients."""
+
+    def close(self) -> None: ...
 
 
 @dataclass(frozen=True, slots=True)
@@ -64,16 +72,12 @@ def evaluate_answer_quality(
     then run concurrently across up to ``max_workers`` questions at once,
     since each question's Gemini calls are independent HTTP requests.
 
-    ``judge_factory`` builds one judge, not many: ``generator`` (a plain
-    synchronous HTTP client) is shared safely across worker threads, but
-    RagasJudge.evaluate() calls ragas's sync wrapper, which internally does
-    ``asyncio.run(self.ascore(...))`` - a fresh event loop per call, reusing
-    the same async client underneath. Calling that concurrently from
-    multiple threads against one shared judge corrupts its connection pool
-    (observed for real: thousands of leaked CLOSE_WAIT sockets and a stalled
-    run). Each worker thread instead lazily builds and caches its own judge
-    via ``judge_factory``, so no judge instance is ever touched from more
-    than one thread.
+    ``generator`` (a plain synchronous HTTP client) is shared safely across
+    worker threads. Each worker thread instead lazily builds and caches its
+    own judge via ``judge_factory`` so one RagasJudge and its persistent
+    asyncio event loop are never touched concurrently from multiple threads.
+    Judges exposing ``close()`` are closed after the worker pool finishes,
+    including when scoring raises.
 
     A retrieval, generation, or judge-scoring failure for one question is
     counted in "answer_errors" and excluded from the averages rather than
@@ -143,12 +147,16 @@ def evaluate_answer_quality(
         retrieved.append((judgment, results))
 
     thread_local = threading.local()
+    judges: list[AnswerQualityJudge] = []
+    judges_lock = threading.Lock()
 
     def _judge_for_this_thread() -> AnswerQualityJudge:
         judge = getattr(thread_local, "judge", None)
         if judge is None:
             judge = judge_factory()
             thread_local.judge = judge
+            with judges_lock:
+                judges.append(judge)
         return judge
 
     def _score_one(
@@ -197,12 +205,17 @@ def evaluate_answer_quality(
             consecutive_scoring_errors += 1
             return consecutive_scoring_errors >= _MAX_CONSECUTIVE_ERRORS
 
-        outcomes = run_bounded(
-            retrieved,
-            lambda pair: _score_one(pair[0], pair[1]),
-            max_workers=max_workers,
-            on_result=_on_scoring_result,
-        )
+        try:
+            outcomes = run_bounded(
+                retrieved,
+                lambda pair: _score_one(pair[0], pair[1]),
+                max_workers=max_workers,
+                on_result=_on_scoring_result,
+            )
+        finally:
+            for judge in judges:
+                if isinstance(judge, _ClosableJudge):
+                    judge.close()
         for (judgment, _results), outcome in zip(retrieved, outcomes, strict=True):
             if isinstance(outcome, BaseException):
                 is_cancelled = isinstance(outcome, CancelledError)

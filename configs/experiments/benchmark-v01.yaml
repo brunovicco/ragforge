@@ -6,6 +6,10 @@ corpus:
 dataset:
   path: datasets/regrag-br/
   split: test  # dev split is reserved for router few-shot examples (ADR-0003)
+  # Cost-controlled comparison: deterministic, query-class-stratified sample.
+  # Remove max_questions only for the final full-test publication run.
+  max_questions: 60
+  sampling_seed: regrag-br-benchmark-sample-v1
 strategies:
   - dense
   - sparse_bm25

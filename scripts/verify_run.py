@@ -21,12 +21,14 @@ import json
 import sys
 from pathlib import Path
 
+from ragforge.evaluation.canonical_hash import canonical_json_hash
 from ragforge.evaluation.event_log import compute_event_hash
 from ragforge.evaluation.lineage_ports import EventEnvelope
 from ragforge.ingestion.snapshot import snapshot_hash
 
 ROOT = Path(__file__).resolve().parents[1]
 ARTIFACTS_DIR = ROOT / "artifacts" / "runs"
+_MANIFEST_FILENAME = "manifest.json"
 
 
 def parse_args() -> argparse.Namespace:
@@ -34,6 +36,20 @@ def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_id")
     return parser.parse_args()
+
+
+def load_recorded_checksums(artifacts_dir: Path) -> dict[str, str]:
+    """Load the standard checksum inventory into a relative-path mapping."""
+    recorded: dict[str, str] = {}
+    checksums_path = artifacts_dir / "checksums.sha256"
+    for line in checksums_path.read_text(encoding="utf-8").splitlines():
+        if not line.strip():
+            continue
+        digest, separator, relative = line.partition("  ")
+        if not separator or not digest or not relative:
+            raise ValueError(f"invalid checksum line: {line!r}")
+        recorded[relative] = digest
+    return recorded
 
 
 def verify_checksums(artifacts_dir: Path) -> list[str]:
@@ -49,12 +65,10 @@ def verify_checksums(artifacts_dir: Path) -> list[str]:
     if not checksums_path.exists():
         return [f"checksums.sha256 not found at {checksums_path}"]
 
-    recorded: dict[str, str] = {}
-    for line in checksums_path.read_text(encoding="utf-8").splitlines():
-        if not line.strip():
-            continue
-        digest, _, relative = line.partition("  ")
-        recorded[relative] = digest
+    try:
+        recorded = load_recorded_checksums(artifacts_dir)
+    except ValueError as exc:
+        return [str(exc)]
 
     for relative, digest in recorded.items():
         path = artifacts_dir / relative
@@ -152,6 +166,24 @@ def verify_manifest(artifacts_dir: Path) -> list[str]:
         problems.append(
             f"manifest.json declares strategies with no question artifacts: {sorted(missing)}"
         )
+    checksums_path = artifacts_dir / "checksums.sha256"
+    if checksums_path.exists():
+        try:
+            recorded = load_recorded_checksums(artifacts_dir)
+        except ValueError as exc:
+            problems.append(str(exc))
+        else:
+            root_inputs = {
+                relative: digest
+                for relative, digest in recorded.items()
+                if relative != _MANIFEST_FILENAME
+            }
+            expected_root_hash = canonical_json_hash(root_inputs)
+            if manifest.get("artifact_root_hash") != expected_root_hash:
+                problems.append(
+                    "manifest.json artifact_root_hash does not match the final artifact "
+                    "checksum inventory"
+                )
     return problems
 
 

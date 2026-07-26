@@ -6,14 +6,27 @@ depend on main()'s local state.
 """
 
 import dataclasses
+import hashlib
 import json
 from pathlib import Path
 
-from ragforge.evaluation.artifact_writer import write_atomic
+from ragforge.evaluation.artifact_writer import (
+    compute_checksums,
+    write_atomic,
+    write_checksums_file,
+)
 from ragforge.evaluation.audit_metrics import compute_audit_report
 from ragforge.evaluation.audit_ports import AuditResult
-from ragforge.evaluation.lineage_ports import GenerationLineage, RetrievalCandidateLineage
+from ragforge.evaluation.canonical_hash import canonical_json_hash
+from ragforge.evaluation.lineage_ports import (
+    GenerationLineage,
+    RetrievalCandidateLineage,
+    RunManifest,
+)
 from ragforge.evaluation.records import QuestionRecord
+from ragforge.evaluation.run_manifest import finalize_manifest
+
+_MANIFEST_FILENAME = "manifest.json"
 
 
 def _load_json_object(path: Path) -> dict[str, object]:
@@ -46,6 +59,46 @@ def reject_if_evidence_dir_already_completed(artifacts_dir: Path) -> None:
             f"{artifacts_dir} - a completed artifacts/runs/<run_id>/ is never overwritten; "
             "use a new run_id"
         )
+
+
+def finalize_evidence_directory(
+    artifacts_dir: Path,
+    run_manifest: RunManifest,
+) -> RunManifest:
+    """Atomically publish a completed manifest covered by the checksum inventory.
+
+    ``artifact_root_hash`` covers every final artifact except
+    ``manifest.json`` and ``checksums.sha256``. Excluding the manifest from
+    that root avoids a self-reference because the root itself is stored in
+    the manifest. ``checksums.sha256`` still includes the exact final
+    manifest bytes, so post-completion changes remain detectable.
+
+    The checksum inventory is written before the final manifest. A crash
+    before the last atomic rename therefore leaves the manifest in
+    ``running`` state rather than exposing a completed-but-unverifiable run.
+    """
+    if run_manifest.status != "running":
+        raise ValueError("only a running manifest can be finalized")
+    artifact_checksums = compute_checksums(
+        artifacts_dir,
+        excluded_paths=frozenset({_MANIFEST_FILENAME}),
+    )
+    final_manifest = finalize_manifest(
+        run_manifest,
+        canonical_json_hash(artifact_checksums),
+    )
+    final_manifest_content = json.dumps(
+        dataclasses.asdict(final_manifest),
+        ensure_ascii=False,
+        indent=2,
+    )
+    complete_checksums = {
+        **artifact_checksums,
+        _MANIFEST_FILENAME: hashlib.sha256(final_manifest_content.encode("utf-8")).hexdigest(),
+    }
+    write_checksums_file(artifacts_dir, complete_checksums)
+    write_atomic(artifacts_dir / _MANIFEST_FILENAME, final_manifest_content)
+    return final_manifest
 
 
 def write_question_artifacts(

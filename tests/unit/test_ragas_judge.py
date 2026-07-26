@@ -1,5 +1,6 @@
 """Tests for RagasJudge, using fakes for RAGAS metrics and the abstention LLM (no network)."""
 
+import asyncio
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -32,7 +33,7 @@ class _FakeMetric:
         self._handler = handler
         self.calls: list[dict[str, Any]] = []
 
-    def score(self, **kwargs: Any) -> _FakeMetricResult:
+    async def ascore(self, **kwargs: Any) -> _FakeMetricResult:
         self.calls.append(kwargs)
         return self._handler(**kwargs)
 
@@ -49,9 +50,17 @@ class _FakeAbstentionLLM:
         self._rationale = rationale
         self.calls: list[tuple[str, Any]] = []
 
-    def generate(self, prompt: str, response_model: Any) -> Any:
+    async def agenerate(self, prompt: str, response_model: Any) -> Any:
         self.calls.append((prompt, response_model))
         return _FakeAbstentionResult(self._appropriate, self._rationale)
+
+
+class _TrackingCloseable:
+    def __init__(self) -> None:
+        self.loop_ids: list[int] = []
+
+    async def close(self) -> None:
+        self.loop_ids.append(id(asyncio.get_running_loop()))
 
 
 def _sample(
@@ -82,6 +91,46 @@ def test_evaluate_returns_faithfulness_answer_relevancy_and_abstention() -> None
     assert result.abstention.appropriate is True
     assert result.abstention.rationale == "respondeu com base no contexto"
     assert result.schema_version == 2
+
+
+def test_evaluate_reuses_one_event_loop_and_closes_clients_on_that_loop() -> None:
+    """Async clients never cross the short-lived loops that caused live-run failures."""
+    evaluation_loop_ids: list[int] = []
+
+    def record_loop(**kwargs: Any) -> _FakeMetricResult:
+        evaluation_loop_ids.append(id(asyncio.get_running_loop()))
+        return _FakeMetricResult(1.0)
+
+    closeable = _TrackingCloseable()
+    judge = RagasJudge(
+        _FakeMetric(record_loop),
+        _FakeMetric(record_loop),
+        _FakeAbstentionLLM(),
+        _IDENTITY,
+        closeables=(closeable,),
+    )
+
+    judge.evaluate(_sample(question="q1"))
+    judge.evaluate(_sample(question="q2"))
+    judge.close()
+    judge.close()
+
+    assert len(set(evaluation_loop_ids)) == 1
+    assert closeable.loop_ids == [evaluation_loop_ids[0]]
+
+
+def test_evaluate_rejects_use_after_close() -> None:
+    """A closed judge fails explicitly instead of leaking an un-awaited coroutine."""
+    judge = RagasJudge(
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(1.0)),
+        _FakeMetric(lambda **kwargs: _FakeMetricResult(1.0)),
+        _FakeAbstentionLLM(),
+        _IDENTITY,
+    )
+    judge.close()
+
+    with pytest.raises(GenerationError, match="closed"):
+        judge.evaluate(_sample())
 
 
 def test_identity_property_returns_the_configured_identity() -> None:
@@ -189,7 +238,7 @@ def test_evaluate_raises_generation_error_when_the_abstention_call_fails() -> No
     """A failure in this project's own abstention call is also translated to GenerationError."""
 
     class _FailingAbstentionLLM:
-        def generate(self, prompt: str, response_model: Any) -> Any:
+        async def agenerate(self, prompt: str, response_model: Any) -> Any:
             raise RuntimeError("boom")
 
     judge = RagasJudge(

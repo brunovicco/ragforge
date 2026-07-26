@@ -8,6 +8,7 @@ computed only after every file is closed, so ``checksums.sha256`` never
 covers a partially-written file.
 """
 
+from collections.abc import Mapping
 from pathlib import Path
 
 from ragforge.ingestion.snapshot import snapshot_hash
@@ -26,7 +27,11 @@ def write_atomic(path: Path, content: str) -> None:
     tmp_path.replace(path)
 
 
-def compute_checksums(root: Path) -> dict[str, str]:
+def compute_checksums(
+    root: Path,
+    *,
+    excluded_paths: frozenset[str] = frozenset(),
+) -> dict[str, str]:
     """Return ``{relative_posix_path: sha256_hex}`` for every regular file under ``root``.
 
     The checksums file itself (if already present from a prior partial
@@ -37,19 +42,23 @@ def compute_checksums(root: Path) -> dict[str, str]:
         if not path.is_file():
             continue
         relative = path.relative_to(root).as_posix()
-        if relative == _CHECKSUMS_FILENAME:
+        if relative == _CHECKSUMS_FILENAME or relative in excluded_paths:
             continue
         checksums[relative] = snapshot_hash(path)
     return checksums
 
 
-def write_checksums_file(root: Path) -> None:
+def write_checksums_file(
+    root: Path,
+    checksums: Mapping[str, str] | None = None,
+) -> None:
     """Write ``root/checksums.sha256`` in standard ``sha256sum`` format (verifiable externally).
 
-    Every existing file under ``root`` at call time is included - callers
-    should call this only after every other artifact for the run has been
-    written.
+    With no explicit mapping, every existing file under ``root`` at call
+    time is included. A precomputed mapping supports evidence finalization,
+    where the inventory for the intended final manifest is published before
+    that manifest's last atomic rename.
     """
-    checksums = compute_checksums(root)
-    lines = [f"{digest}  {relative}" for relative, digest in sorted(checksums.items())]
+    resolved_checksums = compute_checksums(root) if checksums is None else checksums
+    lines = [f"{digest}  {relative}" for relative, digest in sorted(resolved_checksums.items())]
     write_atomic(root / _CHECKSUMS_FILENAME, "\n".join(lines) + "\n" if lines else "")

@@ -127,6 +127,23 @@ def append_records_jsonl(path: Path, records: list[QuestionRecord]) -> None:
             handle.write("\n")
 
 
+def replace_strategy_records_jsonl(
+    path: Path,
+    strategy: str,
+    records: list[QuestionRecord],
+) -> None:
+    """Atomically replace every persisted record for one retried strategy."""
+    if any(record.strategy != strategy for record in records):
+        raise ValueError("all replacement records must belong to the declared strategy")
+    retained = [record for record in read_records_jsonl(path) if record.strategy != strategy]
+    temporary_path = path.with_suffix(f"{path.suffix}.tmp")
+    with temporary_path.open("w", encoding="utf-8") as handle:
+        for record in [*retained, *records]:
+            handle.write(json.dumps(record.to_json_dict(), ensure_ascii=False))
+            handle.write("\n")
+    temporary_path.replace(path)
+
+
 def read_records_jsonl(path: Path) -> list[QuestionRecord]:
     """Load stored records, keeping the latest unique strategy/question pair."""
     if not path.exists():

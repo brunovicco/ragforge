@@ -154,6 +154,15 @@ class _FactoryTrackingJudge:
         return _judge_result()
 
 
+class _ClosableTrackingJudge(_FactoryTrackingJudge):
+    def __init__(self) -> None:
+        super().__init__()
+        self.close_calls = 0
+
+    def close(self) -> None:
+        self.close_calls += 1
+
+
 def test_evaluate_answer_quality_averages_citation_accuracy_across_judgments() -> None:
     """One perfectly-cited answer and one uncited answer average to 0.5 citation accuracy."""
     generator = _FakeGenerator(
@@ -423,11 +432,9 @@ def test_evaluate_answer_quality_never_shares_one_judge_instance_across_threads(
     """judge_factory builds a separate judge per worker thread, never shared across threads.
 
     Regression test: a real live run shared one RagasJudge across concurrent
-    worker threads. Each RagasJudge.evaluate() call does asyncio.run(...)
-    internally (a fresh event loop per call, reusing the same async client
-    underneath); calling that concurrently from multiple threads against one
-    shared judge corrupted its connection pool - observed for real as
-    thousands of leaked CLOSE_WAIT sockets and a stalled run.
+    worker threads. Concurrent use of one async client and event loop
+    corrupted its connection pool - observed for real as thousands of leaked
+    CLOSE_WAIT sockets and a stalled run.
     """
     count = 10
     generator = _FakeGenerator(
@@ -450,3 +457,31 @@ def test_evaluate_answer_quality_never_shares_one_judge_instance_across_threads(
     assert len(built_instances) <= 3, "at most one judge instance per worker thread"
     for judge in built_instances:
         assert len(judge.thread_ids) == 1, "a judge instance was used from more than one thread"
+
+
+def test_evaluate_answer_quality_closes_every_thread_local_judge() -> None:
+    """Every worker-owned judge releases its persistent loop and provider clients."""
+    count = 6
+    generator = _FakeGenerator(
+        {f"q{i}": Answer(text=f"answer {i}", citations=(ART_1,)) for i in range(count)}
+    )
+    built_instances: list[_ClosableTrackingJudge] = []
+    lock = threading.Lock()
+
+    def factory() -> _ClosableTrackingJudge:
+        with lock:
+            judge = _ClosableTrackingJudge()
+            built_instances.append(judge)
+        return judge
+
+    evaluate_answer_quality(
+        _FakeStrategy(),
+        [_judgment(f"q{i}", ART_1) for i in range(count)],
+        generator,
+        factory,
+        k=5,
+        max_workers=3,
+    )
+
+    assert built_instances
+    assert all(judge.close_calls == 1 for judge in built_instances)

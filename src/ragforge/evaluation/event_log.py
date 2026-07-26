@@ -60,6 +60,31 @@ class EventLog:
         self._lock = threading.Lock()
         self._sequence = 0
         self._previous_event_hash: str | None = None
+        self._restore_tail()
+
+    def _restore_tail(self) -> None:
+        """Continue an existing run's sequence and hash chain when resuming."""
+        if not self._path.exists():
+            return
+        lines = self._path.read_text(encoding="utf-8").splitlines()
+        if not lines:
+            return
+        payload: object = json.loads(lines[-1])
+        if not isinstance(payload, dict):
+            raise ValueError(f"last event in {self._path} must be a JSON object")
+        stored_run_id = payload.get("run_id")
+        sequence = payload.get("sequence")
+        event_hash = payload.get("event_hash")
+        if stored_run_id != self._run_id:
+            raise ValueError(
+                f"event log run_id mismatch: expected {self._run_id!r}, found {stored_run_id!r}"
+            )
+        if isinstance(sequence, bool) or not isinstance(sequence, int) or sequence < 1:
+            raise ValueError(f"last event in {self._path} has an invalid sequence")
+        if not isinstance(event_hash, str) or not event_hash:
+            raise ValueError(f"last event in {self._path} has an invalid event_hash")
+        self._sequence = sequence
+        self._previous_event_hash = event_hash
 
     def emit(
         self,

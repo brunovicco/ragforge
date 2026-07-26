@@ -10,6 +10,8 @@ from ragforge.evaluation.records import (
     RetrievalRecord,
     append_records_jsonl,
     merge_question_records,
+    read_records_jsonl,
+    replace_strategy_records_jsonl,
 )
 
 
@@ -105,3 +107,32 @@ def test_append_records_jsonl_is_idempotent_for_a_resumed_strategy(tmp_path: Pat
     append_records_jsonl(path, records)
 
     assert len(path.read_text(encoding="utf-8").splitlines()) == 1
+
+
+def test_replace_strategy_records_jsonl_removes_failed_resume_records(tmp_path: Path) -> None:
+    """Retrying a strategy replaces stale outcomes while preserving other strategies."""
+    path = tmp_path / "records.jsonl"
+    stale = merge_question_records(
+        "dense",
+        [_retrieval("q1", status="failed", error="quota")],
+        [_answer("q1", status="failed", error="quota")],
+    )
+    preserved = merge_question_records(
+        "sparse_bm25",
+        [_retrieval("q1")],
+        [_answer("q1")],
+    )
+    replacement = merge_question_records(
+        "dense",
+        [_retrieval("q1")],
+        [_answer("q1")],
+    )
+    append_records_jsonl(path, [*stale, *preserved])
+
+    replace_strategy_records_jsonl(path, "dense", replacement)
+
+    records = read_records_jsonl(path)
+    assert len(records) == 2
+    by_strategy = {record.strategy: record for record in records}
+    assert by_strategy["dense"].errors == ()
+    assert by_strategy["sparse_bm25"] == preserved[0]

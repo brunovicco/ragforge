@@ -1,5 +1,6 @@
 """Tests for scripts/verify_run.py: checksum, event-chain, and manifest verification (ADR-0017)."""
 
+import dataclasses
 import importlib.util
 import json
 import sys
@@ -10,6 +11,8 @@ import pytest
 
 from ragforge.evaluation.artifact_writer import write_atomic, write_checksums_file
 from ragforge.evaluation.event_log import EventLog
+from ragforge.evaluation.run_evidence import finalize_evidence_directory
+from ragforge.evaluation.run_manifest import build_initial_manifest
 
 _SCRIPT_PATH = Path(__file__).resolve().parents[2] / "scripts" / "verify_run.py"
 
@@ -34,25 +37,19 @@ def _build_clean_run(artifacts_dir: Path, *, run_id: str = "run-1") -> Path:
 
     write_atomic(run_dir / "questions" / "base.json", json.dumps({"question_id": "q1"}))
 
-    manifest = {
-        "schema_version": 1,
-        "run_id": run_id,
-        "status": "completed",
-        "git_sha": "abc123",
-        "started_at": "2026-01-01T00:00:00+00:00",
-        "completed_at": "2026-01-01T00:01:00+00:00",
-        "corpus_hash": "corpus-hash",
-        "dataset_hash": "dataset-hash",
-        "split_hash": "split-hash",
-        "configuration_hash": "config-hash",
-        "models": {},
-        "strategies": ["base"],
-        "execution": {},
-        "artifact_root_hash": None,
-    }
-    write_atomic(run_dir / "manifest.json", json.dumps(manifest))
-
-    write_checksums_file(run_dir)
+    manifest = build_initial_manifest(
+        run_id=run_id,
+        git_sha="abc123",
+        corpus_hash="corpus-hash",
+        dataset_hash="dataset-hash",
+        split_hash="split-hash",
+        configuration_hash="config-hash",
+        models={},
+        strategies=("base",),
+        execution={},
+    )
+    write_atomic(run_dir / "manifest.json", json.dumps(dataclasses.asdict(manifest)))
+    finalize_evidence_directory(run_dir, manifest)
     return run_dir
 
 
@@ -164,6 +161,19 @@ def test_verify_manifest_detects_a_strategy_with_no_question_artifact(tmp_path: 
     problems = verify_run.verify_manifest(run_dir)
 
     assert any("raptor" in problem for problem in problems)
+
+
+def test_verify_manifest_detects_an_inconsistent_artifact_root_hash(tmp_path: Path) -> None:
+    """Recomputing file checksums cannot hide a manifest/root inconsistency."""
+    run_dir = _build_clean_run(tmp_path)
+    manifest = json.loads((run_dir / "manifest.json").read_text(encoding="utf-8"))
+    manifest["artifact_root_hash"] = "incorrect"
+    write_atomic(run_dir / "manifest.json", json.dumps(manifest))
+    write_checksums_file(run_dir)
+
+    problems = verify_run.verify_manifest(run_dir)
+
+    assert any("artifact_root_hash" in problem for problem in problems)
 
 
 def test_main_exits_zero_and_prints_ok_for_a_clean_run(

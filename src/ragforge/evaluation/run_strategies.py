@@ -273,6 +273,7 @@ def build_contextual_strategy(
 
 
 def _evaluate(
+    strategy_label: str,
     strategy: RetrievalStrategy,
     judgments: list[Judgment],
     generator: AnswerGenerator,
@@ -281,13 +282,15 @@ def _evaluate(
     answer_quality_workers: int,
     embedding_identity_hash: str | None = None,
 ) -> tuple[dict[str, float], list[QuestionRecord], list[RetrievalCandidateLineage]]:
-    """Score ``strategy`` for retrieval ranking and answer quality alike (ADR-0002/0007).
+    """Score ``strategy`` under its canonical experiment label (ADR-0002/0007).
 
     Merges evaluate_strategy's and evaluate_answer_quality's per-question
     records into one QuestionRecord per judgment (ADR-0012), alongside the
     same aggregate metrics dict this returned before. ``embedding_identity_hash``
     (ADR-0017), when given, is forwarded to evaluate_strategy to populate
-    per-candidate retrieval lineage.
+    per-candidate retrieval lineage. ``strategy_label`` deliberately comes
+    from the experiment configuration: implementation names such as
+    ``sparse`` and ``hybrid`` are not stable result identifiers.
     """
     retrieval_result = evaluate_strategy(
         strategy, judgments, k=top_k, embedding_identity_hash=embedding_identity_hash
@@ -300,6 +303,10 @@ def _evaluate(
         k=top_k,
         max_workers=answer_quality_workers,
     )
-    records = merge_question_records(strategy.name, retrieval_result.records, answer_result.records)
+    records = merge_question_records(
+        strategy_label,
+        retrieval_result.records,
+        answer_result.records,
+    )
     metrics = {**retrieval_result.metrics, **answer_result.metrics}
     return metrics, records, retrieval_result.candidate_lineage

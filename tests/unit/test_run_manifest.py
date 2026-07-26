@@ -1,6 +1,9 @@
 """Tests for run manifest lifecycle (ADR-0017)."""
 
+import dataclasses
+import json
 import subprocess
+from pathlib import Path
 
 import pytest
 
@@ -8,7 +11,9 @@ from ragforge.evaluation.lineage_ports import RunManifest
 from ragforge.evaluation.run_manifest import (
     build_initial_manifest,
     finalize_manifest,
+    load_run_manifest,
     reject_if_already_completed,
+    require_clean_worktree,
     resolve_git_sha,
 )
 
@@ -68,6 +73,85 @@ def test_build_initial_manifest_starts_running_with_no_completion_fields() -> No
     assert manifest.completed_at is None
     assert manifest.artifact_root_hash is None
     assert manifest.run_id == "run-1"
+
+
+def test_load_run_manifest_preserves_the_original_start_identity(tmp_path: Path) -> None:
+    """A resumed run reloads, rather than reconstructs, its running manifest."""
+    manifest = _manifest()
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(dataclasses.asdict(manifest)), encoding="utf-8")
+
+    loaded = load_run_manifest(path)
+
+    assert loaded == manifest
+    assert loaded.started_at == manifest.started_at
+    assert loaded.git_sha == manifest.git_sha
+
+
+def test_require_clean_worktree_allows_only_untracked_generated_outputs(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Run output directories do not prevent a later clean resume."""
+    monkeypatch.setattr("ragforge.evaluation.run_manifest.shutil.which", lambda _name: "git")
+    result = subprocess.CompletedProcess(
+        args=["git"],
+        returncode=0,
+        stdout=(
+            "?? artifacts/runs/run-1/report.json\n"
+            "?? experiments/run-1/results.json\n"
+            "?? .ragforge/cache/indexes/marker.json\n"
+        ),
+        stderr="",
+    )
+    monkeypatch.setattr(
+        "ragforge.evaluation.run_manifest.subprocess.run",
+        lambda *_args, **_kwargs: result,
+    )
+
+    require_clean_worktree(tmp_path)
+
+
+def test_require_clean_worktree_rejects_staged_unstaged_or_untracked_source(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The manifest Git SHA may not conceal code or documentation changes."""
+    monkeypatch.setattr("ragforge.evaluation.run_manifest.shutil.which", lambda _name: "git")
+    result = subprocess.CompletedProcess(
+        args=["git"],
+        returncode=0,
+        stdout=" M src/ragforge/app.py\nA  wiki/Home.md\n?? configs/local.yaml\n",
+        stderr="",
+    )
+    monkeypatch.setattr(
+        "ragforge.evaluation.run_manifest.subprocess.run",
+        lambda *_args, **_kwargs: result,
+    )
+
+    with pytest.raises(SystemExit, match="clean Git worktree"):
+        require_clean_worktree(tmp_path)
+
+
+def test_require_clean_worktree_rejects_a_tracked_output_change(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Only untracked generated output is exempt; tracked evidence remains protected."""
+    monkeypatch.setattr("ragforge.evaluation.run_manifest.shutil.which", lambda _name: "git")
+    result = subprocess.CompletedProcess(
+        args=["git"],
+        returncode=0,
+        stdout=" M experiments/published/results.json\n",
+        stderr="",
+    )
+    monkeypatch.setattr(
+        "ragforge.evaluation.run_manifest.subprocess.run",
+        lambda *_args, **_kwargs: result,
+    )
+
+    with pytest.raises(SystemExit, match="clean Git worktree"):
+        require_clean_worktree(tmp_path)
 
 
 def test_finalize_manifest_marks_completed_and_sets_artifact_root_hash() -> None:
