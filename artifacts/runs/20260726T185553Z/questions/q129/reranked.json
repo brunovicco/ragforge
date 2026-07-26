@@ -1,0 +1,132 @@
+{
+  "question_record": {
+    "question_id": "q129",
+    "query_class": "global",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-73",
+      "ICVM-607/2019::art-73::par-1",
+      "ICVM-607/2019::art-73::par-2",
+      "ICVM-607/2019::art-103",
+      "ICVM-607/2019::art-103::par-1",
+      "ICVM-607/2019::art-103::par-2",
+      "ICVM-607/2019::art-103::par-2-inc-i",
+      "ICVM-607/2019::art-103::par-2-inc-ii",
+      "ICVM-607/2019::art-7",
+      "ICVM-607/2019::art-7::inc-i",
+      "ICVM-607/2019::art-7::inc-ii",
+      "ICVM-607/2019::art-7::inc-iii",
+      "ICVM-607/2019::art-7::par-1",
+      "ICVM-607/2019::art-7::par-2",
+      "ICVM-607/2019::art-7::par-3",
+      "ICVM-607/2019::art-7::par-4",
+      "ICVM-607/2019::art-106",
+      "ICVM-607/2019::art-106::inc-i",
+      "ICVM-607/2019::art-106::inc-ii",
+      "ICVM-607/2019::art-106::inc-iii",
+      "ICVM-607/2019::art-106::par-unico"
+    ],
+    "answer_text": "Com base na Instrução CVM nº 607/2019, as etapas do rito processual sancionador até a apresentação de defesa envolvem os seguintes procedimentos:\n\n1.  **Emissão de parecer pela PFE:** Antes da citação dos acusados, a Procuradoria Federal Especializada (PFE) deve emitir um parecer sobre o termo de acusação no prazo de 30 dias, contados da data de seu recebimento [ICVM-607/2019::art-7]. Este parecer tem como escopo o exame do cumprimento do art. 5º, a análise da observância dos requisitos do art. 6º e o exame da adequação do rito adotado [ICVM-607/2019::art-7::inc-i, ii, iii].\n2.  **Providências da Superintendência:** Com base no parecer da PFE, a superintendência pode arquivar o processo, adequar o rito ou realizar ajustes no termo de acusação [ICVM-607/2019::art-7::par-1]. Caso o superintendente decida não adotar as providências recomendadas pelo parecer, deverá justificar sua decisão [ICVM-607/2019::art-7::par-2].\n3.  **Citação:** Após as etapas anteriores, ocorre a citação dos acusados para a apresentação de defesa [ICVM-607/2019::art-7].\n\n**Observações importantes:**\n*   **Rito Simplificado:** Nos processos submetidos ao rito simplificado (infrações previstas no Anexo 73 da Instrução), o parecer da PFE não é obrigatório [ICVM-607/2019::art-7::par-3].\n*   **Rito Ordinário:** Caso o Superintendente opte por instaurar um procedimento único que abranja tanto uma infração do Anexo 73 quanto uma infração de outra natureza, o processo deverá observar o rito ordinário [ICVM-607/2019::art-73::par-1].\n*   **Assessoramento:** Independentemente da emissão do parecer obrigatório, as superintendências podem solicitar assessoramento jurídico direto à PFE durante a fase de instrução [ICVM-607/2019::art-7::par-4].",
+    "answer_citations": [
+      "ICVM-607/2019::art-7",
+      "ICVM-607/2019::art-7::inc-i, ii, iii",
+      "ICVM-607/2019::art-7::par-1",
+      "ICVM-607/2019::art-7::par-2",
+      "ICVM-607/2019::art-7::par-3",
+      "ICVM-607/2019::art-73::par-1",
+      "ICVM-607/2019::art-7::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.9285714285714286,
+      "answer_relevancy": 0.9064604848195397,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q129",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-73",
+      "structural_ids": [
+        "ICVM-607/2019::art-73",
+        "ICVM-607/2019::art-73::par-1",
+        "ICVM-607/2019::art-73::par-2"
+      ],
+      "raw_score": 4.785209655761719
+    },
+    {
+      "query_id": "q129",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-103",
+      "structural_ids": [
+        "ICVM-607/2019::art-103",
+        "ICVM-607/2019::art-103::par-1",
+        "ICVM-607/2019::art-103::par-2",
+        "ICVM-607/2019::art-103::par-2-inc-i",
+        "ICVM-607/2019::art-103::par-2-inc-ii"
+      ],
+      "raw_score": 3.314614772796631
+    },
+    {
+      "query_id": "q129",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-7",
+      "structural_ids": [
+        "ICVM-607/2019::art-7",
+        "ICVM-607/2019::art-7::inc-i",
+        "ICVM-607/2019::art-7::inc-ii",
+        "ICVM-607/2019::art-7::inc-iii",
+        "ICVM-607/2019::art-7::par-1",
+        "ICVM-607/2019::art-7::par-2",
+        "ICVM-607/2019::art-7::par-3",
+        "ICVM-607/2019::art-7::par-4"
+      ],
+      "raw_score": 2.7439441680908203
+    },
+    {
+      "query_id": "q129",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-106",
+      "structural_ids": [
+        "ICVM-607/2019::art-106",
+        "ICVM-607/2019::art-106::inc-i",
+        "ICVM-607/2019::art-106::inc-ii",
+        "ICVM-607/2019::art-106::inc-iii",
+        "ICVM-607/2019::art-106::par-unico"
+      ],
+      "raw_score": 2.5558390617370605
+    },
+    {
+      "query_id": "q129",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-103::par-2",
+      "structural_ids": [
+        "ICVM-607/2019::art-103::par-2",
+        "ICVM-607/2019::art-103::par-2-inc-i",
+        "ICVM-607/2019::art-103::par-2-inc-ii"
+      ],
+      "raw_score": 2.0707690715789795
+    }
+  ]
+}

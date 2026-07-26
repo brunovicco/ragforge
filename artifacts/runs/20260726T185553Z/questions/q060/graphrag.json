@@ -1,0 +1,143 @@
+{
+  "question_record": {
+    "question_id": "q060",
+    "query_class": "section_comparative",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-10",
+      "LEI-13709/2018::art-10::inc-i",
+      "LEI-13709/2018::art-10::inc-ii",
+      "LEI-13709/2018::art-10::par-1",
+      "LEI-13709/2018::art-10::par-2",
+      "LEI-13709/2018::art-10::par-3",
+      "LEI-13709/2018::art-31",
+      "LEI-13709/2018::art-7",
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-7::inc-ii",
+      "LEI-13709/2018::art-7::inc-iii",
+      "LEI-13709/2018::art-7::inc-iv",
+      "LEI-13709/2018::art-7::inc-v",
+      "LEI-13709/2018::art-7::inc-vi",
+      "LEI-13709/2018::art-7::inc-vii",
+      "LEI-13709/2018::art-7::inc-viii",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::inc-x",
+      "LEI-13709/2018::art-7::par-1",
+      "LEI-13709/2018::art-7::par-2",
+      "LEI-13709/2018::art-7::par-3",
+      "LEI-13709/2018::art-7::par-4",
+      "LEI-13709/2018::art-7::par-5",
+      "LEI-13709/2018::art-7::par-6",
+      "LEI-13709/2018::art-7::par-7",
+      "RES-CMN-5274/2025::art-1::par-1"
+    ],
+    "answer_text": "Com base na LGPD, a comparação entre o tratamento de dados mediante consentimento e o legítimo interesse do controlador apresenta as seguintes características:\n\n**Consentimento (Art. 7º, I):**\n*   É uma das hipóteses que autoriza o tratamento de dados pessoais [LEI-13709/2018::art-7].\n*   Caso o controlador precise compartilhar dados obtidos via consentimento com outros controladores, ele deve obter um novo consentimento específico do titular para essa finalidade, salvo nas hipóteses de dispensa previstas em lei [LEI-13709/2018::art-7::par-5].\n\n**Legítimo Interesse do Controlador (Art. 10):**\n*   O tratamento fundamentado no legítimo interesse deve atender a finalidades legítimas, baseadas em situações concretas, como o apoio e promoção de atividades do controlador ou a proteção do exercício regular de direitos ou prestação de serviços que beneficiem o titular, respeitadas suas expectativas e direitos fundamentais [LEI-13709/2018::art-10, LEI-13709/2018::art-10::inc-i, LEI-13709/2018::art-10::inc-ii].\n*   O tratamento deve se limitar aos dados estritamente necessários para a finalidade pretendida [LEI-13709/2018::art-10::par-1].\n*   O controlador é obrigado a adotar medidas que garantam a transparência do tratamento [LEI-13709/2018::art-10::par-2].\n*   A autoridade nacional pode solicitar ao controlador um relatório de impacto à proteção de dados pessoais, respeitando-se os segredos comercial e industrial [LEI-13709/2018::art-10::par-3].\n*   O tratamento por legítimo interesse não é absoluto: ele não pode ser utilizado caso prevaleçam direitos e liberdades fundamentais do titular que exijam a proteção dos dados [LEI-13709/2018::art-7::inc-ix].\n\n**Pontos em comum:**\n*   A dispensa de consentimento (em qualquer hipótese legal) não desobriga os agentes de tratamento de observarem os princípios gerais e as garantias dos direitos do titular [LEI-13709/2018::art-7::par-6].",
+    "answer_citations": [
+      "LEI-13709/2018::art-7",
+      "LEI-13709/2018::art-7::par-5",
+      "LEI-13709/2018::art-10::par-1",
+      "LEI-13709/2018::art-10::par-2",
+      "LEI-13709/2018::art-10::par-3",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::par-6"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.9197207891481876,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 0.9411764705882353,
+      "answer_relevancy": 0.8570006858879721,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.14285714285714285
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q060",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-10",
+      "structural_ids": [
+        "LEI-13709/2018::art-10",
+        "LEI-13709/2018::art-10::inc-i",
+        "LEI-13709/2018::art-10::inc-ii",
+        "LEI-13709/2018::art-10::par-1",
+        "LEI-13709/2018::art-10::par-2",
+        "LEI-13709/2018::art-10::par-3"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q060",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-31",
+      "structural_ids": [
+        "LEI-13709/2018::art-31"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q060",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-7",
+      "structural_ids": [
+        "LEI-13709/2018::art-7",
+        "LEI-13709/2018::art-7::inc-i",
+        "LEI-13709/2018::art-7::inc-ii",
+        "LEI-13709/2018::art-7::inc-iii",
+        "LEI-13709/2018::art-7::inc-iv",
+        "LEI-13709/2018::art-7::inc-v",
+        "LEI-13709/2018::art-7::inc-vi",
+        "LEI-13709/2018::art-7::inc-vii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-ix",
+        "LEI-13709/2018::art-7::inc-x",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-3",
+        "LEI-13709/2018::art-7::par-4",
+        "LEI-13709/2018::art-7::par-5",
+        "LEI-13709/2018::art-7::par-6",
+        "LEI-13709/2018::art-7::par-7"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q060",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-5274/2025::art-1::par-1",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-1::par-1"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q060",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-7::inc-ix",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-ix"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

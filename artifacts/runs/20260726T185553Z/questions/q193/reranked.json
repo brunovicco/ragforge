@@ -1,0 +1,111 @@
+{
+  "question_record": {
+    "question_id": "q193",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-85",
+      "ICVM-607/2019::art-85::par-1",
+      "ICVM-607/2019::art-85::par-2",
+      "ICVM-607/2019::art-86",
+      "ICVM-607/2019::art-86::par-1",
+      "ICVM-607/2019::art-86::par-2",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-84",
+      "ICVM-607/2019::art-84::par-1",
+      "ICVM-607/2019::art-84::par-2",
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii"
+    ],
+    "answer_text": "Não. De acordo com o art. 85, § 1º da Instrução CVM nº 607/2019, a participação do investidor lesado não lhe confere a condição de parte no processo administrativo [ICVM-607/2019::art-85::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-85::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.8119058584546234,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q193",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-85",
+      "structural_ids": [
+        "ICVM-607/2019::art-85",
+        "ICVM-607/2019::art-85::par-1",
+        "ICVM-607/2019::art-85::par-2"
+      ],
+      "raw_score": 6.709373474121094
+    },
+    {
+      "query_id": "q193",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-86",
+      "structural_ids": [
+        "ICVM-607/2019::art-86",
+        "ICVM-607/2019::art-86::par-1",
+        "ICVM-607/2019::art-86::par-2"
+      ],
+      "raw_score": 4.385886192321777
+    },
+    {
+      "query_id": "q193",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 4.346144676208496
+    },
+    {
+      "query_id": "q193",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-84",
+      "structural_ids": [
+        "ICVM-607/2019::art-84",
+        "ICVM-607/2019::art-84::par-1",
+        "ICVM-607/2019::art-84::par-2"
+      ],
+      "raw_score": 4.023693084716797
+    },
+    {
+      "query_id": "q193",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 3.8289215564727783
+    }
+  ]
+}

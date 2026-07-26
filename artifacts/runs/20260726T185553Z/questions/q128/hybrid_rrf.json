@@ -1,0 +1,111 @@
+{
+  "question_record": {
+    "question_id": "q128",
+    "query_class": "section_comparative",
+    "strategy": "hybrid_rrf",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-10::par-unico",
+      "ICVM-607/2019::art-25::par-4",
+      "ICVM-607/2019::art-8",
+      "ICVM-607/2019::art-8::inc-i",
+      "ICVM-607/2019::art-8::inc-ii",
+      "ICVM-607/2019::art-8::par-unico",
+      "ICVM-607/2019::art-46"
+    ],
+    "answer_text": "De acordo com a Instrução CVM nº 607/2019, os prazos comparados são:\n\n*   **Inquérito Administrativo:** Os trabalhos de investigação devem ser concluídos no prazo de 120 dias, contados a partir da data de instauração do inquérito [ICVM-607/2019::art-10]. Este prazo pode ser prorrogado mais de uma vez, mediante pedido motivado encaminhado à Superintendência Geral [ICVM-607/2019::art-10].\n*   **Apresentação de Defesa:** O acusado possui o prazo de 30 dias após a citação para apresentar sua defesa por escrito [ICVM-607/2019::art-29]. Este prazo é computado individualmente para cada acusado e admite uma única prorrogação pelo mesmo período, desde que haja pedido devidamente fundamentado [ICVM-607/2019::art-29::par-3].",
+    "answer_citations": [
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.8571428571428571,
+      "answer_relevancy": 0.8334048457508137,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.6666666666666666
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q128",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 0.03278688524590164
+    },
+    {
+      "query_id": "q128",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-10",
+      "structural_ids": [
+        "ICVM-607/2019::art-10",
+        "ICVM-607/2019::art-10::par-unico"
+      ],
+      "raw_score": 0.03225806451612903
+    },
+    {
+      "query_id": "q128",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-25::par-4",
+      "structural_ids": [
+        "ICVM-607/2019::art-25::par-4"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q128",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-8",
+      "structural_ids": [
+        "ICVM-607/2019::art-8",
+        "ICVM-607/2019::art-8::inc-i",
+        "ICVM-607/2019::art-8::inc-ii",
+        "ICVM-607/2019::art-8::par-unico"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q128",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-46",
+      "structural_ids": [
+        "ICVM-607/2019::art-46"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

@@ -37,7 +37,6 @@ ENV PATH="/app/.venv/bin:$PATH" \
 
 USER app
 
-# Replace this framework-neutral placeholder with the project's entrypoint, for example:
-#   CMD ["uvicorn", "ragforge.entrypoints.http:app", "--host", "0.0.0.0", "--port", "8000"]
-#   CMD ["python", "-m", "ragforge"]
-CMD ["python", "-c", "import ragforge; print(ragforge.__doc__)"]
+EXPOSE 8000
+
+CMD ["uvicorn", "apps.api.main:app", "--host", "0.0.0.0", "--port", "8000"]

@@ -1,0 +1,127 @@
+{
+  "question_record": {
+    "question_id": "q129",
+    "query_class": "global",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-21",
+      "ICVM-607/2019::art-21::par-1",
+      "ICVM-607/2019::art-21::par-1-inc-i",
+      "ICVM-607/2019::art-21::par-1-inc-ii",
+      "ICVM-607/2019::art-21::par-1-inc-iii",
+      "ICVM-607/2019::art-21::par-1-inc-iv",
+      "ICVM-607/2019::art-21::par-1-inc-v",
+      "ICVM-607/2019::art-21::par-1-inc-vi",
+      "ICVM-607/2019::art-21::par-1-inc-vii",
+      "ICVM-607/2019::art-21::par-2",
+      "ICVM-607/2019::art-21::par-3",
+      "ICVM-607/2019::art-21::par-4",
+      "ICVM-607/2019::preamble",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-74::inc-i",
+      "ICVM-607/2019::art-74::inc-iii"
+    ],
+    "answer_text": "De acordo com a Instrução CVM nº 607/2019, o rito processual sancionador até a apresentação da defesa compreende as seguintes etapas:\n\n1.  **Instauração do processo:** O processo administrativo sancionador é considerado instaurado no momento da citação dos acusados para a apresentação de defesa [ICVM-607/2019::art-21].\n2.  **Citação:** A citação deve conter a identificação do acusado, a indicação dos fatos imputados, a finalidade da citação, o prazo para defesa, a informação de que o processo continuará independentemente de seu comparecimento, o dever de cadastro no sistema eletrônico da CVM e o aviso sobre a possibilidade de propor termo de compromisso [ICVM-607/2019::art-21::par-1]. Caso o processo seja em meio físico, a citação deve incluir também o termo ou peça de acusação [ICVM-607/2019::art-21::par-3].\n3.  **Apresentação de defesa:** O acusado deve apresentar sua defesa por escrito no prazo de 30 dias após a citação, juntando os documentos probatórios e especificando as demais provas que pretende produzir [ICVM-607/2019::art-29].\n    *   **Termo de Compromisso:** O interessado pode manifestar a intenção de celebrar termo de compromisso até o término do prazo de defesa, sem que isso suspenda ou interrompa o prazo para a apresentação da própria defesa [ICVM-607/2019::art-29::par-1, ICVM-607/2019::art-29::par-2].\n    *   **Revelia:** O acusado que, mesmo citado, não apresentar defesa será considerado revel [ICVM-607/2019::art-21::par-4].",
+    "answer_citations": [
+      "ICVM-607/2019::art-21",
+      "ICVM-607/2019::art-21::par-1",
+      "ICVM-607/2019::art-21::par-3",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-21::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 0.4,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.5087403079104241,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9118770987892092,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.4
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q129",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-21",
+      "structural_ids": [
+        "ICVM-607/2019::art-21",
+        "ICVM-607/2019::art-21::par-1",
+        "ICVM-607/2019::art-21::par-1-inc-i",
+        "ICVM-607/2019::art-21::par-1-inc-ii",
+        "ICVM-607/2019::art-21::par-1-inc-iii",
+        "ICVM-607/2019::art-21::par-1-inc-iv",
+        "ICVM-607/2019::art-21::par-1-inc-v",
+        "ICVM-607/2019::art-21::par-1-inc-vi",
+        "ICVM-607/2019::art-21::par-1-inc-vii",
+        "ICVM-607/2019::art-21::par-2",
+        "ICVM-607/2019::art-21::par-3",
+        "ICVM-607/2019::art-21::par-4"
+      ],
+      "raw_score": 0.8130910404098038
+    },
+    {
+      "query_id": "q129",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::preamble",
+      "structural_ids": [
+        "ICVM-607/2019::preamble"
+      ],
+      "raw_score": 0.8016451632771258
+    },
+    {
+      "query_id": "q129",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 0.8014447578988989
+    },
+    {
+      "query_id": "q129",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-74::inc-i",
+      "structural_ids": [
+        "ICVM-607/2019::art-74::inc-i"
+      ],
+      "raw_score": 0.7992340570512496
+    },
+    {
+      "query_id": "q129",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-74::inc-iii",
+      "structural_ids": [
+        "ICVM-607/2019::art-74::inc-iii"
+      ],
+      "raw_score": 0.7991226664845867
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "question_record": {
+    "question_id": "q028",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-26",
+      "RES-CMN-4893/2021::art-24",
+      "RES-CMN-4893/2021::art-24::inc-i",
+      "RES-CMN-4893/2021::art-24::inc-ii",
+      "RES-CMN-4893/2021::art-24::inc-iii",
+      "RES-CMN-4893/2021::art-24::inc-iv",
+      "LC-105/2001::art-2",
+      "LC-105/2001::art-2::par-1",
+      "LC-105/2001::art-2::par-1-inc-i",
+      "LC-105/2001::art-2::par-1-inc-ii",
+      "LC-105/2001::art-2::par-2",
+      "LC-105/2001::art-2::par-3",
+      "LC-105/2001::art-2::par-4",
+      "LC-105/2001::art-2::par-4-inc-i",
+      "LC-105/2001::art-2::par-4-inc-ii",
+      "LC-105/2001::art-2::par-4-inc-ii-ali-a",
+      "LC-105/2001::art-2::par-4-inc-ii-ali-b",
+      "LC-105/2001::art-2::par-5",
+      "LC-105/2001::art-2::par-6",
+      "LC-105/2001::art-4",
+      "LC-105/2001::art-4::par-1",
+      "LC-105/2001::art-4::par-2"
+    ],
+    "answer_text": "Segundo o art. 26 da Resolução CMN nº 4.893/2021, quando o Banco Central do Brasil constatar a inobservância do disposto na referida Resolução ou a limitação à sua atuação na contratação de serviços de processamento e armazenamento de dados e de computação em nuvem, ele poderá vetar ou impor restrições a essas contratações, estabelecendo um prazo para a adequação dos serviços [RES-CMN-4893/2021::art-26].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-26"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.6,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8161643730397454,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q028",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-26",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-26"
+      ],
+      "raw_score": 6.773146152496338
+    },
+    {
+      "query_id": "q028",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-24",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-24",
+        "RES-CMN-4893/2021::art-24::inc-i",
+        "RES-CMN-4893/2021::art-24::inc-ii",
+        "RES-CMN-4893/2021::art-24::inc-iii",
+        "RES-CMN-4893/2021::art-24::inc-iv"
+      ],
+      "raw_score": 3.5969038009643555
+    },
+    {
+      "query_id": "q028",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LC-105/2001::art-2",
+      "structural_ids": [
+        "LC-105/2001::art-2",
+        "LC-105/2001::art-2::par-1",
+        "LC-105/2001::art-2::par-1-inc-i",
+        "LC-105/2001::art-2::par-1-inc-ii",
+        "LC-105/2001::art-2::par-2",
+        "LC-105/2001::art-2::par-3",
+        "LC-105/2001::art-2::par-4",
+        "LC-105/2001::art-2::par-4-inc-i",
+        "LC-105/2001::art-2::par-4-inc-ii",
+        "LC-105/2001::art-2::par-4-inc-ii-ali-a",
+        "LC-105/2001::art-2::par-4-inc-ii-ali-b",
+        "LC-105/2001::art-2::par-5",
+        "LC-105/2001::art-2::par-6"
+      ],
+      "raw_score": 2.241128444671631
+    },
+    {
+      "query_id": "q028",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LC-105/2001::art-2::par-1",
+      "structural_ids": [
+        "LC-105/2001::art-2::par-1",
+        "LC-105/2001::art-2::par-1-inc-i",
+        "LC-105/2001::art-2::par-1-inc-ii"
+      ],
+      "raw_score": 2.2263376712799072
+    },
+    {
+      "query_id": "q028",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LC-105/2001::art-4",
+      "structural_ids": [
+        "LC-105/2001::art-4",
+        "LC-105/2001::art-4::par-1",
+        "LC-105/2001::art-4::par-2"
+      ],
+      "raw_score": 1.9837329387664795
+    }
+  ]
+}

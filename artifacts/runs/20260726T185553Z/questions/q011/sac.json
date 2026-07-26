@@ -1,0 +1,104 @@
+{
+  "question_record": {
+    "question_id": "q011",
+    "query_class": "section_comparative",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LC-105/2001::art-4",
+      "LC-105/2001::art-4::par-1",
+      "LC-105/2001::art-4::par-2",
+      "LC-105/2001::art-3",
+      "LC-105/2001::art-3::par-1",
+      "LC-105/2001::art-3::par-2",
+      "LC-105/2001::art-3::par-3",
+      "LC-105/2001::art-5::par-4",
+      "LC-105/2001::art-5::par-3",
+      "LC-105/2001::art-5::par-2"
+    ],
+    "answer_text": "As regras para o fornecimento de informações sigilosas pelo Banco Central do Brasil, pela Comissão de Valores Mobiliários e pelas instituições financeiras diferem conforme o Poder solicitante, conforme estabelecido na LC 105/2001:\n\n**Poder Judiciário (Art. 3º):**\n*   As informações devem ser prestadas quando ordenadas pelo Poder Judiciário [LC-105/2001::art-3].\n*   O caráter sigiloso deve ser preservado mediante acesso restrito às partes, que não podem utilizar os dados para fins estranhos à lide [LC-105/2001::art-3].\n*   No caso de comissões de inquérito administrativo para apurar responsabilidade de servidor público, a prestação de informações depende de prévia autorização judicial, independentemente da existência de processo judicial em curso [LC-105/2001::art-3::par-1, LC-105/2001::art-3::par-2].\n\n**Poder Legislativo Federal (Art. 4º):**\n*   As informações e documentos sigilosos são fornecidos quando fundamentadamente necessários ao exercício das competências constitucionais e legais do Poder Legislativo [LC-105/2001::art-4].\n*   As Comissões Parlamentares de Inquérito (CPIs) podem obter as informações diretamente das instituições financeiras ou por intermédio do Banco Central ou da CVM [LC-105/2001::art-4::par-1].\n*   Diferente do Poder Judiciário, as solicitações do Poder Legislativo exigem aprovação prévia do Plenário da Câmara dos Deputados, do Senado Federal ou do plenário das respectivas comissões parlamentares de inquérito [LC-105/2001::art-4::par-2].",
+    "answer_citations": [
+      "LC-105/2001::art-3",
+      "LC-105/2001::art-4",
+      "LC-105/2001::art-4::par-1",
+      "LC-105/2001::art-4::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7757314937903085,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LC-105/2001::art-4",
+      "structural_ids": [
+        "LC-105/2001::art-4",
+        "LC-105/2001::art-4::par-1",
+        "LC-105/2001::art-4::par-2"
+      ],
+      "raw_score": 0.7987492374142021
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LC-105/2001::art-3",
+      "structural_ids": [
+        "LC-105/2001::art-3",
+        "LC-105/2001::art-3::par-1",
+        "LC-105/2001::art-3::par-2",
+        "LC-105/2001::art-3::par-3"
+      ],
+      "raw_score": 0.7770559362230812
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LC-105/2001::art-5::par-4",
+      "structural_ids": [
+        "LC-105/2001::art-5::par-4"
+      ],
+      "raw_score": 0.7613526824316241
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LC-105/2001::art-5::par-3",
+      "structural_ids": [
+        "LC-105/2001::art-5::par-3"
+      ],
+      "raw_score": 0.7564433792315055
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LC-105/2001::art-5::par-2",
+      "structural_ids": [
+        "LC-105/2001::art-5::par-2"
+      ],
+      "raw_score": 0.7530761193661035
+    }
+  ]
+}

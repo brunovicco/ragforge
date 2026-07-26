@@ -1,0 +1,113 @@
+{
+  "question_record": {
+    "question_id": "q141",
+    "query_class": "numeric_tabular",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-49",
+      "ICVM-607/2019::art-75",
+      "ICVM-607/2019::art-50",
+      "ICVM-607/2019::art-50::par-1",
+      "ICVM-607/2019::art-50::par-2",
+      "ICVM-607/2019::art-50::par-3",
+      "ICVM-607/2019::art-50::par-4",
+      "ICVM-607/2019::art-57",
+      "ICVM-607/2019::art-57::par-1",
+      "ICVM-607/2019::art-57::par-2",
+      "ICVM-607/2019::art-57::par-3",
+      "ICVM-607/2019::art-57::par-4",
+      "ICVM-607/2019::art-57::par-5",
+      "ICVM-607/2019::art-57::par-6",
+      "ICVM-607/2019::art-51",
+      "ICVM-607/2019::art-51::par-unico"
+    ],
+    "answer_text": "Segundo o art. 49 da Instrução CVM nº 607/2019, a sessão pública de julgamento deve ser convocada com pelo menos 15 (quinze) dias de antecedência [ICVM-607/2019::art-49].",
+    "answer_citations": [
+      "ICVM-607/2019::art-49"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9409914116865002,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q141",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-49",
+      "structural_ids": [
+        "ICVM-607/2019::art-49"
+      ],
+      "raw_score": 0.7946923900056662
+    },
+    {
+      "query_id": "q141",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-75",
+      "structural_ids": [
+        "ICVM-607/2019::art-75"
+      ],
+      "raw_score": 0.7407534072145838
+    },
+    {
+      "query_id": "q141",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-50",
+      "structural_ids": [
+        "ICVM-607/2019::art-50",
+        "ICVM-607/2019::art-50::par-1",
+        "ICVM-607/2019::art-50::par-2",
+        "ICVM-607/2019::art-50::par-3",
+        "ICVM-607/2019::art-50::par-4"
+      ],
+      "raw_score": 0.7407004326687214
+    },
+    {
+      "query_id": "q141",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-57",
+      "structural_ids": [
+        "ICVM-607/2019::art-57",
+        "ICVM-607/2019::art-57::par-1",
+        "ICVM-607/2019::art-57::par-2",
+        "ICVM-607/2019::art-57::par-3",
+        "ICVM-607/2019::art-57::par-4",
+        "ICVM-607/2019::art-57::par-5",
+        "ICVM-607/2019::art-57::par-6"
+      ],
+      "raw_score": 0.7272362853106562
+    },
+    {
+      "query_id": "q141",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-51",
+      "structural_ids": [
+        "ICVM-607/2019::art-51",
+        "ICVM-607/2019::art-51::par-unico"
+      ],
+      "raw_score": 0.7202335826179747
+    }
+  ]
+}

@@ -1,0 +1,148 @@
+{
+  "question_record": {
+    "question_id": "q055",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-2",
+      "LEI-13709/2018::art-8::par-3",
+      "LEI-13709/2018::art-8::par-4",
+      "LEI-13709/2018::art-8::par-5",
+      "LEI-13709/2018::art-8::par-6",
+      "LEI-13709/2018::art-15",
+      "LEI-13709/2018::art-15::inc-i",
+      "LEI-13709/2018::art-15::inc-ii",
+      "LEI-13709/2018::art-15::inc-iii",
+      "LEI-13709/2018::art-15::inc-iv",
+      "LEI-13709/2018::art-9",
+      "LEI-13709/2018::art-9::inc-i",
+      "LEI-13709/2018::art-9::inc-ii",
+      "LEI-13709/2018::art-9::inc-iii",
+      "LEI-13709/2018::art-9::inc-iv",
+      "LEI-13709/2018::art-9::inc-v",
+      "LEI-13709/2018::art-9::inc-vi",
+      "LEI-13709/2018::art-9::inc-vii",
+      "LEI-13709/2018::art-9::par-1",
+      "LEI-13709/2018::art-9::par-2",
+      "LEI-13709/2018::art-9::par-3",
+      "LEI-13709/2018::art-11::inc-ii",
+      "LEI-13709/2018::art-11::inc-ii-ali-a",
+      "LEI-13709/2018::art-11::inc-ii-ali-b",
+      "LEI-13709/2018::art-11::inc-ii-ali-c",
+      "LEI-13709/2018::art-11::inc-ii-ali-d",
+      "LEI-13709/2018::art-11::inc-ii-ali-e",
+      "LEI-13709/2018::art-11::inc-ii-ali-f",
+      "LEI-13709/2018::art-11::inc-ii-ali-g",
+      "LEI-13709/2018::art-14::par-3"
+    ],
+    "answer_text": "Segundo o art. 8º da LGPD, o consentimento deve ser fornecido por escrito ou por outro meio que demonstre a manifestação de vontade do titular [LEI-13709/2018::art-8].\n\nCaso o consentimento seja fornecido por escrito, ele deve constar em uma cláusula destacada das demais cláusulas contratuais [LEI-13709/2018::art-8::par-1]. Além disso, o consentimento deve referir-se a finalidades determinadas, sendo nulas as autorizações genéricas [LEI-13709/2018::art-8::par-4].",
+    "answer_citations": [
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.770078755279567,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.3333333333333333
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q055",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-8",
+      "structural_ids": [
+        "LEI-13709/2018::art-8",
+        "LEI-13709/2018::art-8::par-1",
+        "LEI-13709/2018::art-8::par-2",
+        "LEI-13709/2018::art-8::par-3",
+        "LEI-13709/2018::art-8::par-4",
+        "LEI-13709/2018::art-8::par-5",
+        "LEI-13709/2018::art-8::par-6"
+      ],
+      "raw_score": 7.387182235717773
+    },
+    {
+      "query_id": "q055",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-15",
+      "structural_ids": [
+        "LEI-13709/2018::art-15",
+        "LEI-13709/2018::art-15::inc-i",
+        "LEI-13709/2018::art-15::inc-ii",
+        "LEI-13709/2018::art-15::inc-iii",
+        "LEI-13709/2018::art-15::inc-iv"
+      ],
+      "raw_score": 7.105563640594482
+    },
+    {
+      "query_id": "q055",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-9",
+      "structural_ids": [
+        "LEI-13709/2018::art-9",
+        "LEI-13709/2018::art-9::inc-i",
+        "LEI-13709/2018::art-9::inc-ii",
+        "LEI-13709/2018::art-9::inc-iii",
+        "LEI-13709/2018::art-9::inc-iv",
+        "LEI-13709/2018::art-9::inc-v",
+        "LEI-13709/2018::art-9::inc-vi",
+        "LEI-13709/2018::art-9::inc-vii",
+        "LEI-13709/2018::art-9::par-1",
+        "LEI-13709/2018::art-9::par-2",
+        "LEI-13709/2018::art-9::par-3"
+      ],
+      "raw_score": 6.826897144317627
+    },
+    {
+      "query_id": "q055",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-11::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-11::inc-ii",
+        "LEI-13709/2018::art-11::inc-ii-ali-a",
+        "LEI-13709/2018::art-11::inc-ii-ali-b",
+        "LEI-13709/2018::art-11::inc-ii-ali-c",
+        "LEI-13709/2018::art-11::inc-ii-ali-d",
+        "LEI-13709/2018::art-11::inc-ii-ali-e",
+        "LEI-13709/2018::art-11::inc-ii-ali-f",
+        "LEI-13709/2018::art-11::inc-ii-ali-f",
+        "LEI-13709/2018::art-11::inc-ii-ali-g"
+      ],
+      "raw_score": 6.372654438018799
+    },
+    {
+      "query_id": "q055",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-14::par-3",
+      "structural_ids": [
+        "LEI-13709/2018::art-14::par-3"
+      ],
+      "raw_score": 6.237632751464844
+    }
+  ]
+}

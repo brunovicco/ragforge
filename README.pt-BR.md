@@ -10,7 +10,7 @@ O RAGForge está sendo construído para comparar estratégias sparse, dense, hyb
 
 ## Por que isso existe
 
-A maioria das comparações de RAG é anedótica. O RAGForge trata a pergunta "*qual estratégia de RAG eu deveria usar?*" como um experimento: 8 estratégias avaliadas × 7 classes de pergunta, com um roteador adaptativo pensado para ser avaliado contra um **oráculo empírico**, e todo número publicado reproduzível bit a bit a partir de um cache versionado de chamadas de LLM. Veja [Status](#status) para o que já foi construído.
+A maioria das comparações de RAG é anedótica. O RAGForge trata a pergunta "*qual estratégia de RAG eu deveria usar?*" como um experimento: 10 configurações de estratégia × 7 classes de pergunta, com um roteador adaptativo pensado para ser avaliado contra um **oráculo empírico**, e todo número publicado reproduzível bit a bit a partir de um cache versionado de chamadas de LLM. Veja [Status](#status) para o que já foi construído.
 
 ## Estratégias avaliadas
 
@@ -22,8 +22,10 @@ A maioria das comparações de RAG é anedótica. O RAGForge trata a pergunta "*
 | 4 | Reranked | Hybrid top-50 → cross-encoder → top-5 | Implementado |
 | 5 | Contextual Retrieval | Contexto via LLM por chunk + prompt caching | Implementado |
 | 6 | Parent-child / multi-vector | Busca em chunks pequenos, entrega a seção | Implementado |
-| 7 | RAPTOR | Árvore recursiva de resumos (impl. mínima) | Implementado |
-| 8 | GraphRAG | Adapter LightRAG (local + global) | Implementado |
+| 7 | Summary-Augmented Chunking (SAC) | Resumo do documento + texto autoritativo do chunk | Implementado |
+| 8 | SAC + Contextual | Resumo do documento + contexto por chunk + texto autoritativo | Implementado |
+| 9 | RAPTOR | Árvore recursiva de resumos (impl. mínima) | Implementado |
+| 10 | GraphRAG | Adapter LightRAG (local + global) | Implementado |
 
 Transversais: **Roteador Adaptativo** (regras + few-shot, planejado), **Fluxo corretivo** (avaliador de evidência com retry / reformulação / declaração de evidência insuficiente, LangGraph, planejado), **governança** (rastreamento resposta → chunk → artigo via Citation Accuracy, mais uma auditoria de suporte semântico pós-geração com reescrita limitada e uma trilha de evidência à prova de adulteração por execução, implementado), **observabilidade** (tracing do Langfuse apenas com metadados implementado; OpenTelemetry planejado).
 
@@ -36,18 +38,35 @@ está de fato rodando hoje versus o que é meta de design - veja o [histórico d
 |---|---|
 | Chunker estrutural jurídico (ADR-0006) | Implementado |
 | Pipeline de ingestão (extração, hash de snapshot) | Implementado |
-| As 8 estratégias de recuperação avaliadas (Dense até GraphRAG) | Implementado |
+| As 10 configurações de recuperação avaliadas (Dense até GraphRAG) | Implementado |
 | Harness de avaliação + julgamentos de cobertura estrutural (ADR-0002) | Implementado |
 | Observabilidade (Langfuse, apenas metadados) | Implementado |
 | Geração de resposta + Citation Accuracy | Implementado |
 | Judge de LLM independente - Faithfulness/Answer Relevancy + abstenção (ADR-0018) | Implementado - não calibrado (exercício de kappa da ADR-0007 pendente) |
 | Auditoria de citação/suporte semântico pós-geração + reescrita limitada (ADR-0016) | Implementado - desligado por padrão (`audit.enabled: false`) |
 | Diretório de evidência auditável e à prova de adulteração por execução (ADR-0017) | Implementado - `artifacts/runs/<run_id>/`, verificado via `scripts/verify_run.py` |
-| Runner principal do benchmark (`make bench-live`, 8 estratégias + qualidade de resposta) | Implementado - apenas modo live |
+| Runner principal do benchmark (`make bench-live`, 10 estratégias + qualidade de resposta) | Implementado - apenas modo live |
 | Roteador Adaptativo, Fluxo corretivo | Planejado |
 | Golden set RegRAG-BR | 230 perguntas: 36 validation/dev + 194 test |
-| Apps de API / dashboard | Planejado (apenas scaffolding) |
+| Apps de API / dashboard | API de resultados publicados e dashboard analítico implementados; Arena ao vivo planejada |
 | `make bench` (replay determinístico, bit a bit, ADR-0004) | Planejado - precisa de um cache versionado de chamadas de LLM, ainda não construído |
+
+## Resultado do benchmark v0.1
+
+O run [`20260726T185553Z`](experiments/20260726T185553Z/results.json) avalia uma
+**amostra determinística e estratificada por classe de 60 perguntas** do split
+de teste com 194 perguntas. A seed é
+`regrag-br-benchmark-sample-v1`; este é um resultado da v0.1 com custo
+controlado, não uma afirmação sobre o split de teste completo.
+
+**SAC é a estratégia recomendada para a v0.1** pelo melhor equilíbrio: maior
+nDCG@5 (`0,963`), MRR (`0,991`) e Citation Accuracy (`0,689`) neste run, com
+Document-Level Retrieval Mismatch igual a zero. RAPTOR obteve o maior Recall@5
+(`1,000`) e Precision@5 (`0,611`), mas seus nós de resumo gerados apresentam
+outro compromisso de qualidade da evidência.
+
+O scorecard completo, metodologia, limitações e instruções de verificação estão
+em [Resultados do benchmark](docs/BENCHMARK-RESULTS.md).
 
 ## Início rápido
 
@@ -56,7 +75,8 @@ uv sync --all-groups
 make infra-up                                      # Postgres+pgvector, OpenSearch
 GEMINI_API_KEY=... OPENAI_API_KEY=... make bench-live
 make bench-live-local                              # mesma matriz, embeddings Qwen locais
-make dashboard                                     # benchmark + Arena lado a lado
+make api                                           # API read-only de resultados publicados
+make dashboard                                     # dashboard analítico offline
 ```
 
 `make bench-live` chama provedores reais (embeddings, contextualização, sumarização do RAPTOR, extração de entidades do GraphRAG - ver a tabela de estratégias acima). `make bench` (replay determinístico e sem custo a partir de um cache versionado de LLM) é o design-alvo segundo a [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), mas essa camada de cache ainda não existe - apenas o modo live está implementado.

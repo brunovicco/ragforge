@@ -1,0 +1,99 @@
+{
+  "question_record": {
+    "question_id": "q017",
+    "query_class": "unanswerable",
+    "strategy": "sac_contextual",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-5274/2025::art-2",
+      "RES-CMN-5274/2025::preamble",
+      "RES-CMN-5274/2025::art-1::par-2",
+      "RES-CMN-5274/2025::art-1::par-2-inc-i",
+      "RES-CMN-5274/2025::art-1::par-2-inc-ii",
+      "RES-CMN-5274/2025::art-1::par-8",
+      "RES-CMN-5274/2025::art-1::par-8-inc-i",
+      "RES-CMN-5274/2025::art-1::par-8-inc-ii",
+      "RES-CMN-5274/2025::art-1::par-8-inc-iii",
+      "RES-CMN-5274/2025::art-1::par-8-inc-iv",
+      "RES-CMN-5274/2025::art-1::par-8-inc-v",
+      "RES-CMN-5274/2025::art-1::par-1"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o valor de multas pecuniárias para o descumprimento do prazo de adaptação estabelecido na Resolução CMN nº 5274/2025. O texto apenas determina que as instituições devem promover as adaptações necessárias até 1º de março de 2026 [RES-CMN-5274/2025::art-2].",
+    "answer_citations": [
+      "RES-CMN-5274/2025::art-2"
+    ],
+    "metrics": {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7702253892761891,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q017",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-5274/2025::art-2",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-2"
+      ],
+      "raw_score": 0.738732322788553
+    },
+    {
+      "query_id": "q017",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-5274/2025::preamble",
+      "structural_ids": [
+        "RES-CMN-5274/2025::preamble"
+      ],
+      "raw_score": 0.6904640062425645
+    },
+    {
+      "query_id": "q017",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-5274/2025::art-1::par-2",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-1::par-2",
+        "RES-CMN-5274/2025::art-1::par-2-inc-i",
+        "RES-CMN-5274/2025::art-1::par-2-inc-ii"
+      ],
+      "raw_score": 0.6783298335113789
+    },
+    {
+      "query_id": "q017",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-5274/2025::art-1::par-8",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-1::par-8",
+        "RES-CMN-5274/2025::art-1::par-8-inc-i",
+        "RES-CMN-5274/2025::art-1::par-8-inc-ii",
+        "RES-CMN-5274/2025::art-1::par-8-inc-iii",
+        "RES-CMN-5274/2025::art-1::par-8-inc-iv",
+        "RES-CMN-5274/2025::art-1::par-8-inc-v"
+      ],
+      "raw_score": 0.6701626059164869
+    },
+    {
+      "query_id": "q017",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-5274/2025::art-1::par-1",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-1::par-1"
+      ],
+      "raw_score": 0.6698182187231303
+    }
+  ]
+}

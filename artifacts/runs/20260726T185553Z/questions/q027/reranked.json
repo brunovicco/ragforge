@@ -1,0 +1,170 @@
+{
+  "question_record": {
+    "question_id": "q027",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-18",
+      "RES-CMN-4893/2021::art-17",
+      "RES-CMN-4893/2021::art-17::inc-i",
+      "RES-CMN-4893/2021::art-17::inc-ii",
+      "RES-CMN-4893/2021::art-17::inc-iii",
+      "RES-CMN-4893/2021::art-17::inc-iv",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-b",
+      "RES-CMN-4893/2021::art-17::inc-v",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-a",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-b",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-c",
+      "RES-CMN-4893/2021::art-17::inc-vi",
+      "RES-CMN-4893/2021::art-17::inc-vii",
+      "RES-CMN-4893/2021::art-17::inc-viii",
+      "RES-CMN-4893/2021::art-17::inc-ix",
+      "RES-CMN-4893/2021::art-17::par-unico",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b",
+      "ICVM-607/2019::art-68",
+      "LEI-13709/2018::art-4",
+      "LEI-13709/2018::art-4::inc-i",
+      "LEI-13709/2018::art-4::inc-ii",
+      "LEI-13709/2018::art-4::inc-ii-ali-a",
+      "LEI-13709/2018::art-4::inc-ii-ali-b",
+      "LEI-13709/2018::art-4::inc-iii",
+      "LEI-13709/2018::art-4::inc-iii-ali-a",
+      "LEI-13709/2018::art-4::inc-iii-ali-b",
+      "LEI-13709/2018::art-4::inc-iii-ali-c",
+      "LEI-13709/2018::art-4::inc-iii-ali-d",
+      "LEI-13709/2018::art-4::inc-iv",
+      "LEI-13709/2018::art-4::par-1",
+      "LEI-13709/2018::art-4::par-2",
+      "LEI-13709/2018::art-4::par-3",
+      "LEI-13709/2018::art-4::par-4",
+      "RES-CMN-4893/2021::art-25",
+      "RES-CMN-4893/2021::art-25::inc-i",
+      "RES-CMN-4893/2021::art-25::inc-ii",
+      "RES-CMN-4893/2021::art-25::par-unico"
+    ],
+    "answer_text": "Segundo o art. 18 da Resolução CMN nº 4.893/2021, o disposto nos arts. 11 a 17 não se aplica à contratação de sistemas operados por:\n\n*   Câmaras;\n*   Prestadores de serviços de compensação e de liquidação; ou\n*   Entidades que exerçam atividades de registro ou de depósito centralizado [RES-CMN-4893/2021::art-18].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-18"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.4,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7189626416853095,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q027",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-18",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-18"
+      ],
+      "raw_score": 6.650806427001953
+    },
+    {
+      "query_id": "q027",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-17",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-17",
+        "RES-CMN-4893/2021::art-17::inc-i",
+        "RES-CMN-4893/2021::art-17::inc-ii",
+        "RES-CMN-4893/2021::art-17::inc-iii",
+        "RES-CMN-4893/2021::art-17::inc-iv",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-b",
+        "RES-CMN-4893/2021::art-17::inc-v",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-a",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-b",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-c",
+        "RES-CMN-4893/2021::art-17::inc-vi",
+        "RES-CMN-4893/2021::art-17::inc-vii",
+        "RES-CMN-4893/2021::art-17::inc-viii",
+        "RES-CMN-4893/2021::art-17::inc-ix",
+        "RES-CMN-4893/2021::art-17::par-unico",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b"
+      ],
+      "raw_score": 1.8802286386489868
+    },
+    {
+      "query_id": "q027",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-68",
+      "structural_ids": [
+        "ICVM-607/2019::art-68"
+      ],
+      "raw_score": 1.374599575996399
+    },
+    {
+      "query_id": "q027",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-4",
+      "structural_ids": [
+        "LEI-13709/2018::art-4",
+        "LEI-13709/2018::art-4::inc-i",
+        "LEI-13709/2018::art-4::inc-ii",
+        "LEI-13709/2018::art-4::inc-ii-ali-a",
+        "LEI-13709/2018::art-4::inc-ii-ali-b",
+        "LEI-13709/2018::art-4::inc-ii-ali-b",
+        "LEI-13709/2018::art-4::inc-ii-ali-b",
+        "LEI-13709/2018::art-4::inc-iii",
+        "LEI-13709/2018::art-4::inc-iii-ali-a",
+        "LEI-13709/2018::art-4::inc-iii-ali-b",
+        "LEI-13709/2018::art-4::inc-iii-ali-c",
+        "LEI-13709/2018::art-4::inc-iii-ali-d",
+        "LEI-13709/2018::art-4::inc-iv",
+        "LEI-13709/2018::art-4::par-1",
+        "LEI-13709/2018::art-4::par-2",
+        "LEI-13709/2018::art-4::par-2",
+        "LEI-13709/2018::art-4::par-2",
+        "LEI-13709/2018::art-4::par-3",
+        "LEI-13709/2018::art-4::par-3",
+        "LEI-13709/2018::art-4::par-3",
+        "LEI-13709/2018::art-4::par-4",
+        "LEI-13709/2018::art-4::par-4"
+      ],
+      "raw_score": 0.5915433168411255
+    },
+    {
+      "query_id": "q027",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-25",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-25",
+        "RES-CMN-4893/2021::art-25::inc-i",
+        "RES-CMN-4893/2021::art-25::inc-ii",
+        "RES-CMN-4893/2021::art-25::par-unico"
+      ],
+      "raw_score": 0.4618909955024719
+    }
+  ]
+}

@@ -1,0 +1,144 @@
+{
+  "question_record": {
+    "question_id": "q090",
+    "query_class": "global",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-50",
+      "LEI-13709/2018::art-50::par-1",
+      "LEI-13709/2018::art-50::par-2",
+      "LEI-13709/2018::art-50::par-2-inc-i",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+      "LEI-13709/2018::art-50::par-2-inc-ii",
+      "LEI-13709/2018::art-50::par-3",
+      "LEI-13709/2018::preamble",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "LEI-13709/2018::art-44",
+      "LEI-13709/2018::art-44::inc-i",
+      "LEI-13709/2018::art-44::inc-ii",
+      "LEI-13709/2018::art-44::inc-iii",
+      "LEI-13709/2018::art-44::par-unico"
+    ],
+    "answer_text": "A LGPD estabelece que o tratamento de dados pessoais é considerado irregular quando não observa a legislação ou não fornece a segurança esperada pelo titular, levando em conta o modo de realização, os riscos e resultados esperados, e as técnicas disponíveis à época [LEI-13709/2018::art-44]. O controlador ou operador que deixar de adotar as medidas de segurança previstas em lei e, por isso, der causa a danos, responde por eles [LEI-13709/2018::art-44::par-unico].\n\nQuanto às sanções administrativas, a autoridade nacional é responsável por definir, por meio de regulamento próprio submetido a consulta pública, as metodologias que orientarão o cálculo do valor-base das multas [LEI-13709/2018::art-53]. Essas metodologias devem:\n* Ser previamente publicadas para ciência dos agentes de tratamento [LEI-13709/2018::art-53::par-1];\n* Apresentar objetivamente as formas e dosimetrias para o cálculo, com fundamentação detalhada que demonstre a observância dos critérios legais [LEI-13709/2018::art-53::par-1];\n* Estabelecer as circunstâncias e condições para a aplicação de multa simples ou diária [LEI-13709/2018::art-53::par-2].\n\nComo mecanismo de governança e mitigação de riscos, controladores e operadores podem formular regras de boas práticas e programas de governança em privacidade [LEI-13709/2018::art-50]. O controlador pode ser solicitado a demonstrar a efetividade de seu programa de governança, especialmente a pedido da autoridade nacional ou de entidades responsáveis por promover o cumprimento de boas práticas [LEI-13709/2018::art-50::par-2-inc-ii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-44",
+      "LEI-13709/2018::art-44::par-unico",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "LEI-13709/2018::art-50",
+      "LEI-13709/2018::art-50::par-2-inc-ii"
+    ],
+    "metrics": {
+      "recall_at_k": 0.4,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.27727342735504823,
+      "mrr": 0.25,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.9166666666666666,
+      "answer_relevancy": 0.6686004955164105,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.2857142857142857
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q090",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-50",
+      "structural_ids": [
+        "LEI-13709/2018::art-50",
+        "LEI-13709/2018::art-50::par-1",
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii",
+        "LEI-13709/2018::art-50::par-3"
+      ],
+      "raw_score": 16.578875
+    },
+    {
+      "query_id": "q090",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::preamble",
+      "structural_ids": [
+        "LEI-13709/2018::preamble"
+      ],
+      "raw_score": 14.840688
+    },
+    {
+      "query_id": "q090",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-50::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii"
+      ],
+      "raw_score": 14.246893
+    },
+    {
+      "query_id": "q090",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 12.922688
+    },
+    {
+      "query_id": "q090",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-44",
+      "structural_ids": [
+        "LEI-13709/2018::art-44",
+        "LEI-13709/2018::art-44::inc-i",
+        "LEI-13709/2018::art-44::inc-ii",
+        "LEI-13709/2018::art-44::inc-iii",
+        "LEI-13709/2018::art-44::par-unico"
+      ],
+      "raw_score": 12.581455
+    }
+  ]
+}

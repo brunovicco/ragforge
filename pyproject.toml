@@ -157,6 +157,7 @@ ignore_missing_imports = true
 [tool.pytest.ini_options]
 addopts = "--strict-config --strict-markers --cov=src/ragforge --cov-report=term-missing -m \"not integration\""
 testpaths = ["tests"]
+pythonpath = ["."]
 markers = [
     "integration: tests that require real infrastructure",
     "contract: tests that verify an interface contract",
@@ -177,7 +178,7 @@ exclude_dirs = ["tests"]
 skips = []
 
 [tool.engineering-harness.quality]
-source-roots = ["src"]
+source-roots = ["src", "apps"]
 test-roots = ["tests"]
 
 [tool.engineering-harness.architecture]

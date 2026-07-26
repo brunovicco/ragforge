@@ -1,0 +1,122 @@
+{
+  "question_record": {
+    "question_id": "q079",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-33",
+      "LEI-13709/2018::art-33::inc-i",
+      "LEI-13709/2018::art-33::inc-ii",
+      "LEI-13709/2018::art-33::inc-ii-ali-a",
+      "LEI-13709/2018::art-33::inc-ii-ali-b",
+      "LEI-13709/2018::art-33::inc-ii-ali-c",
+      "LEI-13709/2018::art-33::inc-ii-ali-d",
+      "LEI-13709/2018::art-33::inc-iii",
+      "LEI-13709/2018::art-33::inc-iv",
+      "LEI-13709/2018::art-33::inc-v",
+      "LEI-13709/2018::art-33::inc-vi",
+      "LEI-13709/2018::art-33::inc-vii",
+      "LEI-13709/2018::art-33::inc-viii",
+      "LEI-13709/2018::art-33::inc-ix",
+      "LEI-13709/2018::art-33::par-unico"
+    ],
+    "answer_text": "De acordo com o art. 33 da Lei Geral de Proteção de Dados (LGPD), a transferência internacional de dados pessoais é permitida nos seguintes casos:\n\n*   Para países ou organismos internacionais que proporcionem um grau de proteção de dados pessoais adequado ao previsto na Lei [LEI-13709/2018::art-33::inc-i];\n*   Quando o controlador oferecer e comprovar garantias de cumprimento dos princípios, dos direitos do titular e do regime de proteção de dados, por meio de cláusulas contratuais específicas, cláusulas-padrão contratuais, normas corporativas globais ou selos, certificados e códigos de conduta regularmente emitidos [LEI-13709/2018::art-33::inc-ii, LEI-13709/2018::art-33::inc-ii-ali-a, LEI-13709/2018::art-33::inc-ii-ali-b, LEI-13709/2018::art-33::inc-ii-ali-c, LEI-13709/2018::art-33::inc-ii-ali-d];\n*   Quando necessária para a cooperação jurídica internacional entre órgãos públicos de inteligência, de investigação e de persecução, conforme instrumentos de direito internacional [LEI-13709/2018::art-33::inc-iii];\n*   Quando necessária para a proteção da vida ou da incolumidade física do titular ou de terceiro [LEI-13709/2018::art-33::inc-iv];\n*   Quando autorizada pela autoridade nacional [LEI-13709/2018::art-33::inc-v];\n*   Quando resultar em compromisso assumido em acordo de cooperação internacional [LEI-13709/2018::art-33::inc-vi];\n*   Quando necessária para a execução de política pública ou atribuição legal do serviço público, com a devida publicidade [LEI-13709/2018::art-33::inc-vii];\n*   Quando o titular fornecer consentimento específico e em destaque para a transferência, com informação prévia sobre o caráter internacional da operação, de forma distinta de outras finalidades [LEI-13709/2018::art-33::inc-viii];\n*   Quando necessário para atender às hipóteses previstas nos incisos II, V e VI do art. 7º da referida Lei [LEI-13709/2018::art-33::inc-ix].",
+    "answer_citations": [
+      "LEI-13709/2018::art-33::inc-i",
+      "LEI-13709/2018::art-33::inc-iii",
+      "LEI-13709/2018::art-33::inc-iv",
+      "LEI-13709/2018::art-33::inc-v",
+      "LEI-13709/2018::art-33::inc-vi",
+      "LEI-13709/2018::art-33::inc-vii",
+      "LEI-13709/2018::art-33::inc-viii",
+      "LEI-13709/2018::art-33::inc-ix"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9974059648424697,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q079",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-33",
+      "structural_ids": [
+        "LEI-13709/2018::art-33",
+        "LEI-13709/2018::art-33::inc-i",
+        "LEI-13709/2018::art-33::inc-ii",
+        "LEI-13709/2018::art-33::inc-ii-ali-a",
+        "LEI-13709/2018::art-33::inc-ii-ali-b",
+        "LEI-13709/2018::art-33::inc-ii-ali-c",
+        "LEI-13709/2018::art-33::inc-ii-ali-d",
+        "LEI-13709/2018::art-33::inc-iii",
+        "LEI-13709/2018::art-33::inc-iv",
+        "LEI-13709/2018::art-33::inc-v",
+        "LEI-13709/2018::art-33::inc-vi",
+        "LEI-13709/2018::art-33::inc-vii",
+        "LEI-13709/2018::art-33::inc-viii",
+        "LEI-13709/2018::art-33::inc-ix",
+        "LEI-13709/2018::art-33::par-unico"
+      ],
+      "raw_score": 0.8294641008253765
+    },
+    {
+      "query_id": "q079",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-33::inc-i",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-i"
+      ],
+      "raw_score": 0.7785886192913444
+    },
+    {
+      "query_id": "q079",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-33::inc-vii",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-vii"
+      ],
+      "raw_score": 0.7778748546199038
+    },
+    {
+      "query_id": "q079",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-33::inc-vi",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-vi"
+      ],
+      "raw_score": 0.7772815516029146
+    },
+    {
+      "query_id": "q079",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-33::inc-viii",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-viii"
+      ],
+      "raw_score": 0.7746465084994181
+    }
+  ]
+}

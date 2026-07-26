@@ -1,0 +1,142 @@
+{
+  "question_record": {
+    "question_id": "q108",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-5::inc-xi",
+      "LEI-13709/2018::art-5::inc-iii",
+      "LEI-13709/2018::art-12",
+      "LEI-13709/2018::art-12::par-1",
+      "LEI-13709/2018::art-12::par-2",
+      "LEI-13709/2018::art-12::par-3",
+      "LEI-13709/2018::art-5",
+      "LEI-13709/2018::art-5::inc-i",
+      "LEI-13709/2018::art-5::inc-ii",
+      "LEI-13709/2018::art-5::inc-iv",
+      "LEI-13709/2018::art-5::inc-v",
+      "LEI-13709/2018::art-5::inc-vi",
+      "LEI-13709/2018::art-5::inc-vii",
+      "LEI-13709/2018::art-5::inc-viii",
+      "LEI-13709/2018::art-5::inc-ix",
+      "LEI-13709/2018::art-5::inc-x",
+      "LEI-13709/2018::art-5::inc-xii",
+      "LEI-13709/2018::art-5::inc-xiii",
+      "LEI-13709/2018::art-5::inc-xiv",
+      "LEI-13709/2018::art-5::inc-xv",
+      "LEI-13709/2018::art-5::inc-xvi",
+      "LEI-13709/2018::art-5::inc-xvii",
+      "LEI-13709/2018::art-5::inc-xviii",
+      "LEI-13709/2018::art-5::inc-xix"
+    ],
+    "answer_text": "Segundo o art. 5º, inciso XI da LGPD, a anonimização caracteriza-se pela utilização de meios técnicos razoáveis e disponíveis no momento do tratamento, por meio dos quais um dado perde a possibilidade de associação, direta ou indireta, a um indivíduo [LEI-13709/2018::art-5::inc-xi].",
+    "answer_citations": [
+      "LEI-13709/2018::art-5::inc-xi"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8427459098080595,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q108",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xi",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xi"
+      ],
+      "raw_score": 0.7583383222422955
+    },
+    {
+      "query_id": "q108",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-5::inc-iii",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-iii"
+      ],
+      "raw_score": 0.7321357908199373
+    },
+    {
+      "query_id": "q108",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-12",
+      "structural_ids": [
+        "LEI-13709/2018::art-12",
+        "LEI-13709/2018::art-12::par-1",
+        "LEI-13709/2018::art-12::par-2",
+        "LEI-13709/2018::art-12::par-3"
+      ],
+      "raw_score": 0.7267798653954295
+    },
+    {
+      "query_id": "q108",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-5",
+      "structural_ids": [
+        "LEI-13709/2018::art-5",
+        "LEI-13709/2018::art-5::inc-i",
+        "LEI-13709/2018::art-5::inc-ii",
+        "LEI-13709/2018::art-5::inc-iii",
+        "LEI-13709/2018::art-5::inc-iv",
+        "LEI-13709/2018::art-5::inc-v",
+        "LEI-13709/2018::art-5::inc-vi",
+        "LEI-13709/2018::art-5::inc-vii",
+        "LEI-13709/2018::art-5::inc-viii",
+        "LEI-13709/2018::art-5::inc-viii",
+        "LEI-13709/2018::art-5::inc-viii",
+        "LEI-13709/2018::art-5::inc-viii",
+        "LEI-13709/2018::art-5::inc-viii",
+        "LEI-13709/2018::art-5::inc-ix",
+        "LEI-13709/2018::art-5::inc-x",
+        "LEI-13709/2018::art-5::inc-xi",
+        "LEI-13709/2018::art-5::inc-xii",
+        "LEI-13709/2018::art-5::inc-xiii",
+        "LEI-13709/2018::art-5::inc-xiv",
+        "LEI-13709/2018::art-5::inc-xv",
+        "LEI-13709/2018::art-5::inc-xvi",
+        "LEI-13709/2018::art-5::inc-xvii",
+        "LEI-13709/2018::art-5::inc-xviii",
+        "LEI-13709/2018::art-5::inc-xviii",
+        "LEI-13709/2018::art-5::inc-xviii",
+        "LEI-13709/2018::art-5::inc-xix",
+        "LEI-13709/2018::art-5::inc-xix",
+        "LEI-13709/2018::art-5::inc-xix",
+        "LEI-13709/2018::art-5::inc-xix",
+        "LEI-13709/2018::art-5::inc-xix"
+      ],
+      "raw_score": 0.7193780057356629
+    },
+    {
+      "query_id": "q108",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xiv",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xiv"
+      ],
+      "raw_score": 0.7050221685309307
+    }
+  ]
+}

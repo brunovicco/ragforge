@@ -1,0 +1,99 @@
+{
+  "question_record": {
+    "question_id": "q029",
+    "query_class": "exact_factual",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-26",
+      "RES-CMN-4893/2021::preamble",
+      "RES-CMN-4893/2021::art-17::inc-iv",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-b",
+      "RES-CMN-4893/2021::art-3::inc-iv",
+      "RES-CMN-4893/2021::art-13",
+      "RES-CMN-4893/2021::art-13::inc-i",
+      "RES-CMN-4893/2021::art-13::inc-ii",
+      "RES-CMN-4893/2021::art-13::inc-iii"
+    ],
+    "answer_text": "O contexto fornecido não contém o texto do art. 27 da Resolução CMN nº 4.893/2021, portanto não é possível informar quais resoluções são revogadas com base nas informações disponíveis.",
+    "answer_citations": [],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.0,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q029",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-26",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-26"
+      ],
+      "raw_score": 16.910095
+    },
+    {
+      "query_id": "q029",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::preamble",
+      "structural_ids": [
+        "RES-CMN-4893/2021::preamble"
+      ],
+      "raw_score": 16.782282
+    },
+    {
+      "query_id": "q029",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-17::inc-iv",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-17::inc-iv",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-b"
+      ],
+      "raw_score": 16.651491
+    },
+    {
+      "query_id": "q029",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-4893/2021::art-3::inc-iv",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-3::inc-iv"
+      ],
+      "raw_score": 16.080456
+    },
+    {
+      "query_id": "q029",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-13",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-13",
+        "RES-CMN-4893/2021::art-13::inc-i",
+        "RES-CMN-4893/2021::art-13::inc-ii",
+        "RES-CMN-4893/2021::art-13::inc-iii"
+      ],
+      "raw_score": 15.750599
+    }
+  ]
+}

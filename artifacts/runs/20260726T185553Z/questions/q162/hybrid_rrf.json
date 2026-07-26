@@ -1,0 +1,168 @@
+{
+  "question_record": {
+    "question_id": "q162",
+    "query_class": "global",
+    "strategy": "hybrid_rrf",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-113",
+      "ICVM-607/2019::art-113::inc-i",
+      "ICVM-607/2019::art-113::inc-ii",
+      "ICVM-607/2019::art-113::inc-iii",
+      "ICVM-607/2019::art-113::inc-iv",
+      "ICVM-607/2019::art-113::inc-v",
+      "ICVM-607/2019::art-113::inc-vi",
+      "ICVM-607/2019::art-113::inc-vii",
+      "ICVM-607/2019::art-113::inc-viii",
+      "ICVM-607/2019::art-113::inc-ix",
+      "ICVM-607/2019::art-113::inc-x",
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-66::par-5",
+      "ICVM-607/2019::art-60",
+      "ICVM-607/2019::art-60::inc-i",
+      "ICVM-607/2019::art-60::inc-ii",
+      "ICVM-607/2019::art-60::inc-iii",
+      "ICVM-607/2019::art-60::inc-iv",
+      "ICVM-607/2019::art-60::inc-v",
+      "ICVM-607/2019::art-60::inc-vi",
+      "ICVM-607/2019::art-60::inc-vii"
+    ],
+    "answer_text": "De acordo com a Instrução CVM 607/2019, a estrutura para o cálculo e a dosimetria das penalidades segue as diretrizes abaixo:\n\n*   **Fixação da Pena-Base:** O Colegiado deve observar os princípios da proporcionalidade e da razoabilidade, considerando a capacidade econômica do infrator e os motivos que justificam a penalidade [ICVM-607/2019::art-63].\n*   **Critérios para Multas:** Caso a penalidade seja de multa, a pena-base deve respeitar os limites máximos estabelecidos para cada grupo de infração (Grupos I a V), conforme previsto no Anexo da norma [ICVM-607/2019::art-63::par-1]. Se a infração não estiver listada no Anexo, o Colegiado deve enquadrá-la em um dos grupos com base na gravidade da conduta [ICVM-607/2019::art-63::par-2].\n*   **Limites Temporais:** Para as penalidades de inabilitação, suspensão ou proibição temporária (descritas nos incisos III a VI do art. 60), a pena-base deve ser fixada em meses, não podendo exceder 10 anos [ICVM-607/2019::art-63::par-3]. Para a proibição de atuar no mercado (inciso VII do art. 60), o limite é de 5 anos [ICVM-607/2019::art-63::par-4].\n*   **Ordem de Dosimetria:** Exceto no caso de advertência, o Colegiado fixa inicialmente a pena-base e, na sequência, aplica as circunstâncias agravantes e atenuantes, seguidas pela causa de redução da pena, nesta ordem [ICVM-607/2019::art-62].\n*   **Consideração de Outras Sanções:** O Colegiado deve considerar na dosimetria outras sanções aplicadas definitivamente por outras autoridades sobre os mesmos fatos, sendo ônus do acusado demonstrar essa circunstância até o julgamento [ICVM-607/2019::art-62::par-unico].\n*   **Restrição a Atenuantes:** A circunstância atenuante prevista no inciso I do art. 66 não se aplica ao acusado que tenha celebrado acordo administrativo em processo de supervisão (conforme art. 30 da Lei nº 13.506/2017) referente aos mesmos fatos [ICVM-607/2019::art-66::par-5].",
+    "answer_citations": [
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-66::par-5"
+    ],
+    "metrics": {
+      "recall_at_k": 0.4,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.30078518014914984,
+      "mrr": 0.3333333333333333,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.9333333333333333,
+      "answer_relevancy": 0.8746269257539576,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.125
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q162",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-113",
+      "structural_ids": [
+        "ICVM-607/2019::art-113",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix",
+        "ICVM-607/2019::art-113::inc-x",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix"
+      ],
+      "raw_score": 0.01639344262295082
+    },
+    {
+      "query_id": "q162",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 0.01639344262295082
+    },
+    {
+      "query_id": "q162",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 0.016129032258064516
+    },
+    {
+      "query_id": "q162",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-66::par-5",
+      "structural_ids": [
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 0.016129032258064516
+    },
+    {
+      "query_id": "q162",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-60",
+      "structural_ids": [
+        "ICVM-607/2019::art-60",
+        "ICVM-607/2019::art-60::inc-i",
+        "ICVM-607/2019::art-60::inc-ii",
+        "ICVM-607/2019::art-60::inc-iii",
+        "ICVM-607/2019::art-60::inc-iv",
+        "ICVM-607/2019::art-60::inc-v",
+        "ICVM-607/2019::art-60::inc-vi",
+        "ICVM-607/2019::art-60::inc-vii"
+      ],
+      "raw_score": 0.015873015873015872
+    }
+  ]
+}

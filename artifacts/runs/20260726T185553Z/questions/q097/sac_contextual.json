@@ -1,0 +1,99 @@
+{
+  "question_record": {
+    "question_id": "q097",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-61",
+      "LEI-13709/2018::art-33::par-unico",
+      "LEI-13709/2018::art-36",
+      "LEI-13709/2018::art-33::inc-ii",
+      "LEI-13709/2018::art-33::inc-ii-ali-a",
+      "LEI-13709/2018::art-33::inc-ii-ali-b",
+      "LEI-13709/2018::art-33::inc-ii-ali-c",
+      "LEI-13709/2018::art-33::inc-ii-ali-d",
+      "LEI-13709/2018::art-18::par-6"
+    ],
+    "answer_text": "A empresa estrangeira será notificada e intimada de todos os atos processuais previstos na Lei, independentemente de procuração ou de disposição contratual ou estatutária, na pessoa do agente, representante ou pessoa responsável por sua filial, agência, sucursal, estabelecimento ou escritório instalado no Brasil [LEI-13709/2018::art-61].",
+    "answer_citations": [
+      "LEI-13709/2018::art-61"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7877658675527538,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q097",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-61",
+      "structural_ids": [
+        "LEI-13709/2018::art-61"
+      ],
+      "raw_score": 0.7985276316873988
+    },
+    {
+      "query_id": "q097",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-33::par-unico",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::par-unico"
+      ],
+      "raw_score": 0.6865416716273559
+    },
+    {
+      "query_id": "q097",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-36",
+      "structural_ids": [
+        "LEI-13709/2018::art-36"
+      ],
+      "raw_score": 0.6717396794825962
+    },
+    {
+      "query_id": "q097",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-33::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-ii",
+        "LEI-13709/2018::art-33::inc-ii-ali-a",
+        "LEI-13709/2018::art-33::inc-ii-ali-b",
+        "LEI-13709/2018::art-33::inc-ii-ali-c",
+        "LEI-13709/2018::art-33::inc-ii-ali-d"
+      ],
+      "raw_score": 0.6659538053542438
+    },
+    {
+      "query_id": "q097",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-18::par-6",
+      "structural_ids": [
+        "LEI-13709/2018::art-18::par-6"
+      ],
+      "raw_score": 0.66522622173859
+    }
+  ]
+}

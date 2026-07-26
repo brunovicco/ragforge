@@ -1,0 +1,152 @@
+{
+  "question_record": {
+    "question_id": "q078",
+    "query_class": "exact_factual",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-26",
+      "LEI-13709/2018::art-26::par-1",
+      "LEI-13709/2018::art-26::par-1-inc-i",
+      "LEI-13709/2018::art-26::par-1-inc-ii",
+      "LEI-13709/2018::art-26::par-1-inc-iii",
+      "LEI-13709/2018::art-26::par-1-inc-iv",
+      "LEI-13709/2018::art-26::par-1-inc-v",
+      "LEI-13709/2018::art-26::par-1-inc-vi",
+      "LEI-13709/2018::art-26::par-2",
+      "LEI-13709/2018::art-27",
+      "LEI-13709/2018::art-27::inc-i",
+      "LEI-13709/2018::art-27::inc-ii",
+      "LEI-13709/2018::art-27::inc-iii",
+      "LEI-13709/2018::art-27::par-unico",
+      "LEI-13709/2018::art-33::inc-vii",
+      "LEI-13709/2018::art-23",
+      "LEI-13709/2018::art-23::inc-i",
+      "LEI-13709/2018::art-23::inc-ii",
+      "LEI-13709/2018::art-23::inc-iii",
+      "LEI-13709/2018::art-23::inc-iv",
+      "LEI-13709/2018::art-23::par-1",
+      "LEI-13709/2018::art-23::par-2",
+      "LEI-13709/2018::art-23::par-3",
+      "LEI-13709/2018::art-23::par-4",
+      "LEI-13709/2018::art-23::par-5"
+    ],
+    "answer_text": "Sim, é permitido ao Poder Público transferir dados pessoais a entidades privadas, desde que a situação se enquadre em uma das exceções previstas no art. 26, § 1º da LGPD:\n\n*   **Execução descentralizada de atividade pública:** Quando a transferência for exigida para esse fim específico e determinado, observada a Lei de Acesso à Informação [LEI-13709/2018::art-26::par-1-inc-i].\n*   **Dados acessíveis publicamente:** Nos casos em que os dados forem acessíveis ao público, observadas as disposições da Lei [LEI-13709/2018::art-26::par-1-inc-iii] [LEI-13709/2018::art-26::par-1-inc-vi].\n*   **Previsão legal ou contratual:** Quando houver previsão legal ou a transferência for respaldada em contratos, convênios ou instrumentos congêneres [LEI-13709/2018::art-26::par-1-inc-iv].\n*   **Prevenção de fraudes e segurança:** Quando a transferência objetivar exclusivamente a prevenção de fraudes e irregularidades, ou proteger e resguardar a segurança e a integridade do titular dos dados, sendo vedado o tratamento para outras finalidades [LEI-13709/2018::art-26::par-1-inc-v].\n\nAlém disso, os contratos e convênios que envolvam essas transferências devem ser comunicados à autoridade nacional [LEI-13709/2018::art-26::par-2].",
+    "answer_citations": [
+      "LEI-13709/2018::art-26::par-1-inc-i",
+      "LEI-13709/2018::art-26::par-1-inc-iii",
+      "LEI-13709/2018::art-26::par-1-inc-vi",
+      "LEI-13709/2018::art-26::par-1-inc-iv",
+      "LEI-13709/2018::art-26::par-1-inc-v",
+      "LEI-13709/2018::art-26::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9066030284968217,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q078",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-26",
+      "structural_ids": [
+        "LEI-13709/2018::art-26",
+        "LEI-13709/2018::art-26::par-1",
+        "LEI-13709/2018::art-26::par-1-inc-i",
+        "LEI-13709/2018::art-26::par-1-inc-ii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-vi",
+        "LEI-13709/2018::art-26::par-2"
+      ],
+      "raw_score": 0.8132106243549003
+    },
+    {
+      "query_id": "q078",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-26::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-26::par-1",
+        "LEI-13709/2018::art-26::par-1-inc-i",
+        "LEI-13709/2018::art-26::par-1-inc-ii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-vi"
+      ],
+      "raw_score": 0.7646110735977859
+    },
+    {
+      "query_id": "q078",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-27",
+      "structural_ids": [
+        "LEI-13709/2018::art-27",
+        "LEI-13709/2018::art-27::inc-i",
+        "LEI-13709/2018::art-27::inc-ii",
+        "LEI-13709/2018::art-27::inc-iii",
+        "LEI-13709/2018::art-27::par-unico"
+      ],
+      "raw_score": 0.7398310602152637
+    },
+    {
+      "query_id": "q078",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-33::inc-vii",
+      "structural_ids": [
+        "LEI-13709/2018::art-33::inc-vii"
+      ],
+      "raw_score": 0.7205982713831594
+    },
+    {
+      "query_id": "q078",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-23",
+      "structural_ids": [
+        "LEI-13709/2018::art-23",
+        "LEI-13709/2018::art-23::inc-i",
+        "LEI-13709/2018::art-23::inc-ii",
+        "LEI-13709/2018::art-23::inc-iii",
+        "LEI-13709/2018::art-23::inc-iii",
+        "LEI-13709/2018::art-23::inc-iv",
+        "LEI-13709/2018::art-23::par-1",
+        "LEI-13709/2018::art-23::par-2",
+        "LEI-13709/2018::art-23::par-3",
+        "LEI-13709/2018::art-23::par-4",
+        "LEI-13709/2018::art-23::par-5"
+      ],
+      "raw_score": 0.7183440364908157
+    }
+  ]
+}

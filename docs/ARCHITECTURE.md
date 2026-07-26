@@ -9,8 +9,9 @@ produces tamper-evident evidence for every publishable run.
 
 External dependencies are official corpus snapshots, hosted Gemini/OpenAI
 model APIs, Postgres+pgvector, and OpenSearch. LightRAG uses repository-local
-storage. The future API, dashboard, adaptive router, and corrective workflow
-consume benchmark results but are not production entrypoints in v0.1.
+storage. The v0.1 read-only API and analytical dashboard consume explicitly
+published benchmark results. The adaptive router, corrective workflow, and
+live comparison Arena remain future product surfaces.
 
 ## Layers
 
@@ -70,9 +71,23 @@ corpus manifest + split + judgments
   -> aggregate metrics + per-question evidence + checksums
 ```
 
-The current composition root is `ragforge.evaluation.run`. `domain/` owns
+The benchmark composition root is `ragforge.evaluation.run`. `domain/` owns
 framework-free query, chunk, judgment, and retrieval contracts. Retrieval,
 generation, embedding, and storage packages implement boundary behavior.
 `evaluation/` coordinates the benchmark and owns its evidence/reporting
-contracts. `application/`, `entrypoints/`, and `apps/` remain scaffolding for
-future product surfaces.
+contracts.
+
+Published results use a separate read-only path:
+
+```text
+experiments/published-runs.json
+  -> JsonPublishedBenchmarkRepository (adapter)
+  -> PublishedBenchmarkRepository (application contract)
+  -> FastAPI v1 responses / Streamlit analytical view
+```
+
+The explicit catalog is the publication boundary: arbitrary, incomplete, or
+unverified experiment directories are not discovered automatically. The API
+does not expose prompts or per-question model responses. The dashboard reads
+the same application model directly from versioned artifacts and performs no
+retrieval or provider calls.

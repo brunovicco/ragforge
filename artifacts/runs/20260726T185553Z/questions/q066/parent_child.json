@@ -1,0 +1,81 @@
+{
+  "question_record": {
+    "question_id": "q066",
+    "query_class": "exact_factual",
+    "strategy": "parent_child",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-14",
+      "LEI-13709/2018::art-14::par-1",
+      "LEI-13709/2018::art-14::par-2",
+      "LEI-13709/2018::art-14::par-3",
+      "LEI-13709/2018::art-14::par-4",
+      "LEI-13709/2018::art-14::par-5",
+      "LEI-13709/2018::art-14::par-6",
+      "LEI-13709/2018::art-13",
+      "LEI-13709/2018::art-13::par-1",
+      "LEI-13709/2018::art-13::par-2",
+      "LEI-13709/2018::art-13::par-3",
+      "LEI-13709/2018::art-13::par-4"
+    ],
+    "answer_text": "Segundo o art. 14 da LGPD, o tratamento de dados pessoais de crianças deve ser realizado em seu melhor interesse, observando as seguintes diretrizes:\n\n*   **Consentimento:** Deve ser realizado com o consentimento específico e em destaque, fornecido por pelo menos um dos pais ou pelo responsável legal [LEI-13709/2018::art-14][LEI-13709/2018::art-14::par-1]. O controlador deve realizar esforços razoáveis para verificar que o consentimento foi dado pelo responsável, considerando as tecnologias disponíveis [LEI-13709/2018::art-14::par-5].\n*   **Exceções ao consentimento:** A coleta pode ocorrer sem o consentimento mencionado apenas quando for necessária para contatar os pais ou o responsável legal (utilizados uma única vez e sem armazenamento) ou para a proteção da criança. Em nenhum desses casos os dados podem ser repassados a terceiros sem o consentimento dos pais ou responsável [LEI-13709/2018::art-14::par-3].\n*   **Transparência e Informação:** Os controladores devem manter pública a informação sobre os tipos de dados coletados, a forma de utilização e os procedimentos para o exercício dos direitos dos titulares [LEI-13709/2018::art-14::par-2]. Essas informações devem ser fornecidas de maneira simples, clara e acessível, adequadas ao entendimento da criança e dos responsáveis, considerando as características do usuário e utilizando recursos audiovisuais quando adequado [LEI-13709/2018::art-14::par-6].\n*   **Limitação de dados:** Os controladores não devem condicionar a participação em jogos, aplicações de internet ou outras atividades ao fornecimento de informações pessoais além das estritamente necessárias para a atividade [LEI-13709/2018::art-14::par-4].",
+    "answer_citations": [
+      "LEI-13709/2018::art-14",
+      "LEI-13709/2018::art-14::par-1",
+      "LEI-13709/2018::art-14::par-5",
+      "LEI-13709/2018::art-14::par-3",
+      "LEI-13709/2018::art-14::par-2",
+      "LEI-13709/2018::art-14::par-6",
+      "LEI-13709/2018::art-14::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.5,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.9375,
+      "answer_relevancy": 0.8578056798995776,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.14285714285714285
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q066",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-14",
+      "structural_ids": [
+        "LEI-13709/2018::art-14",
+        "LEI-13709/2018::art-14::par-1",
+        "LEI-13709/2018::art-14::par-2",
+        "LEI-13709/2018::art-14::par-3",
+        "LEI-13709/2018::art-14::par-4",
+        "LEI-13709/2018::art-14::par-5",
+        "LEI-13709/2018::art-14::par-6"
+      ],
+      "raw_score": 0.8507670620287108
+    },
+    {
+      "query_id": "q066",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-13",
+      "structural_ids": [
+        "LEI-13709/2018::art-13",
+        "LEI-13709/2018::art-13::par-1",
+        "LEI-13709/2018::art-13::par-2",
+        "LEI-13709/2018::art-13::par-3",
+        "LEI-13709/2018::art-13::par-4"
+      ],
+      "raw_score": 0.6986590502194852
+    }
+  ]
+}

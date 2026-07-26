@@ -1,0 +1,113 @@
+{
+  "question_record": {
+    "question_id": "q046",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-2",
+      "LEI-13709/2018::art-2::inc-i",
+      "LEI-13709/2018::art-2::inc-ii",
+      "LEI-13709/2018::art-2::inc-iii",
+      "LEI-13709/2018::art-2::inc-iv",
+      "LEI-13709/2018::art-2::inc-v",
+      "LEI-13709/2018::art-2::inc-vi",
+      "LEI-13709/2018::art-2::inc-vii",
+      "LEI-13709/2018::art-55-j::inc-ii",
+      "LEI-13709/2018::art-1",
+      "LEI-13709/2018::art-1::par-unico",
+      "LEI-13709/2018::art-5::inc-xvii",
+      "LEI-13709/2018::art-55-j::inc-xiii"
+    ],
+    "answer_text": "Os fundamentos da disciplina de proteção de dados pessoais, conforme o art. 2º da LGPD, são:\n\n*   O respeito à privacidade [LEI-13709/2018::art-2::inc-i];\n*   A autodeterminação informativa [LEI-13709/2018::art-2::inc-ii];\n*   A liberdade de expressão, de informação, de comunicação e de opinião [LEI-13709/2018::art-2::inc-iii];\n*   A inviolabilidade da intimidade, da honra e da imagem [LEI-13709/2018::art-2::inc-iv];\n*   O desenvolvimento econômico e tecnológico e a inovação [LEI-13709/2018::art-2::inc-v];\n*   A livre iniciativa, a livre concorrência e a defesa do consumidor [LEI-13709/2018::art-2::inc-vi];\n*   Os direitos humanos, o livre desenvolvimento da personalidade, a dignidade e o exercício da cidadania pelas pessoas naturais [LEI-13709/2018::art-2::inc-vii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-2::inc-i",
+      "LEI-13709/2018::art-2::inc-ii",
+      "LEI-13709/2018::art-2::inc-iii",
+      "LEI-13709/2018::art-2::inc-iv",
+      "LEI-13709/2018::art-2::inc-v",
+      "LEI-13709/2018::art-2::inc-vi",
+      "LEI-13709/2018::art-2::inc-vii"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9969127253686354,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q046",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-2",
+        "LEI-13709/2018::art-2::inc-i",
+        "LEI-13709/2018::art-2::inc-ii",
+        "LEI-13709/2018::art-2::inc-iii",
+        "LEI-13709/2018::art-2::inc-iv",
+        "LEI-13709/2018::art-2::inc-v",
+        "LEI-13709/2018::art-2::inc-vi",
+        "LEI-13709/2018::art-2::inc-vii"
+      ],
+      "raw_score": 7.577186584472656
+    },
+    {
+      "query_id": "q046",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-ii"
+      ],
+      "raw_score": 5.701234817504883
+    },
+    {
+      "query_id": "q046",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-1",
+        "LEI-13709/2018::art-1::par-unico"
+      ],
+      "raw_score": 5.69277286529541
+    },
+    {
+      "query_id": "q046",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xvii",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xvii"
+      ],
+      "raw_score": 5.578698635101318
+    },
+    {
+      "query_id": "q046",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-xiii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-xiii"
+      ],
+      "raw_score": 5.486871242523193
+    }
+  ]
+}

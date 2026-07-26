@@ -10,7 +10,7 @@ RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarch
 
 ## Why this exists
 
-Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 8 targeted strategies × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache. See [Status](#status) for what is built so far.
+Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 10 strategy configurations × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache. See [Status](#status) for what is built so far.
 
 ## Benchmarked strategies
 
@@ -22,8 +22,10 @@ Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG str
 | 4 | Reranked | Hybrid top-50 → cross-encoder → top-5 | Implemented |
 | 5 | Contextual Retrieval | Per-chunk LLM context + prompt caching | Implemented |
 | 6 | Parent-child / multi-vector | Search small chunks, deliver the section | Implemented |
-| 7 | RAPTOR | Recursive summary tree (minimal impl.) | Implemented |
-| 8 | GraphRAG | LightRAG adapter (local + global) | Implemented |
+| 7 | Summary-Augmented Chunking (SAC) | Document summary + authoritative chunk text | Implemented |
+| 8 | SAC + Contextual | Document summary + per-chunk context + authoritative text | Implemented |
+| 9 | RAPTOR | Recursive summary tree (minimal impl.) | Implemented |
+| 10 | GraphRAG | LightRAG adapter (local + global) | Implemented |
 
 Cross-cutting: **Adaptive Router** (rules + few-shot, planned), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph, planned), **governance** (answer → chunk → article citation tracing via Citation Accuracy, plus a post-generation semantic-support audit with bounded rewrite and a tamper-evident evidence trail per run, implemented), **observability** (Langfuse metadata-only tracing implemented; OpenTelemetry planned).
 
@@ -36,18 +38,35 @@ is actually running today versus what the design targets - see the [PR history](
 |---|---|
 | Legal structural chunker (ADR-0006) | Implemented |
 | Ingestion pipeline (extraction, snapshot hashing) | Implemented |
-| All 8 benchmarked retrieval strategies (Dense through GraphRAG) | Implemented |
+| All 10 benchmarked retrieval configurations (Dense through GraphRAG) | Implemented |
 | Evaluation harness + structural-coverage judgments (ADR-0002) | Implemented |
 | Observability (Langfuse, metadata-only) | Implemented |
 | Answer generation + Citation Accuracy | Implemented |
 | Independent LLM judge - Faithfulness/Answer Relevancy + abstention (ADR-0018) | Implemented - uncalibrated (ADR-0007 kappa exercise pending) |
 | Post-generation citation/semantic-support audit + bounded rewrite (ADR-0016) | Implemented - off by default (`audit.enabled: false`) |
 | Auditable, tamper-evident run evidence directory (ADR-0017) | Implemented - `artifacts/runs/<run_id>/`, verified via `scripts/verify_run.py` |
-| Main benchmark runner (`make bench-live`, all 8 strategies + answer quality) | Implemented - live mode only |
+| Main benchmark runner (`make bench-live`, all 10 strategies + answer quality) | Implemented - live mode only |
 | Adaptive Router, Corrective workflow | Planned |
 | RegRAG-BR golden set | 230 questions published: 36 validation/dev + 194 test |
-| API / dashboard apps | Planned (scaffolding only) |
+| API / dashboard apps | Published-results API and analytical dashboard implemented; live Arena planned |
 | `make bench` (cached, bit-for-bit replay, ADR-0004) | Planned - needs a versioned LLM call cache, not built yet |
+
+## v0.1 benchmark result
+
+Run [`20260726T185553Z`](experiments/20260726T185553Z/results.json) evaluates a
+**deterministic, query-class-stratified sample of 60 questions** from the
+194-question test split. The seed is
+`regrag-br-benchmark-sample-v1`; this is a cost-controlled v0.1 result, not a
+claim about the complete test split.
+
+**SAC is the recommended v0.1 strategy** for its balanced profile: the highest
+nDCG@5 (`0.963`), MRR (`0.991`), and Citation Accuracy (`0.689`) in this run,
+with zero Document-Level Retrieval Mismatch. RAPTOR achieved the highest
+Recall@5 (`1.000`) and Precision@5 (`0.611`), but its generated summary nodes
+carry a different evidence-quality trade-off.
+
+The full scorecard, methodology, limitations, and verification instructions
+are in [Benchmark results](docs/BENCHMARK-RESULTS.md).
 
 ## Quick start
 
@@ -56,7 +75,8 @@ uv sync --all-groups
 make infra-up                                      # Postgres+pgvector, OpenSearch
 GEMINI_API_KEY=... OPENAI_API_KEY=... make bench-live
 make bench-live-local                              # same matrix, local Qwen embeddings
-make dashboard                                     # benchmark + side-by-side Arena
+make api                                           # read-only published-results API
+make dashboard                                     # offline analytical benchmark dashboard
 ```
 
 `make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). `make bench` (deterministic, zero-cost replay from a versioned LLM cache) is the target design per [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), but that cache layer doesn't exist yet - only live mode is implemented.

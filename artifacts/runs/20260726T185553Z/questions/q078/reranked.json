@@ -1,0 +1,124 @@
+{
+  "question_record": {
+    "question_id": "q078",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-26::par-1",
+      "LEI-13709/2018::art-26::par-1-inc-i",
+      "LEI-13709/2018::art-26::par-1-inc-ii",
+      "LEI-13709/2018::art-26::par-1-inc-iii",
+      "LEI-13709/2018::art-26::par-1-inc-iv",
+      "LEI-13709/2018::art-26::par-1-inc-v",
+      "LEI-13709/2018::art-26::par-1-inc-vi",
+      "LEI-13709/2018::art-26",
+      "LEI-13709/2018::art-26::par-2",
+      "LEI-13709/2018::art-5::inc-xvi",
+      "LEI-13709/2018::art-32",
+      "LEI-13709/2018::art-29"
+    ],
+    "answer_text": "Sim, a transferência de dados pessoais pelo Poder Público a entidades privadas é permitida, desde que se enquadre em uma das seguintes hipóteses previstas no art. 26, § 1º da LGPD:\n\n*   **Execução descentralizada de atividade pública:** Quando a transferência for exigida para esse fim específico e determinado, observando-se a Lei de Acesso à Informação [LEI-13709/2018::art-26::par-1-inc-i].\n*   **Dados acessíveis publicamente:** Nos casos em que os dados forem acessíveis ao público, respeitadas as disposições da Lei [LEI-13709/2018::art-26::par-1-inc-vi].\n*   **Previsão legal ou contratual:** Quando houver previsão legal ou a transferência for respaldada em contratos, convênios ou instrumentos congêneres [LEI-13709/2018::art-26::par-1-inc-iv].\n*   **Prevenção de fraudes e segurança:** Quando a transferência objetivar exclusivamente a prevenção de fraudes e irregularidades, ou proteger e resguardar a segurança e a integridade do titular dos dados, sendo vedado o tratamento para outras finalidades [LEI-13709/2018::art-26::par-1-inc-v].\n\nAlém disso, os contratos e convênios que fundamentam essas transferências devem ser comunicados à autoridade nacional [LEI-13709/2018::art-26::par-2].",
+    "answer_citations": [
+      "LEI-13709/2018::art-26::par-1-inc-i",
+      "LEI-13709/2018::art-26::par-1-inc-vi",
+      "LEI-13709/2018::art-26::par-1-inc-iv",
+      "LEI-13709/2018::art-26::par-1-inc-v",
+      "LEI-13709/2018::art-26::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.9166666666666666,
+      "answer_relevancy": 0.8729669877652676,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q078",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-26::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-26::par-1",
+        "LEI-13709/2018::art-26::par-1-inc-i",
+        "LEI-13709/2018::art-26::par-1-inc-ii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-vi"
+      ],
+      "raw_score": 7.243918418884277
+    },
+    {
+      "query_id": "q078",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-26",
+      "structural_ids": [
+        "LEI-13709/2018::art-26",
+        "LEI-13709/2018::art-26::par-1",
+        "LEI-13709/2018::art-26::par-1-inc-i",
+        "LEI-13709/2018::art-26::par-1-inc-ii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iii",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-iv",
+        "LEI-13709/2018::art-26::par-1-inc-v",
+        "LEI-13709/2018::art-26::par-1-inc-vi",
+        "LEI-13709/2018::art-26::par-2"
+      ],
+      "raw_score": 6.476467132568359
+    },
+    {
+      "query_id": "q078",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xvi",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xvi"
+      ],
+      "raw_score": 5.1404805183410645
+    },
+    {
+      "query_id": "q078",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-32",
+      "structural_ids": [
+        "LEI-13709/2018::art-32"
+      ],
+      "raw_score": 4.159788131713867
+    },
+    {
+      "query_id": "q078",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-29",
+      "structural_ids": [
+        "LEI-13709/2018::art-29"
+      ],
+      "raw_score": 4.030644416809082
+    }
+  ]
+}

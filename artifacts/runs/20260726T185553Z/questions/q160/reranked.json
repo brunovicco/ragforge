@@ -1,0 +1,154 @@
+{
+  "question_record": {
+    "question_id": "q160",
+    "query_class": "multi_hop",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-65",
+      "ICVM-607/2019::art-65::inc-i",
+      "ICVM-607/2019::art-65::inc-ii",
+      "ICVM-607/2019::art-65::inc-iii",
+      "ICVM-607/2019::art-65::inc-iv",
+      "ICVM-607/2019::art-65::inc-v",
+      "ICVM-607/2019::art-65::inc-vi",
+      "ICVM-607/2019::art-65::inc-vii",
+      "ICVM-607/2019::art-65::inc-viii",
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-65::par-3",
+      "ICVM-607/2019::art-71::par-1",
+      "ICVM-607/2019::art-66",
+      "ICVM-607/2019::art-66::inc-i",
+      "ICVM-607/2019::art-66::inc-ii",
+      "ICVM-607/2019::art-66::inc-iii",
+      "ICVM-607/2019::art-66::inc-iv",
+      "ICVM-607/2019::art-66::inc-v",
+      "ICVM-607/2019::art-66::par-1",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4",
+      "ICVM-607/2019::art-66::par-5",
+      "ICVM-607/2019::art-71",
+      "ICVM-607/2019::art-71::par-2",
+      "ICVM-607/2019::art-71::par-3",
+      "ICVM-607/2019::art-71::par-3-inc-i",
+      "ICVM-607/2019::art-71::par-3-inc-ii",
+      "ICVM-607/2019::art-71::par-4",
+      "ICVM-607/2019::art-71::par-5",
+      "ICVM-607/2019::art-71::par-6",
+      "ICVM-607/2019::art-71::par-7"
+    ],
+    "answer_text": "Com base no contexto fornecido, não é possível responder à sua pergunta, pois o documento não contém o artigo 63 da Instrução CVM nº 607/2019.\n\nNo entanto, em relação às circunstâncias agravantes previstas no art. 65, a norma estabelece que:\n\n*   A penalidade de multa será acrescida em até 25% para cada agravante verificada [ICVM-607/2019::art-65::par-1].\n*   As penalidades de suspensão, inabilitação e proibição serão acrescidas em até 25% para cada agravante verificada, considerando o número de meses da pena-base e desprezando-se as frações [ICVM-607/2019::art-65::par-2].\n*   O Colegiado fixará inicialmente a pena-base e, na sequência, aplicará as circunstâncias agravantes e atenuantes, nessa ordem [ICVM-607/2019::art-62].",
+    "answer_citations": [
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-62"
+    ],
+    "metrics": {
+      "recall_at_k": 0.5,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.38685280723454163,
+      "mrr": 0.5,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.8333333333333334,
+      "answer_relevancy": 0.6440493455319661,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.3333333333333333
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q160",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 5.831252098083496
+    },
+    {
+      "query_id": "q160",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-65",
+      "structural_ids": [
+        "ICVM-607/2019::art-65",
+        "ICVM-607/2019::art-65::inc-i",
+        "ICVM-607/2019::art-65::inc-ii",
+        "ICVM-607/2019::art-65::inc-iii",
+        "ICVM-607/2019::art-65::inc-iv",
+        "ICVM-607/2019::art-65::inc-v",
+        "ICVM-607/2019::art-65::inc-vi",
+        "ICVM-607/2019::art-65::inc-vii",
+        "ICVM-607/2019::art-65::inc-viii",
+        "ICVM-607/2019::art-65::par-1",
+        "ICVM-607/2019::art-65::par-2",
+        "ICVM-607/2019::art-65::par-3"
+      ],
+      "raw_score": 4.9824066162109375
+    },
+    {
+      "query_id": "q160",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-71::par-1",
+      "structural_ids": [
+        "ICVM-607/2019::art-71::par-1"
+      ],
+      "raw_score": 4.259853363037109
+    },
+    {
+      "query_id": "q160",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-66",
+      "structural_ids": [
+        "ICVM-607/2019::art-66",
+        "ICVM-607/2019::art-66::inc-i",
+        "ICVM-607/2019::art-66::inc-ii",
+        "ICVM-607/2019::art-66::inc-iii",
+        "ICVM-607/2019::art-66::inc-iv",
+        "ICVM-607/2019::art-66::inc-v",
+        "ICVM-607/2019::art-66::par-1",
+        "ICVM-607/2019::art-66::par-2",
+        "ICVM-607/2019::art-66::par-3",
+        "ICVM-607/2019::art-66::par-4",
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 2.803795337677002
+    },
+    {
+      "query_id": "q160",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-71",
+      "structural_ids": [
+        "ICVM-607/2019::art-71",
+        "ICVM-607/2019::art-71::par-1",
+        "ICVM-607/2019::art-71::par-2",
+        "ICVM-607/2019::art-71::par-3",
+        "ICVM-607/2019::art-71::par-3-inc-i",
+        "ICVM-607/2019::art-71::par-3-inc-ii",
+        "ICVM-607/2019::art-71::par-4",
+        "ICVM-607/2019::art-71::par-5",
+        "ICVM-607/2019::art-71::par-6",
+        "ICVM-607/2019::art-71::par-7"
+      ],
+      "raw_score": 1.6673929691314697
+    }
+  ]
+}

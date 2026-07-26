@@ -1,0 +1,103 @@
+{
+  "question_record": {
+    "question_id": "q091",
+    "query_class": "unanswerable",
+    "strategy": "sparse_bm25",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-52::inc-iii",
+      "LEI-13709/2018::art-54",
+      "LEI-13709/2018::art-54::par-unico",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "LEI-13709/2018::art-55-d::par-1",
+      "ICVM-607/2019::art-61",
+      "ICVM-607/2019::art-61::inc-i",
+      "ICVM-607/2019::art-61::inc-ii",
+      "ICVM-607/2019::art-61::inc-iii",
+      "ICVM-607/2019::art-61::inc-iv",
+      "ICVM-607/2019::art-61::par-1",
+      "ICVM-607/2019::art-61::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o valor mínimo da multa diária prevista no art. 52, inciso III, da LGPD. O texto menciona apenas que a multa diária deve observar o limite total referido no inciso II [LEI-13709/2018::art-52::inc-iii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-52::inc-iii"
+    ],
+    "metrics": {
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.852174478315446,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q091",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-52::inc-iii",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::inc-iii"
+      ],
+      "raw_score": 19.206556
+    },
+    {
+      "query_id": "q091",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-54",
+      "structural_ids": [
+        "LEI-13709/2018::art-54",
+        "LEI-13709/2018::art-54::par-unico"
+      ],
+      "raw_score": 18.403757
+    },
+    {
+      "query_id": "q091",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 15.881213
+    },
+    {
+      "query_id": "q091",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-55-d::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-d::par-1"
+      ],
+      "raw_score": 15.273051
+    },
+    {
+      "query_id": "q091",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-61",
+      "structural_ids": [
+        "ICVM-607/2019::art-61",
+        "ICVM-607/2019::art-61::inc-i",
+        "ICVM-607/2019::art-61::inc-ii",
+        "ICVM-607/2019::art-61::inc-iii",
+        "ICVM-607/2019::art-61::inc-iv",
+        "ICVM-607/2019::art-61::par-1",
+        "ICVM-607/2019::art-61::par-2"
+      ],
+      "raw_score": 12.897463
+    }
+  ]
+}

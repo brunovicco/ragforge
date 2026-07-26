@@ -1,0 +1,112 @@
+{
+  "question_record": {
+    "question_id": "q188",
+    "query_class": "section_comparative",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii",
+      "ICVM-607/2019::art-89",
+      "ICVM-607/2019::art-89::par-1",
+      "ICVM-607/2019::art-89::par-2",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-104",
+      "ICVM-607/2019::art-93",
+      "ICVM-607/2019::art-93::par-1",
+      "ICVM-607/2019::art-93::par-2",
+      "ICVM-607/2019::art-93::par-3",
+      "ICVM-607/2019::art-93::par-4"
+    ],
+    "answer_text": "Com base nos documentos fornecidos, é possível identificar os efeitos do termo de compromisso, porém não há informações suficientes para responder sobre o Acordo de Supervisão conforme solicitado.\n\n**Efeitos do Termo de Compromisso (art. 88):**\nA celebração do termo de compromisso produz os seguintes efeitos:\n*   A suspensão de processo administrativo em curso, durante o prazo estipulado para o cumprimento do compromisso [ICVM-607/2019::art-88::inc-i]; ou\n*   A não instauração de processo administrativo sancionador, caso a proposta seja apresentada em fase de apuração ou antes dela [ICVM-607/2019::art-88::inc-ii].\n\n**Acordo de Supervisão:**\nO contexto fornecido não contém o artigo 92 da Instrução CVM nº 607/2019, mencionado na sua pergunta. Portanto, não é possível comparar os efeitos do Acordo de Supervisão com os do termo de compromisso utilizando apenas as informações disponíveis.",
+    "answer_citations": [
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii"
+    ],
+    "metrics": {
+      "recall_at_k": 0.5,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.6131471927654584,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.7142857142857143,
+      "answer_relevancy": 0.7385236792751293,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 0.8027105340718733
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-89",
+      "structural_ids": [
+        "ICVM-607/2019::art-89",
+        "ICVM-607/2019::art-89::par-1",
+        "ICVM-607/2019::art-89::par-2"
+      ],
+      "raw_score": 0.7802183061454273
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 0.7768091409668945
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-104",
+      "structural_ids": [
+        "ICVM-607/2019::art-104"
+      ],
+      "raw_score": 0.774574186221001
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-93",
+      "structural_ids": [
+        "ICVM-607/2019::art-93",
+        "ICVM-607/2019::art-93::par-1",
+        "ICVM-607/2019::art-93::par-2",
+        "ICVM-607/2019::art-93::par-3",
+        "ICVM-607/2019::art-93::par-4"
+      ],
+      "raw_score": 0.7712555625420753
+    }
+  ]
+}

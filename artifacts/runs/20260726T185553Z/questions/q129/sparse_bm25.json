@@ -1,0 +1,144 @@
+{
+  "question_record": {
+    "question_id": "q129",
+    "query_class": "global",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-7",
+      "ICVM-607/2019::art-7::inc-i",
+      "ICVM-607/2019::art-7::inc-ii",
+      "ICVM-607/2019::art-7::inc-iii",
+      "ICVM-607/2019::art-7::par-1",
+      "ICVM-607/2019::art-7::par-2",
+      "ICVM-607/2019::art-7::par-3",
+      "ICVM-607/2019::art-7::par-4",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-73",
+      "ICVM-607/2019::art-73::par-1",
+      "ICVM-607/2019::art-73::par-2",
+      "ICVM-607/2019::art-103",
+      "ICVM-607/2019::art-103::par-1",
+      "ICVM-607/2019::art-103::par-2",
+      "ICVM-607/2019::art-103::par-2-inc-i",
+      "ICVM-607/2019::art-103::par-2-inc-ii",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3"
+    ],
+    "answer_text": "Com base na Instrução CVM 607/2019, as etapas do rito processual sancionador até a apresentação da defesa incluem:\n\n1.  **Emissão de parecer pela PFE:** Antes da citação dos acusados, a Procuradoria Federal Especializada (PFE) deve emitir um parecer sobre o termo de acusação no prazo de 30 dias, examinando o cumprimento dos requisitos legais e a adequação do rito adotado [ICVM-607/2019::art-7]. Este parecer não é obrigatório nos processos submetidos ao rito simplificado [ICVM-607/2019::art-7::par-3].\n2.  **Providências da Superintendência:** Com base no parecer da PFE, a superintendência pode arquivar o processo, adequar o rito ou realizar ajustes no termo de acusação [ICVM-607/2019::art-7::par-1]. O superintendente deve justificar caso não adote as providências recomendadas pelo parecer [ICVM-607/2019::art-7::par-2].\n3.  **Citação:** O processo segue para a citação dos acusados.\n4.  **Apresentação de defesa:** O acusado deve apresentar sua defesa por escrito no prazo de 30 dias após a citação [ICVM-607/2019::art-29].\n\n**Observações importantes sobre esta fase:**\n*   **Termo de Compromisso:** O interessado deve manifestar a intenção de celebrar termo de compromisso até o término do prazo para a apresentação de defesa [ICVM-607/2019::art-29::par-1, ICVM-607/2019::art-82::par-1]. Essa manifestação não suspende nem interrompe o prazo para a defesa [ICVM-607/2019::art-29::par-2].\n*   **Prazos:** É admitida uma única prorrogação do prazo de defesa pelo mesmo período, mediante pedido fundamentado [ICVM-607/2019::art-29::par-3].\n*   **Sigilo:** Em processos com múltiplos acusados, as defesas são consideradas sigilosas e não são fornecidas a terceiros ou outros acusados até o encerramento do último prazo de apresentação de defesa [ICVM-607/2019::art-29::par-5].",
+    "answer_citations": [
+      "ICVM-607/2019::art-7",
+      "ICVM-607/2019::art-7::par-3",
+      "ICVM-607/2019::art-7::par-1",
+      "ICVM-607/2019::art-7::par-2",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-5"
+    ],
+    "metrics": {
+      "recall_at_k": 0.2,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.21398626473452756,
+      "mrr": 0.5,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9124561905665098,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.125
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q129",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-7",
+      "structural_ids": [
+        "ICVM-607/2019::art-7",
+        "ICVM-607/2019::art-7::inc-i",
+        "ICVM-607/2019::art-7::inc-ii",
+        "ICVM-607/2019::art-7::inc-iii",
+        "ICVM-607/2019::art-7::par-1",
+        "ICVM-607/2019::art-7::par-2",
+        "ICVM-607/2019::art-7::par-3",
+        "ICVM-607/2019::art-7::par-4"
+      ],
+      "raw_score": 16.9895
+    },
+    {
+      "query_id": "q129",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 15.992922
+    },
+    {
+      "query_id": "q129",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-73",
+      "structural_ids": [
+        "ICVM-607/2019::art-73",
+        "ICVM-607/2019::art-73::par-1",
+        "ICVM-607/2019::art-73::par-2"
+      ],
+      "raw_score": 13.670141
+    },
+    {
+      "query_id": "q129",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-103",
+      "structural_ids": [
+        "ICVM-607/2019::art-103",
+        "ICVM-607/2019::art-103::par-1",
+        "ICVM-607/2019::art-103::par-2",
+        "ICVM-607/2019::art-103::par-2-inc-i",
+        "ICVM-607/2019::art-103::par-2-inc-ii"
+      ],
+      "raw_score": 13.231273
+    },
+    {
+      "query_id": "q129",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 12.533084
+    }
+  ]
+}

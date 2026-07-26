@@ -1,0 +1,124 @@
+{
+  "question_record": {
+    "question_id": "q183",
+    "query_class": "numeric_tabular",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-52::par-7",
+      "ICVM-607/2019::art-96",
+      "ICVM-607/2019::art-96::par-1",
+      "ICVM-607/2019::art-96::par-2",
+      "ICVM-607/2019::art-96::par-3",
+      "ICVM-607/2019::art-96::par-4",
+      "ICVM-607/2019::art-96::par-5",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-92::inc-i",
+      "ICVM-607/2019::art-92::inc-ii",
+      "ICVM-607/2019::art-66",
+      "ICVM-607/2019::art-66::inc-i",
+      "ICVM-607/2019::art-66::inc-ii",
+      "ICVM-607/2019::art-66::inc-iii",
+      "ICVM-607/2019::art-66::inc-iv",
+      "ICVM-607/2019::art-66::inc-v",
+      "ICVM-607/2019::art-66::par-1",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4",
+      "ICVM-607/2019::art-66::par-5"
+    ],
+    "answer_text": "Segundo o art. 92 da ICVM 607/2019, em caso de Acordo de Supervisão, a penalidade aplicável pode ser reduzida de 1/3 (um terço) a 2/3 (dois terços) [ICVM-607/2019::art-92].",
+    "answer_citations": [
+      "ICVM-607/2019::art-92"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.5,
+      "mrr": 0.3333333333333333,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8893997660276681,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q183",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-52::par-7",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::par-7"
+      ],
+      "raw_score": 16.979408
+    },
+    {
+      "query_id": "q183",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-96",
+      "structural_ids": [
+        "ICVM-607/2019::art-96",
+        "ICVM-607/2019::art-96::par-1",
+        "ICVM-607/2019::art-96::par-2",
+        "ICVM-607/2019::art-96::par-3",
+        "ICVM-607/2019::art-96::par-4",
+        "ICVM-607/2019::art-96::par-5"
+      ],
+      "raw_score": 16.779636
+    },
+    {
+      "query_id": "q183",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-92",
+      "structural_ids": [
+        "ICVM-607/2019::art-92",
+        "ICVM-607/2019::art-92::inc-i",
+        "ICVM-607/2019::art-92::inc-ii"
+      ],
+      "raw_score": 16.67139
+    },
+    {
+      "query_id": "q183",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-66",
+      "structural_ids": [
+        "ICVM-607/2019::art-66",
+        "ICVM-607/2019::art-66::inc-i",
+        "ICVM-607/2019::art-66::inc-ii",
+        "ICVM-607/2019::art-66::inc-iii",
+        "ICVM-607/2019::art-66::inc-iv",
+        "ICVM-607/2019::art-66::inc-v",
+        "ICVM-607/2019::art-66::par-1",
+        "ICVM-607/2019::art-66::par-2",
+        "ICVM-607/2019::art-66::par-3",
+        "ICVM-607/2019::art-66::par-4",
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 15.757935
+    },
+    {
+      "query_id": "q183",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-66::par-5",
+      "structural_ids": [
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 15.319893
+    }
+  ]
+}

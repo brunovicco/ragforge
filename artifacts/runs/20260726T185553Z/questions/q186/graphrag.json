@@ -1,0 +1,113 @@
+{
+  "question_record": {
+    "question_id": "q186",
+    "query_class": "exact_factual",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-95",
+      "LEI-13709/2018::art-55-j::inc-ii",
+      "ICVM-607/2019::art-96",
+      "ICVM-607/2019::art-96::par-1",
+      "ICVM-607/2019::art-96::par-2",
+      "ICVM-607/2019::art-96::par-3",
+      "ICVM-607/2019::art-96::par-4",
+      "ICVM-607/2019::art-96::par-5",
+      "ICVM-607/2019::art-18",
+      "ICVM-607/2019::art-98",
+      "ICVM-607/2019::art-98::inc-i",
+      "ICVM-607/2019::art-98::inc-ii",
+      "ICVM-607/2019::art-98::inc-iii",
+      "ICVM-607/2019::art-98::inc-iv",
+      "ICVM-607/2019::art-98::inc-v",
+      "ICVM-607/2019::art-98::par-unico"
+    ],
+    "answer_text": "Sim, o proponente pode retificar ou desistir da proposta de Acordo de Supervisão a qualquer momento antes da assinatura do respectivo instrumento [ICVM-607/2019::art-95].",
+    "answer_citations": [
+      "ICVM-607/2019::art-95"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8481515071520395,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q186",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-95",
+      "structural_ids": [
+        "ICVM-607/2019::art-95"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q186",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-ii"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q186",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-96",
+      "structural_ids": [
+        "ICVM-607/2019::art-96",
+        "ICVM-607/2019::art-96::par-1",
+        "ICVM-607/2019::art-96::par-2",
+        "ICVM-607/2019::art-96::par-3",
+        "ICVM-607/2019::art-96::par-4",
+        "ICVM-607/2019::art-96::par-5"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q186",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-18",
+      "structural_ids": [
+        "ICVM-607/2019::art-18"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q186",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-98",
+      "structural_ids": [
+        "ICVM-607/2019::art-98",
+        "ICVM-607/2019::art-98::inc-i",
+        "ICVM-607/2019::art-98::inc-ii",
+        "ICVM-607/2019::art-98::inc-iii",
+        "ICVM-607/2019::art-98::inc-iv",
+        "ICVM-607/2019::art-98::inc-v",
+        "ICVM-607/2019::art-98::par-unico"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

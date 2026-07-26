@@ -1,0 +1,109 @@
+{
+  "question_record": {
+    "question_id": "q123",
+    "query_class": "numeric_tabular",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-30",
+      "ICVM-607/2019::art-30::par-1",
+      "ICVM-607/2019::art-30::par-2",
+      "ICVM-607/2019::art-25::par-4",
+      "ICVM-607/2019::art-101::inc-ii",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-31",
+      "ICVM-607/2019::art-31::par-1",
+      "ICVM-607/2019::art-31::par-2"
+    ],
+    "answer_text": "O instrumento de mandato de um procurador não constituído nos autos deve ser apresentado à CVM nos 15 (quinze) dias subsequentes à apresentação da defesa [ICVM-607/2019::art-30::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-30::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8483287180588004,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-30",
+      "structural_ids": [
+        "ICVM-607/2019::art-30",
+        "ICVM-607/2019::art-30::par-1",
+        "ICVM-607/2019::art-30::par-2"
+      ],
+      "raw_score": 0.7831756853197389
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-25::par-4",
+      "structural_ids": [
+        "ICVM-607/2019::art-25::par-4"
+      ],
+      "raw_score": 0.7270682786839678
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-101::inc-ii",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-ii"
+      ],
+      "raw_score": 0.7261790096849958
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 0.7247234216463766
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-31",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2"
+      ],
+      "raw_score": 0.7241062860300449
+    }
+  ]
+}

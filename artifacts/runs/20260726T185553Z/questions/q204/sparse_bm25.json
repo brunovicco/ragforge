@@ -1,0 +1,137 @@
+{
+  "question_record": {
+    "question_id": "q204",
+    "query_class": "numeric_tabular",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-107",
+      "ICVM-607/2019::art-107::inc-i",
+      "ICVM-607/2019::art-107::inc-ii",
+      "ICVM-607/2019::art-107::par-1",
+      "ICVM-607/2019::art-107::par-2",
+      "ICVM-607/2019::art-107::par-2-inc-i",
+      "ICVM-607/2019::art-107::par-2-inc-ii",
+      "ICVM-607/2019::art-107::par-2-inc-iii",
+      "ICVM-607/2019::art-101::inc-xii",
+      "RES-CMN-4893/2021::art-25",
+      "RES-CMN-4893/2021::art-25::inc-i",
+      "RES-CMN-4893/2021::art-25::inc-ii",
+      "RES-CMN-4893/2021::art-25::par-unico",
+      "ICVM-607/2019::art-99",
+      "ICVM-607/2019::art-99::par-1",
+      "ICVM-607/2019::art-99::par-2",
+      "ICVM-607/2019::art-99::par-3",
+      "ICVM-607/2019::art-36",
+      "ICVM-607/2019::art-36::inc-i",
+      "ICVM-607/2019::art-36::inc-ii",
+      "ICVM-607/2019::art-36::par-1",
+      "ICVM-607/2019::art-36::par-2",
+      "ICVM-607/2019::art-36::par-3",
+      "ICVM-607/2019::art-36::par-4",
+      "ICVM-607/2019::art-36::par-5",
+      "ICVM-607/2019::art-36::par-6",
+      "ICVM-607/2019::art-36::par-6-inc-i",
+      "ICVM-607/2019::art-36::par-6-inc-ii"
+    ],
+    "answer_text": "De acordo com o art. 107, inciso II, da ICVM 607/2019, a redução das penas aplicáveis na esfera administrativa é de 1/3 (um terço) a 2/3 (dois terços) [ICVM-607/2019::art-107::inc-ii].",
+    "answer_citations": [
+      "ICVM-607/2019::art-107::inc-ii"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7865534433815148,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q204",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-107",
+      "structural_ids": [
+        "ICVM-607/2019::art-107",
+        "ICVM-607/2019::art-107::inc-i",
+        "ICVM-607/2019::art-107::inc-ii",
+        "ICVM-607/2019::art-107::par-1",
+        "ICVM-607/2019::art-107::par-2",
+        "ICVM-607/2019::art-107::par-2-inc-i",
+        "ICVM-607/2019::art-107::par-2-inc-ii",
+        "ICVM-607/2019::art-107::par-2-inc-iii"
+      ],
+      "raw_score": 33.561222
+    },
+    {
+      "query_id": "q204",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-101::inc-xii",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-xii"
+      ],
+      "raw_score": 17.04061
+    },
+    {
+      "query_id": "q204",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-25",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-25",
+        "RES-CMN-4893/2021::art-25::inc-i",
+        "RES-CMN-4893/2021::art-25::inc-ii",
+        "RES-CMN-4893/2021::art-25::par-unico"
+      ],
+      "raw_score": 15.238067
+    },
+    {
+      "query_id": "q204",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-99",
+      "structural_ids": [
+        "ICVM-607/2019::art-99",
+        "ICVM-607/2019::art-99::par-1",
+        "ICVM-607/2019::art-99::par-2",
+        "ICVM-607/2019::art-99::par-3"
+      ],
+      "raw_score": 14.653254
+    },
+    {
+      "query_id": "q204",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-36",
+      "structural_ids": [
+        "ICVM-607/2019::art-36",
+        "ICVM-607/2019::art-36::inc-i",
+        "ICVM-607/2019::art-36::inc-ii",
+        "ICVM-607/2019::art-36::par-1",
+        "ICVM-607/2019::art-36::par-2",
+        "ICVM-607/2019::art-36::par-3",
+        "ICVM-607/2019::art-36::par-4",
+        "ICVM-607/2019::art-36::par-5",
+        "ICVM-607/2019::art-36::par-6",
+        "ICVM-607/2019::art-36::par-6-inc-i",
+        "ICVM-607/2019::art-36::par-6-inc-ii"
+      ],
+      "raw_score": 14.249474
+    }
+  ]
+}

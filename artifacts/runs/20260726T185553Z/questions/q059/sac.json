@@ -1,0 +1,166 @@
+{
+  "question_record": {
+    "question_id": "q059",
+    "query_class": "multi_hop",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-2",
+      "LEI-13709/2018::art-8::par-3",
+      "LEI-13709/2018::art-8::par-4",
+      "LEI-13709/2018::art-8::par-5",
+      "LEI-13709/2018::art-8::par-6",
+      "LEI-13709/2018::art-7",
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-7::inc-ii",
+      "LEI-13709/2018::art-7::inc-iii",
+      "LEI-13709/2018::art-7::inc-iv",
+      "LEI-13709/2018::art-7::inc-v",
+      "LEI-13709/2018::art-7::inc-vi",
+      "LEI-13709/2018::art-7::inc-vii",
+      "LEI-13709/2018::art-7::inc-viii",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::inc-x",
+      "LEI-13709/2018::art-7::par-1",
+      "LEI-13709/2018::art-7::par-2",
+      "LEI-13709/2018::art-7::par-3",
+      "LEI-13709/2018::art-7::par-4",
+      "LEI-13709/2018::art-7::par-5",
+      "LEI-13709/2018::art-7::par-6",
+      "LEI-13709/2018::art-7::par-7",
+      "LEI-13709/2018::art-18::inc-viii",
+      "LEI-13709/2018::art-9",
+      "LEI-13709/2018::art-9::inc-i",
+      "LEI-13709/2018::art-9::inc-ii",
+      "LEI-13709/2018::art-9::inc-iii",
+      "LEI-13709/2018::art-9::inc-iv",
+      "LEI-13709/2018::art-9::inc-v",
+      "LEI-13709/2018::art-9::inc-vi",
+      "LEI-13709/2018::art-9::inc-vii",
+      "LEI-13709/2018::art-9::par-1",
+      "LEI-13709/2018::art-9::par-2",
+      "LEI-13709/2018::art-9::par-3",
+      "LEI-13709/2018::art-5::inc-xii"
+    ],
+    "answer_text": "O consentimento previsto no inciso I do art. 7º da LGPD é a manifestação livre, informada e inequívoca pela qual o titular concorda com o tratamento de seus dados pessoais para uma finalidade determinada [LEI-13709/2018::art-5::inc-xii].\n\nEm relação à forma exigida pelo art. 8º, estabelecem-se as seguintes diretrizes:\n\n*   **Meio de manifestação:** O consentimento deve ser fornecido por escrito ou por outro meio que demonstre a manifestação de vontade do titular [LEI-13709/2018::art-8].\n*   **Forma escrita:** Caso seja fornecido por escrito, o consentimento deve constar em uma cláusula destacada das demais cláusulas contratuais [LEI-13709/2018::art-8::par-1].\n*   **Finalidade:** O consentimento deve referir-se a finalidades determinadas, sendo nulas as autorizações genéricas [LEI-13709/2018::art-8::par-4].\n*   **Ônus da prova:** Cabe ao controlador o ônus de provar que o consentimento foi obtido em conformidade com a lei [LEI-13709/2018::art-8::par-2].\n*   **Validade:** É vedado o tratamento de dados mediante vício de consentimento [LEI-13709/2018::art-8::par-3]. Além disso, o consentimento será considerado nulo se as informações fornecidas ao titular tiverem conteúdo enganoso, abusivo ou não forem apresentadas previamente com transparência, de forma clara e inequívoca [LEI-13709/2018::art-9::par-1].",
+    "answer_citations": [
+      "LEI-13709/2018::art-5::inc-xii",
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-4",
+      "LEI-13709/2018::art-8::par-2",
+      "LEI-13709/2018::art-8::par-3",
+      "LEI-13709/2018::art-9::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9094021489932452,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.14285714285714285
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-8",
+      "structural_ids": [
+        "LEI-13709/2018::art-8",
+        "LEI-13709/2018::art-8::par-1",
+        "LEI-13709/2018::art-8::par-2",
+        "LEI-13709/2018::art-8::par-3",
+        "LEI-13709/2018::art-8::par-4",
+        "LEI-13709/2018::art-8::par-5",
+        "LEI-13709/2018::art-8::par-6"
+      ],
+      "raw_score": 0.7627519459573056
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-7",
+      "structural_ids": [
+        "LEI-13709/2018::art-7",
+        "LEI-13709/2018::art-7::inc-i",
+        "LEI-13709/2018::art-7::inc-ii",
+        "LEI-13709/2018::art-7::inc-iii",
+        "LEI-13709/2018::art-7::inc-iv",
+        "LEI-13709/2018::art-7::inc-v",
+        "LEI-13709/2018::art-7::inc-vi",
+        "LEI-13709/2018::art-7::inc-vii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-ix",
+        "LEI-13709/2018::art-7::inc-x",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-3",
+        "LEI-13709/2018::art-7::par-4",
+        "LEI-13709/2018::art-7::par-5",
+        "LEI-13709/2018::art-7::par-6",
+        "LEI-13709/2018::art-7::par-7"
+      ],
+      "raw_score": 0.7458729709952833
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-18::inc-viii",
+      "structural_ids": [
+        "LEI-13709/2018::art-18::inc-viii"
+      ],
+      "raw_score": 0.715660768759563
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-9",
+      "structural_ids": [
+        "LEI-13709/2018::art-9",
+        "LEI-13709/2018::art-9::inc-i",
+        "LEI-13709/2018::art-9::inc-ii",
+        "LEI-13709/2018::art-9::inc-iii",
+        "LEI-13709/2018::art-9::inc-iv",
+        "LEI-13709/2018::art-9::inc-v",
+        "LEI-13709/2018::art-9::inc-vi",
+        "LEI-13709/2018::art-9::inc-vii",
+        "LEI-13709/2018::art-9::par-1",
+        "LEI-13709/2018::art-9::par-2",
+        "LEI-13709/2018::art-9::par-3"
+      ],
+      "raw_score": 0.689430525208182
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xii",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xii"
+      ],
+      "raw_score": 0.6860474678879481
+    }
+  ]
+}

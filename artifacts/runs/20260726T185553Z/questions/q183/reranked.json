@@ -1,0 +1,101 @@
+{
+  "question_record": {
+    "question_id": "q183",
+    "query_class": "numeric_tabular",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-66::par-5",
+      "ICVM-607/2019::art-99",
+      "ICVM-607/2019::art-99::par-1",
+      "ICVM-607/2019::art-99::par-2",
+      "ICVM-607/2019::art-99::par-3",
+      "ICVM-607/2019::art-78",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-92::inc-i",
+      "ICVM-607/2019::art-92::inc-ii",
+      "ICVM-607/2019::art-66::par-3"
+    ],
+    "answer_text": "Segundo o art. 92 da ICVM 607/2019, em caso de Acordo de Supervisão, a penalidade aplicável pode ser reduzida de 1/3 (um terço) a 2/3 (dois terços) [ICVM-607/2019::art-92].",
+    "answer_citations": [
+      "ICVM-607/2019::art-92"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.43067655807339306,
+      "mrr": 0.25,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9019604403455177,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q183",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-66::par-5",
+      "structural_ids": [
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 3.8702073097229004
+    },
+    {
+      "query_id": "q183",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-99",
+      "structural_ids": [
+        "ICVM-607/2019::art-99",
+        "ICVM-607/2019::art-99::par-1",
+        "ICVM-607/2019::art-99::par-2",
+        "ICVM-607/2019::art-99::par-3"
+      ],
+      "raw_score": 2.9546284675598145
+    },
+    {
+      "query_id": "q183",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-78",
+      "structural_ids": [
+        "ICVM-607/2019::art-78"
+      ],
+      "raw_score": 2.6567492485046387
+    },
+    {
+      "query_id": "q183",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-92",
+      "structural_ids": [
+        "ICVM-607/2019::art-92",
+        "ICVM-607/2019::art-92::inc-i",
+        "ICVM-607/2019::art-92::inc-ii"
+      ],
+      "raw_score": 2.231140613555908
+    },
+    {
+      "query_id": "q183",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-66::par-3",
+      "structural_ids": [
+        "ICVM-607/2019::art-66::par-3"
+      ],
+      "raw_score": 2.0331335067749023
+    }
+  ]
+}

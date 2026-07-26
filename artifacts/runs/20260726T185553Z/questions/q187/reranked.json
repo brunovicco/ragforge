@@ -1,0 +1,113 @@
+{
+  "question_record": {
+    "question_id": "q187",
+    "query_class": "multi_hop",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-84",
+      "ICVM-607/2019::art-84::par-1",
+      "ICVM-607/2019::art-84::par-2",
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3",
+      "ICVM-607/2019::art-83::par-3"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o artigo 29 da Instrução CVM nº 607/2019. Portanto, não é possível estabelecer a relação solicitada com base apenas nos documentos disponibilizados.\n\nO que o texto estabelece é que o interessado deve manifestar sua intenção de celebrar o termo de compromisso dentro do prazo para a apresentação de defesa [ICVM-607/2019::art-82::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-82::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 0.5,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.2640681225725909,
+      "mrr": 0.25,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.5891696990887969,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q187",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 5.6321868896484375
+    },
+    {
+      "query_id": "q187",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-84",
+      "structural_ids": [
+        "ICVM-607/2019::art-84",
+        "ICVM-607/2019::art-84::par-1",
+        "ICVM-607/2019::art-84::par-2"
+      ],
+      "raw_score": 5.234643459320068
+    },
+    {
+      "query_id": "q187",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 4.655017375946045
+    },
+    {
+      "query_id": "q187",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 4.509389877319336
+    },
+    {
+      "query_id": "q187",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-83::par-3",
+      "structural_ids": [
+        "ICVM-607/2019::art-83::par-3"
+      ],
+      "raw_score": 4.1887054443359375
+    }
+  ]
+}

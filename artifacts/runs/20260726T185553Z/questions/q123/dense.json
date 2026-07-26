@@ -1,0 +1,107 @@
+{
+  "question_record": {
+    "question_id": "q123",
+    "query_class": "numeric_tabular",
+    "strategy": "dense",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-30",
+      "ICVM-607/2019::art-30::par-1",
+      "ICVM-607/2019::art-30::par-2",
+      "ICVM-607/2019::art-25::par-4",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-46",
+      "ICVM-607/2019::art-38",
+      "ICVM-607/2019::art-38::par-unico"
+    ],
+    "answer_text": "Segundo o art. 30, § 1º da Instrução CVM nº 607/2019, o instrumento de mandato deve ser apresentado à CVM nos 15 (quinze) dias subsequentes à apresentação da defesa [ICVM-607/2019::art-30::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-30::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7972921946552435,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-30",
+      "structural_ids": [
+        "ICVM-607/2019::art-30",
+        "ICVM-607/2019::art-30::par-1",
+        "ICVM-607/2019::art-30::par-2"
+      ],
+      "raw_score": 0.787536685148185
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-25::par-4",
+      "structural_ids": [
+        "ICVM-607/2019::art-25::par-4"
+      ],
+      "raw_score": 0.718962641351163
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 0.7090219757690636
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-46",
+      "structural_ids": [
+        "ICVM-607/2019::art-46"
+      ],
+      "raw_score": 0.7088061301220948
+    },
+    {
+      "query_id": "q123",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-38",
+      "structural_ids": [
+        "ICVM-607/2019::art-38",
+        "ICVM-607/2019::art-38::par-unico"
+      ],
+      "raw_score": 0.6983882337576127
+    }
+  ]
+}

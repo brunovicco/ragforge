@@ -1,0 +1,117 @@
+{
+  "question_record": {
+    "question_id": "q090",
+    "query_class": "global",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-50::par-2",
+      "LEI-13709/2018::art-50::par-2-inc-i",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+      "LEI-13709/2018::art-50::par-2-inc-ii",
+      "LEI-13709/2018::preamble",
+      "RES-CMN-4893/2021::art-17::par-unico",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b",
+      "LEI-13709/2018::art-25",
+      "LEI-13709/2018::art-30"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o regime de sanções aplicáveis a infrações no tratamento de dados pessoais. O material disponível limita-se a tratar da implementação de programas de governança em privacidade, da interoperabilidade de dados para fins públicos e de obrigações contratuais em regimes de resolução bancária.",
+    "answer_citations": [],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 0.25,
+      "answer_relevancy": 0.3003279027293529,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q090",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-50::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii"
+      ],
+      "raw_score": 2.392362594604492
+    },
+    {
+      "query_id": "q090",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::preamble",
+      "structural_ids": [
+        "LEI-13709/2018::preamble"
+      ],
+      "raw_score": 0.7997188568115234
+    },
+    {
+      "query_id": "q090",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-17::par-unico",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-17::par-unico",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b"
+      ],
+      "raw_score": 0.5688073635101318
+    },
+    {
+      "query_id": "q090",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-25",
+      "structural_ids": [
+        "LEI-13709/2018::art-25"
+      ],
+      "raw_score": -0.7260581254959106
+    },
+    {
+      "query_id": "q090",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-30",
+      "structural_ids": [
+        "LEI-13709/2018::art-30"
+      ],
+      "raw_score": -1.124930739402771
+    }
+  ]
+}

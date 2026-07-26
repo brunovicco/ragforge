@@ -1,0 +1,153 @@
+{
+  "question_record": {
+    "question_id": "q024",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-9",
+      "RES-CMN-4893/2021::art-6",
+      "RES-CMN-4893/2021::art-6::par-unico",
+      "RES-CMN-4893/2021::art-6::par-unico-inc-i",
+      "RES-CMN-4893/2021::art-6::par-unico-inc-ii",
+      "RES-CMN-4893/2021::art-6::par-unico-inc-iii",
+      "RES-CMN-4893/2021::art-3",
+      "RES-CMN-4893/2021::art-3::inc-i",
+      "RES-CMN-4893/2021::art-3::inc-ii",
+      "RES-CMN-4893/2021::art-3::inc-iii",
+      "RES-CMN-4893/2021::art-3::inc-iv",
+      "RES-CMN-4893/2021::art-3::inc-v",
+      "RES-CMN-4893/2021::art-3::inc-v-ali-a",
+      "RES-CMN-4893/2021::art-3::inc-v-ali-b",
+      "RES-CMN-4893/2021::art-3::inc-v-ali-c",
+      "RES-CMN-4893/2021::art-3::inc-v-ali-d",
+      "RES-CMN-4893/2021::art-3::inc-vi",
+      "RES-CMN-4893/2021::art-3::inc-vi-ali-a",
+      "RES-CMN-4893/2021::art-3::inc-vi-ali-b",
+      "RES-CMN-4893/2021::art-3::inc-vi-ali-c",
+      "RES-CMN-4893/2021::art-3::inc-vii",
+      "RES-CMN-4893/2021::art-3::par-1",
+      "RES-CMN-4893/2021::art-3::par-2",
+      "RES-CMN-4893/2021::art-3::par-3",
+      "RES-CMN-4893/2021::art-3::par-4",
+      "RES-CMN-4893/2021::art-3::par-5",
+      "RES-CMN-4893/2021::art-5",
+      "RES-CMN-4893/2021::art-2",
+      "RES-CMN-4893/2021::art-2::par-1",
+      "RES-CMN-4893/2021::art-2::par-1-inc-i",
+      "RES-CMN-4893/2021::art-2::par-1-inc-ii",
+      "RES-CMN-4893/2021::art-2::par-1-inc-iii",
+      "RES-CMN-4893/2021::art-2::par-2",
+      "RES-CMN-4893/2021::art-2::par-2-inc-i",
+      "RES-CMN-4893/2021::art-2::par-2-inc-ii",
+      "RES-CMN-4893/2021::art-2::par-3"
+    ],
+    "answer_text": "Segundo o art. 9º da Resolução CMN nº 4.893/2021, a política de segurança cibernética e o plano de ação e de resposta a incidentes devem ser aprovados pelo conselho de administração ou, na sua inexistência, pela diretoria da instituição [RES-CMN-4893/2021::art-9].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-9"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9402264558889092,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q024",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-9",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-9"
+      ],
+      "raw_score": 0.8667485462974674
+    },
+    {
+      "query_id": "q024",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-6",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-6",
+        "RES-CMN-4893/2021::art-6::par-unico",
+        "RES-CMN-4893/2021::art-6::par-unico-inc-i",
+        "RES-CMN-4893/2021::art-6::par-unico-inc-ii",
+        "RES-CMN-4893/2021::art-6::par-unico-inc-iii"
+      ],
+      "raw_score": 0.8075857990282264
+    },
+    {
+      "query_id": "q024",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-3",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-3",
+        "RES-CMN-4893/2021::art-3::inc-i",
+        "RES-CMN-4893/2021::art-3::inc-ii",
+        "RES-CMN-4893/2021::art-3::inc-iii",
+        "RES-CMN-4893/2021::art-3::inc-iv",
+        "RES-CMN-4893/2021::art-3::inc-v",
+        "RES-CMN-4893/2021::art-3::inc-v-ali-a",
+        "RES-CMN-4893/2021::art-3::inc-v-ali-b",
+        "RES-CMN-4893/2021::art-3::inc-v-ali-c",
+        "RES-CMN-4893/2021::art-3::inc-v-ali-d",
+        "RES-CMN-4893/2021::art-3::inc-vi",
+        "RES-CMN-4893/2021::art-3::inc-vi-ali-a",
+        "RES-CMN-4893/2021::art-3::inc-vi-ali-b",
+        "RES-CMN-4893/2021::art-3::inc-vi-ali-c",
+        "RES-CMN-4893/2021::art-3::inc-vii",
+        "RES-CMN-4893/2021::art-3::par-1",
+        "RES-CMN-4893/2021::art-3::par-2",
+        "RES-CMN-4893/2021::art-3::par-3",
+        "RES-CMN-4893/2021::art-3::par-4",
+        "RES-CMN-4893/2021::art-3::par-5"
+      ],
+      "raw_score": 0.7874591187833586
+    },
+    {
+      "query_id": "q024",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-4893/2021::art-5",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-5"
+      ],
+      "raw_score": 0.7833297502610228
+    },
+    {
+      "query_id": "q024",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-2",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-2",
+        "RES-CMN-4893/2021::art-2::par-1",
+        "RES-CMN-4893/2021::art-2::par-1-inc-i",
+        "RES-CMN-4893/2021::art-2::par-1-inc-ii",
+        "RES-CMN-4893/2021::art-2::par-1-inc-iii",
+        "RES-CMN-4893/2021::art-2::par-2",
+        "RES-CMN-4893/2021::art-2::par-2-inc-i",
+        "RES-CMN-4893/2021::art-2::par-2-inc-ii",
+        "RES-CMN-4893/2021::art-2::par-3"
+      ],
+      "raw_score": 0.7820191167577906
+    }
+  ]
+}

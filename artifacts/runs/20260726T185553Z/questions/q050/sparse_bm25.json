@@ -1,0 +1,146 @@
+{
+  "question_record": {
+    "question_id": "q050",
+    "query_class": "exact_factual",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-2",
+      "LEI-13709/2018::art-8::par-3",
+      "LEI-13709/2018::art-8::par-4",
+      "LEI-13709/2018::art-8::par-5",
+      "LEI-13709/2018::art-8::par-6",
+      "LEI-13709/2018::art-20",
+      "LEI-13709/2018::art-20::par-1",
+      "LEI-13709/2018::art-20::par-2",
+      "LEI-13709/2018::art-20::par-3",
+      "LEI-13709/2018::art-39",
+      "LEI-13709/2018::art-18",
+      "LEI-13709/2018::art-18::inc-i",
+      "LEI-13709/2018::art-18::inc-ii",
+      "LEI-13709/2018::art-18::inc-iii",
+      "LEI-13709/2018::art-18::inc-iv",
+      "LEI-13709/2018::art-18::inc-v",
+      "LEI-13709/2018::art-18::inc-vi",
+      "LEI-13709/2018::art-18::inc-vii",
+      "LEI-13709/2018::art-18::inc-viii",
+      "LEI-13709/2018::art-18::inc-ix",
+      "LEI-13709/2018::art-18::par-1",
+      "LEI-13709/2018::art-18::par-2",
+      "LEI-13709/2018::art-18::par-3",
+      "LEI-13709/2018::art-18::par-4",
+      "LEI-13709/2018::art-18::par-4-inc-i",
+      "LEI-13709/2018::art-18::par-4-inc-ii",
+      "LEI-13709/2018::art-18::par-5",
+      "LEI-13709/2018::art-18::par-6",
+      "LEI-13709/2018::art-18::par-7",
+      "LEI-13709/2018::art-18::par-8",
+      "LEI-13709/2018::art-58-a::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém o artigo 5º da Lei nº 13.709/2018 (LGPD), portanto, não é possível responder à sua pergunta com base nas informações disponíveis.",
+    "answer_citations": [],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.0,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q050",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-8",
+      "structural_ids": [
+        "LEI-13709/2018::art-8",
+        "LEI-13709/2018::art-8::par-1",
+        "LEI-13709/2018::art-8::par-2",
+        "LEI-13709/2018::art-8::par-3",
+        "LEI-13709/2018::art-8::par-4",
+        "LEI-13709/2018::art-8::par-5",
+        "LEI-13709/2018::art-8::par-6"
+      ],
+      "raw_score": 9.486049
+    },
+    {
+      "query_id": "q050",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-20",
+      "structural_ids": [
+        "LEI-13709/2018::art-20",
+        "LEI-13709/2018::art-20::par-1",
+        "LEI-13709/2018::art-20::par-2",
+        "LEI-13709/2018::art-20::par-3"
+      ],
+      "raw_score": 8.196145
+    },
+    {
+      "query_id": "q050",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-39",
+      "structural_ids": [
+        "LEI-13709/2018::art-39"
+      ],
+      "raw_score": 8.175435
+    },
+    {
+      "query_id": "q050",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-18",
+      "structural_ids": [
+        "LEI-13709/2018::art-18",
+        "LEI-13709/2018::art-18::inc-i",
+        "LEI-13709/2018::art-18::inc-ii",
+        "LEI-13709/2018::art-18::inc-iii",
+        "LEI-13709/2018::art-18::inc-iv",
+        "LEI-13709/2018::art-18::inc-v",
+        "LEI-13709/2018::art-18::inc-v",
+        "LEI-13709/2018::art-18::inc-vi",
+        "LEI-13709/2018::art-18::inc-vii",
+        "LEI-13709/2018::art-18::inc-viii",
+        "LEI-13709/2018::art-18::inc-ix",
+        "LEI-13709/2018::art-18::par-1",
+        "LEI-13709/2018::art-18::par-2",
+        "LEI-13709/2018::art-18::par-3",
+        "LEI-13709/2018::art-18::par-4",
+        "LEI-13709/2018::art-18::par-4-inc-i",
+        "LEI-13709/2018::art-18::par-4-inc-ii",
+        "LEI-13709/2018::art-18::par-5",
+        "LEI-13709/2018::art-18::par-6",
+        "LEI-13709/2018::art-18::par-7",
+        "LEI-13709/2018::art-18::par-8"
+      ],
+      "raw_score": 7.9698606
+    },
+    {
+      "query_id": "q050",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-58-a::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-58-a::par-2"
+      ],
+      "raw_score": 7.790944
+    }
+  ]
+}

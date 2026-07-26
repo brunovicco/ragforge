@@ -1,0 +1,102 @@
+{
+  "question_record": {
+    "question_id": "q228",
+    "query_class": "multi_hop",
+    "strategy": "parent_child",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-50",
+      "ICVM-607/2019::art-50::par-1",
+      "ICVM-607/2019::art-50::par-2",
+      "ICVM-607/2019::art-50::par-3",
+      "ICVM-607/2019::art-50::par-4",
+      "ICVM-607/2019::art-55",
+      "ICVM-607/2019::art-55::par-unico",
+      "ICVM-607/2019::art-57",
+      "ICVM-607/2019::art-57::par-1",
+      "ICVM-607/2019::art-57::par-2",
+      "ICVM-607/2019::art-57::par-3",
+      "ICVM-607/2019::art-57::par-4",
+      "ICVM-607/2019::art-57::par-5",
+      "ICVM-607/2019::art-57::par-6",
+      "ICVM-607/2019::art-54"
+    ],
+    "answer_text": "A Instrução CVM nº 607/2019 estabelece que a sessão de julgamento somente será realizada com a presença de, no mínimo, 3 (três) membros do Colegiado [ICVM-607/2019::art-50].\n\nCaso a sessão não ocorra por motivo de força maior, ela poderá ser transferida para o primeiro dia útil seguinte, no mesmo horário anteriormente marcado, sem a necessidade de nova convocação ou publicação [ICVM-607/2019::art-50::par-4]. Embora o texto não explicite a relação direta entre o quórum e o adiamento, a regra de transferência mantém a sessão agendada, submetendo-a, na nova data, à exigência geral de presença mínima de 3 (três) membros para a sua efetiva realização [ICVM-607/2019::art-50].",
+    "answer_citations": [
+      "ICVM-607/2019::art-50",
+      "ICVM-607/2019::art-50::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.25,
+      "ndcg_at_k": 0.6131471927654584,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6856243446899631,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q228",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-50",
+      "structural_ids": [
+        "ICVM-607/2019::art-50",
+        "ICVM-607/2019::art-50::par-1",
+        "ICVM-607/2019::art-50::par-2",
+        "ICVM-607/2019::art-50::par-3",
+        "ICVM-607/2019::art-50::par-4"
+      ],
+      "raw_score": 0.8230559981722052
+    },
+    {
+      "query_id": "q228",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-55",
+      "structural_ids": [
+        "ICVM-607/2019::art-55",
+        "ICVM-607/2019::art-55::par-unico"
+      ],
+      "raw_score": 0.7168467038436028
+    },
+    {
+      "query_id": "q228",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-57",
+      "structural_ids": [
+        "ICVM-607/2019::art-57",
+        "ICVM-607/2019::art-57::par-1",
+        "ICVM-607/2019::art-57::par-2",
+        "ICVM-607/2019::art-57::par-3",
+        "ICVM-607/2019::art-57::par-4",
+        "ICVM-607/2019::art-57::par-5",
+        "ICVM-607/2019::art-57::par-6"
+      ],
+      "raw_score": 0.7130934892952923
+    },
+    {
+      "query_id": "q228",
+      "strategy": "parent-child",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-54",
+      "structural_ids": [
+        "ICVM-607/2019::art-54"
+      ],
+      "raw_score": 0.6867918271258652
+    }
+  ]
+}

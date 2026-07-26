@@ -1,0 +1,132 @@
+{
+  "question_record": {
+    "question_id": "q187",
+    "query_class": "multi_hop",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3",
+      "ICVM-607/2019::art-84",
+      "ICVM-607/2019::art-84::par-1",
+      "ICVM-607/2019::art-84::par-2",
+      "ICVM-607/2019::art-83",
+      "ICVM-607/2019::art-83::par-1",
+      "ICVM-607/2019::art-83::par-2",
+      "ICVM-607/2019::art-83::par-3",
+      "ICVM-607/2019::art-83::par-4",
+      "ICVM-607/2019::art-83::par-5",
+      "ICVM-607/2019::art-83::par-6",
+      "ICVM-607/2019::art-31",
+      "ICVM-607/2019::art-31::par-1",
+      "ICVM-607/2019::art-31::par-2"
+    ],
+    "answer_text": "O interessado deve manifestar sua intenção de celebrar um termo de compromisso até o término do prazo para a apresentação de defesa [ICVM-607/2019::art-29::par-1; ICVM-607/2019::art-82::par-1].\n\nEssa manifestação de intenção não suspende nem interrompe o prazo para a apresentação da defesa, sendo que o interessado mantém o ônus de apresentá-la [ICVM-607/2019::art-29::par-2]. Além disso, a apresentação da proposta completa de termo de compromisso deve ocorrer em até 30 dias após a apresentação da defesa [ICVM-607/2019::art-82::par-2].",
+    "answer_citations": [
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-82::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7147552925766071,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q187",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 39.3212
+    },
+    {
+      "query_id": "q187",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 33.929737
+    },
+    {
+      "query_id": "q187",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-84",
+      "structural_ids": [
+        "ICVM-607/2019::art-84",
+        "ICVM-607/2019::art-84::par-1",
+        "ICVM-607/2019::art-84::par-2"
+      ],
+      "raw_score": 25.83059
+    },
+    {
+      "query_id": "q187",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-83",
+      "structural_ids": [
+        "ICVM-607/2019::art-83",
+        "ICVM-607/2019::art-83::par-1",
+        "ICVM-607/2019::art-83::par-2",
+        "ICVM-607/2019::art-83::par-3",
+        "ICVM-607/2019::art-83::par-4",
+        "ICVM-607/2019::art-83::par-5",
+        "ICVM-607/2019::art-83::par-6"
+      ],
+      "raw_score": 23.113976
+    },
+    {
+      "query_id": "q187",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-31",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2"
+      ],
+      "raw_score": 22.887735
+    }
+  ]
+}
