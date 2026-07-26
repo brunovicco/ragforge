@@ -29,18 +29,21 @@ instead, a deliberate, documented scope boundary.
 
 Document discovery, expected article counts, and source hashes come only
 from the corpus manifest (datasets/regrag-br/corpus_manifest.yaml) and the
-question selection only from the versioned split
-(datasets/regrag-br/split.json) - both ADR-0012. A preflight gate
+question selection from the versioned split
+(datasets/regrag-br/split.json), optionally followed by the deterministic
+stratified cost cap declared in the experiment configuration - both
+ADR-0012. A preflight gate
 (ragforge.evaluation.integrity) validates source hashes, split/golden-set
 agreement, and structural-reference resolution before any indexing starts,
 and fails the run closed (SystemExit) rather than silently indexing a
 reduced or drifted corpus. RAPTOR is built once per document, never across a
 document boundary, so a summary node can never blend unrelated norms. Every
-selected question gets one immutable QuestionRecord per strategy - including
+selected question gets one QuestionRecord per strategy - including
 unanswerable-class questions, which are excluded from ranking/citation
 averages (ADR-0018: they are still generated and judged, for abstention
-appropriateness) but never dropped from coverage - appended to
-experiments/<run_id>/records.jsonl as each strategy finishes.
+appropriateness) but never dropped from coverage - atomically persisted to
+experiments/<run_id>/records.jsonl as each strategy finishes. A retried
+incomplete strategy replaces only its own stale records.
 
 The embedding provider is provider-neutral and config-driven (ADR-0013):
 ``embedding.provider: local`` (operational default, no credentials needed,
@@ -169,11 +172,7 @@ from ragforge.adapters.llm_cache import FileLLMCache
 from ragforge.domain.models import Chunk, Judgment
 from ragforge.domain.protocols import RetrievalStrategy
 from ragforge.embeddings.caching import CachedEmbeddingModel
-from ragforge.evaluation.artifact_writer import (
-    compute_checksums,
-    write_atomic,
-    write_checksums_file,
-)
+from ragforge.evaluation.artifact_writer import write_atomic
 from ragforge.evaluation.audit_metrics import compute_audit_report
 from ragforge.evaluation.audit_ports import AuditResult
 from ragforge.evaluation.canonical_hash import canonical_json_hash
@@ -187,10 +186,11 @@ from ragforge.evaluation.integrity import (
     verify_structural_references,
 )
 from ragforge.evaluation.judgments import load_judgments
-from ragforge.evaluation.lineage_ports import GenerationLineage
+from ragforge.evaluation.lineage_ports import GenerationLineage, RunManifest
 from ragforge.evaluation.manifest import load_corpus_manifest
-from ragforge.evaluation.records import append_records_jsonl, read_records_jsonl
+from ragforge.evaluation.records import read_records_jsonl, replace_strategy_records_jsonl
 from ragforge.evaluation.run_evidence import (
+    finalize_evidence_directory,
     reject_if_evidence_dir_already_completed,
     write_question_artifacts,
     write_summaries,
@@ -198,7 +198,8 @@ from ragforge.evaluation.run_evidence import (
 from ragforge.evaluation.run_lock import BenchmarkAlreadyRunningError, BenchmarkRunLock
 from ragforge.evaluation.run_manifest import (
     build_initial_manifest,
-    finalize_manifest,
+    load_run_manifest,
+    require_clean_worktree,
     resolve_git_sha,
 )
 from ragforge.evaluation.run_reporting import (
@@ -219,6 +220,7 @@ from ragforge.evaluation.run_strategies import (
     build_contextual_strategy,
 )
 from ragforge.evaluation.split import Split, load_split
+from ragforge.evaluation.split_builder import select_stratified_sample
 from ragforge.generation.auditing_answer_generator import AuditingAnswerGenerator
 from ragforge.generation.gemini_answer_generator import GeminiAnswerGenerator
 from ragforge.generation.gemini_contextualizer import GeminiContextualizer
@@ -280,6 +282,7 @@ _DEFAULT_ANSWER_QUALITY_WORKERS = 5
 _DEFAULT_GEMINI_MAX_IN_FLIGHT = 4
 _DEFAULT_EMBEDDING_CACHE_DIR = ".ragforge/cache/embeddings"
 _DEFAULT_INDEX_CACHE_DIR = ".ragforge/cache/indexes"
+_DEFAULT_SAMPLING_SEED = "regrag-br-benchmark-sample-v1"
 _BASE_STRATEGY_LABELS = (
     "dense",
     "sparse_bm25",
@@ -390,6 +393,24 @@ def _select_split_judgments(
     return [by_id[question_id] for question_id in split_ids]
 
 
+def _strategy_checkpoint_complete(metrics: Mapping[str, object], expected_answers: int) -> bool:
+    """Return whether a strategy checkpoint has complete, error-free answer coverage."""
+    answer_n = metrics.get("answer_n")
+    answer_errors = metrics.get("answer_errors")
+    retrieval_errors = metrics.get("errors")
+    return (
+        isinstance(answer_n, (int, float))
+        and not isinstance(answer_n, bool)
+        and float(answer_n) == expected_answers
+        and isinstance(answer_errors, (int, float))
+        and not isinstance(answer_errors, bool)
+        and float(answer_errors) == 0.0
+        and isinstance(retrieval_errors, (int, float))
+        and not isinstance(retrieval_errors, bool)
+        and float(retrieval_errors) == 0.0
+    )
+
+
 def _verify_resume_identity(
     previous: Mapping[str, object],
     index_namespace: str,
@@ -433,16 +454,68 @@ def _verify_resume_identity(
         )
 
 
+def _verify_resume_manifest_identity(
+    previous: RunManifest,
+    *,
+    run_id: str,
+    git_sha: str,
+    corpus_hash: str,
+    dataset_hash: str,
+    split_hash: str,
+    configuration_hash: str,
+    models: dict[str, str],
+    strategies: tuple[str, ...],
+    execution: dict[str, object],
+) -> None:
+    """Fail closed if resumed evidence differs from the run that started it."""
+    expected: dict[str, object] = {
+        "run_id": run_id,
+        "status": "running",
+        "git_sha": git_sha,
+        "corpus_hash": corpus_hash,
+        "dataset_hash": dataset_hash,
+        "split_hash": split_hash,
+        "configuration_hash": configuration_hash,
+        "models": models,
+        "strategies": strategies,
+        "execution": execution,
+    }
+    mismatches = [
+        f"{field}: {getattr(previous, field)!r} != {value!r}"
+        for field, value in expected.items()
+        if getattr(previous, field) != value
+    ]
+    if mismatches:
+        raise SystemExit(
+            "--resume evidence identity mismatch; start a new run:\n"
+            + "\n".join(f"- {mismatch}" for mismatch in mismatches)
+        )
+
+
 def _run() -> None:
     """Index the real corpus with every strategy and score each against the golden set."""
     args = parse_args()
     _reject_cache_mode(args.mode)
     args.config = args.config.resolve()
+    require_clean_worktree(ROOT)
+    current_git_sha = resolve_git_sha(ROOT)
+    if current_git_sha == "unknown":
+        raise SystemExit("auditable benchmark could not resolve the current Git commit")
 
     config = yaml.safe_load(args.config.read_text(encoding="utf-8"))
     requested_strategies = _validate_requested_strategies(config.get("strategies"))
     requested_strategy_set = set(requested_strategies)
     split_name = config["dataset"]["split"]
+    max_questions = config["dataset"].get("max_questions")
+    sampling_seed = config["dataset"].get("sampling_seed", _DEFAULT_SAMPLING_SEED)
+    if max_questions is not None and (
+        isinstance(max_questions, bool) or not isinstance(max_questions, int)
+    ):
+        raise SystemExit("dataset.max_questions must be a positive integer")
+    if max_questions is not None and max_questions <= 0:
+        raise SystemExit("dataset.max_questions must be a positive integer")
+    if not isinstance(sampling_seed, str) or not sampling_seed:
+        raise SystemExit("dataset.sampling_seed must be a non-empty string")
     top_k = config["retrieval"]["top_k"]
     rerank_pool = config["retrieval"]["rerank_pool"]
     embedding_provider = config["embedding"]["provider"]
@@ -484,6 +557,19 @@ def _run() -> None:
     except IntegrityError as exc:
         raise SystemExit(f"preflight integrity check failed:\n{exc}") from exc
     judgments = _select_split_judgments(split, judgments, split_name)
+    if max_questions is not None:
+        try:
+            judgments = select_stratified_sample(
+                judgments,
+                max_questions=max_questions,
+                seed=sampling_seed,
+            )
+        except ValueError as exc:
+            raise SystemExit(f"invalid dataset sample: {exc}") from exc
+        print(
+            f"Selected {len(judgments)} stratified questions "
+            f"(max_questions={max_questions}, seed={sampling_seed})."
+        )
 
     run_id = args.resume or datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     run_dir = RESULTS_DIR / run_id
@@ -493,6 +579,15 @@ def _run() -> None:
 
     artifacts_dir = ARTIFACTS_DIR / run_id
     reject_if_evidence_dir_already_completed(artifacts_dir)
+    existing_run_manifest: RunManifest | None = None
+    if args.resume is not None:
+        manifest_path = artifacts_dir / "manifest.json"
+        if not manifest_path.exists():
+            raise SystemExit(f"--resume requires an existing evidence manifest at {manifest_path}")
+        try:
+            existing_run_manifest = load_run_manifest(manifest_path)
+        except (OSError, ValueError, json.JSONDecodeError) as exc:
+            raise SystemExit(f"invalid resume evidence manifest: {exc}") from exc
 
     print("Extracting and chunking real corpus documents...")
     documents = _load_documents(manifest)
@@ -544,31 +639,59 @@ def _run() -> None:
         _verify_resume_identity(
             previous, index_namespace, generation_model, judge_provider, judge_model
         )
-        run_metrics = previous["metrics"]
+        previous_metrics = previous["metrics"]
+        run_metrics = {
+            label: metrics
+            for label, metrics in previous_metrics.items()
+            if _strategy_checkpoint_complete(metrics, len(judgments))
+        }
+        incomplete_labels = sorted(set(previous_metrics) - set(run_metrics))
         print(f"Resuming {run_id}: {sorted(run_metrics)} already scored.")
+        if incomplete_labels:
+            print(f"  retrying incomplete checkpoints: {incomplete_labels}")
     pending_strategy_set = requested_strategy_set - set(run_metrics)
 
     print("Writing ADR-0017 evidence manifest and snapshots...")
-    run_manifest = build_initial_manifest(
-        run_id=run_id,
-        git_sha=resolve_git_sha(),
-        corpus_hash=manifest.content_hash,
-        dataset_hash=snapshot_hash(JUDGMENTS_PATH),
-        split_hash=snapshot_hash(SPLIT_PATH),
-        configuration_hash=canonical_json_hash(config),
-        models={
-            "embedding": f"{embedding_provider}/{embedding_model}",
-            "generation": generation_model,
-            "judge": f"{judge_provider}/{judge_model}",
-            "audit": f"{audit_provider}/{audit_model}" if audit_enabled else "disabled",
-        },
-        strategies=requested_strategies,
-        execution=dict(execution_config),
-    )
-    write_atomic(
-        artifacts_dir / "manifest.json",
-        json.dumps(dataclasses.asdict(run_manifest), ensure_ascii=False, indent=2),
-    )
+    dataset_hash = snapshot_hash(JUDGMENTS_PATH)
+    split_hash = snapshot_hash(SPLIT_PATH)
+    configuration_hash = canonical_json_hash(config)
+    model_identities = {
+        "embedding": f"{embedding_provider}/{embedding_model}",
+        "generation": generation_model,
+        "judge": f"{judge_provider}/{judge_model}",
+        "audit": f"{audit_provider}/{audit_model}" if audit_enabled else "disabled",
+    }
+    manifest_execution = dict(execution_config)
+    if existing_run_manifest is not None:
+        _verify_resume_manifest_identity(
+            existing_run_manifest,
+            run_id=run_id,
+            git_sha=current_git_sha,
+            corpus_hash=manifest.content_hash,
+            dataset_hash=dataset_hash,
+            split_hash=split_hash,
+            configuration_hash=configuration_hash,
+            models=model_identities,
+            strategies=requested_strategies,
+            execution=manifest_execution,
+        )
+        run_manifest = existing_run_manifest
+    else:
+        run_manifest = build_initial_manifest(
+            run_id=run_id,
+            git_sha=current_git_sha,
+            corpus_hash=manifest.content_hash,
+            dataset_hash=dataset_hash,
+            split_hash=split_hash,
+            configuration_hash=configuration_hash,
+            models=model_identities,
+            strategies=requested_strategies,
+            execution=manifest_execution,
+        )
+        write_atomic(
+            artifacts_dir / "manifest.json",
+            json.dumps(dataclasses.asdict(run_manifest), ensure_ascii=False, indent=2),
+        )
     write_atomic(
         artifacts_dir / "configuration.resolved.yaml", args.config.read_text(encoding="utf-8")
     )
@@ -576,6 +699,20 @@ def _run() -> None:
         artifacts_dir / "corpus-manifest.snapshot.yaml", MANIFEST_PATH.read_text(encoding="utf-8")
     )
     write_atomic(artifacts_dir / "split.snapshot.json", SPLIT_PATH.read_text(encoding="utf-8"))
+    write_atomic(
+        artifacts_dir / "question-selection.snapshot.json",
+        json.dumps(
+            {
+                "schema_version": 1,
+                "split": split_name,
+                "max_questions": max_questions,
+                "sampling_seed": sampling_seed if max_questions is not None else None,
+                "question_ids": [judgment.question_id for judgment in judgments],
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+    )
     event_log = EventLog(run_id, artifacts_dir / "events.jsonl")
 
     print(
@@ -736,7 +873,7 @@ def _run() -> None:
         results_path.write_text(json.dumps(record, ensure_ascii=False, indent=2))
 
     def _evaluate_and_checkpoint(label: str, strategy: RetrievalStrategy) -> None:
-        """Score ``strategy``, append its records.jsonl lines, then checkpoint results.json.
+        """Score ``strategy``, replace its records.jsonl lines, then checkpoint results.json.
 
         A no-op when ``label`` is already in ``run_metrics`` (--resume).
         The outer orchestration also excludes completed labels from stage
@@ -749,6 +886,7 @@ def _run() -> None:
         event_log.emit("strategy", "started", {"label": label})
         try:
             metrics, records, candidate_lineage = _evaluate(
+                label,
                 strategy,
                 judgments,
                 generator,
@@ -771,7 +909,7 @@ def _run() -> None:
             audit_results_by_strategy[label] = audit_results
             metrics = {**metrics, **compute_audit_report(audit_results)}
         run_metrics[label] = metrics
-        append_records_jsonl(records_path, records)
+        replace_strategy_records_jsonl(records_path, label, records)
         write_question_artifacts(artifacts_dir, label, records, candidate_lineage)
         write_summaries(
             artifacts_dir,
@@ -1058,13 +1196,7 @@ def _run() -> None:
         f"## Answer quality\n\n```\n{answer_quality_table}\n```\n",
     )
 
-    artifact_checksums = compute_checksums(artifacts_dir)
-    write_checksums_file(artifacts_dir)
-    final_manifest = finalize_manifest(run_manifest, canonical_json_hash(artifact_checksums))
-    write_atomic(
-        artifacts_dir / "manifest.json",
-        json.dumps(dataclasses.asdict(final_manifest), ensure_ascii=False, indent=2),
-    )
+    finalize_evidence_directory(artifacts_dir, run_manifest)
     print(f"Evidence directory finalized at {artifacts_dir.relative_to(ROOT)}/")
 
 

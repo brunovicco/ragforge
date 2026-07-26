@@ -34,8 +34,11 @@ from ragforge.evaluation.run import (
     _resolve_embedding_cache_dir,
     _resolve_index_cache_dir,
     _select_split_judgments,
+    _strategy_checkpoint_complete,
     _validate_requested_strategies,
+    _verify_resume_manifest_identity,
 )
+from ragforge.evaluation.run_manifest import build_initial_manifest
 from ragforge.evaluation.run_reporting import (
     build_run_record,
     format_answer_quality_table,
@@ -121,6 +124,91 @@ def test_select_split_judgments_uses_declared_partition_order() -> None:
     selected = _select_split_judgments(split, judgments, "test")
 
     assert [judgment.question_id for judgment in selected] == ["q3", "q1"]
+
+
+def test_strategy_checkpoint_requires_complete_error_free_answer_coverage() -> None:
+    """Resume skips only a strategy whose answer evaluation fully succeeded."""
+    assert _strategy_checkpoint_complete(
+        {"answer_n": 60.0, "answer_errors": 0.0, "errors": 0.0},
+        expected_answers=60,
+    )
+
+
+@pytest.mark.parametrize(
+    "metrics",
+    [
+        {"answer_n": 0.0, "answer_errors": 10.0, "errors": 0.0},
+        {"answer_n": 59.0, "answer_errors": 1.0, "errors": 0.0},
+        {"answer_n": 60.0, "answer_errors": 0.0, "errors": 1.0},
+        {"answer_n": True, "answer_errors": 0.0, "errors": 0.0},
+        {"answer_n": 60.0, "answer_errors": 0.0},
+    ],
+)
+def test_strategy_checkpoint_retries_incomplete_or_failed_results(
+    metrics: dict[str, object],
+) -> None:
+    """Quota failures and partial checkpoints must be retried on --resume."""
+    assert not _strategy_checkpoint_complete(metrics, expected_answers=60)
+
+
+def test_resume_manifest_accepts_the_original_running_identity() -> None:
+    """Resume preserves the original started_at when every identity remains equal."""
+    manifest = build_initial_manifest(
+        run_id="run-1",
+        git_sha="abc123",
+        corpus_hash="corpus",
+        dataset_hash="dataset",
+        split_hash="split",
+        configuration_hash="config",
+        models={"judge": "openai/model"},
+        strategies=("dense",),
+        execution={"workers": 2},
+    )
+
+    _verify_resume_manifest_identity(
+        manifest,
+        run_id="run-1",
+        git_sha="abc123",
+        corpus_hash="corpus",
+        dataset_hash="dataset",
+        split_hash="split",
+        configuration_hash="config",
+        models={"judge": "openai/model"},
+        strategies=("dense",),
+        execution={"workers": 2},
+    )
+
+    assert manifest.status == "running"
+    assert manifest.completed_at is None
+
+
+def test_resume_manifest_rejects_a_different_git_commit() -> None:
+    """A clean but different commit cannot continue evidence from the original code."""
+    manifest = build_initial_manifest(
+        run_id="run-1",
+        git_sha="original",
+        corpus_hash="corpus",
+        dataset_hash="dataset",
+        split_hash="split",
+        configuration_hash="config",
+        models={},
+        strategies=("dense",),
+        execution={},
+    )
+
+    with pytest.raises(SystemExit, match="git_sha"):
+        _verify_resume_manifest_identity(
+            manifest,
+            run_id="run-1",
+            git_sha="different",
+            corpus_hash="corpus",
+            dataset_hash="dataset",
+            split_hash="split",
+            configuration_hash="config",
+            models={},
+            strategies=("dense",),
+            execution={},
+        )
 
 
 class _FakeEmbedder:
@@ -464,8 +552,8 @@ class _FakeJudgeForEvaluate:
         )
 
 
-def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_name() -> None:
-    """_evaluate returns metrics from both harnesses plus one merged record per question."""
+def test_evaluate_tags_records_with_the_canonical_experiment_label() -> None:
+    """Configured aliases override internal implementation names in persisted records."""
     judgments = [
         Judgment(
             question_id="q1",
@@ -477,6 +565,7 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
     ]
 
     metrics, records, candidate_lineage = _evaluate(
+        "configured-label",
         _FakeStrategyForEvaluate(),
         judgments,
         _FakeGeneratorForEvaluate(),
@@ -488,7 +577,7 @@ def test_evaluate_merges_retrieval_and_answer_records_tagged_with_the_strategy_n
     assert metrics["recall_at_k"] == 1.0
     assert metrics["citation_accuracy"] == 1.0
     assert len(records) == 1
-    assert records[0].strategy == "fake-strategy"
+    assert records[0].strategy == "configured-label"
     assert records[0].retrieval_status == "succeeded"
     assert records[0].generation_status == "succeeded"
     assert candidate_lineage == [], "no embedding_identity_hash was passed, so no lineage collected"
@@ -507,6 +596,7 @@ def test_evaluate_populates_candidate_lineage_when_embedding_identity_hash_is_gi
     ]
 
     _, _, candidate_lineage = _evaluate(
+        "configured-label",
         _FakeStrategyForEvaluate(),
         judgments,
         _FakeGeneratorForEvaluate(),

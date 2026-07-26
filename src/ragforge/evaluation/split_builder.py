@@ -1,10 +1,13 @@
 """Deterministic stratified split construction for RegRAG-BR (ADR-0003)."""
 
 import hashlib
+import math
 from collections import defaultdict
 
 from ragforge.domain.models import Judgment
 from ragforge.evaluation.split import Split
+
+_SAMPLE_ALGORITHM_VERSION = "stratified-capacity-v1"
 
 
 def build_stratified_split(
@@ -68,3 +71,72 @@ def build_stratified_split(
         validation=validation,
         test=test,
     )
+
+
+def select_stratified_sample(
+    judgments: list[Judgment],
+    *,
+    max_questions: int,
+    seed: str,
+) -> list[Judgment]:
+    """Select an exact-size deterministic sample while preserving every query class.
+
+    One slot is reserved for each class, then the remaining capacity is
+    apportioned proportionally using the largest-remainder method. Selection
+    within each class is ranked by a versioned SHA-256 score; returned
+    judgments retain their original split order.
+
+    Args:
+        judgments: Judgments already selected from one declared split.
+        max_questions: Exact sample size, unless the split is smaller.
+        seed: Versioned sampling seed recorded in the resolved configuration.
+
+    Raises:
+        ValueError: If the requested size cannot represent every query class.
+    """
+    if max_questions <= 0:
+        raise ValueError("max_questions must be positive")
+    if max_questions >= len(judgments):
+        return list(judgments)
+
+    by_class: dict[str, list[Judgment]] = defaultdict(list)
+    for judgment in judgments:
+        if judgment.query.query_class is None:
+            raise ValueError(f"judgment {judgment.question_id!r} has no query class")
+        by_class[judgment.query.query_class.value].append(judgment)
+    if max_questions < len(by_class):
+        raise ValueError(
+            f"max_questions must be at least {len(by_class)} to represent every query class"
+        )
+
+    remaining = max_questions - len(by_class)
+    total_capacity = len(judgments) - len(by_class)
+    allocation: dict[str, int] = dict.fromkeys(by_class, 1)
+    remainders: list[tuple[float, str]] = []
+    allocated_extra = 0
+    for query_class, class_judgments in sorted(by_class.items()):
+        capacity = len(class_judgments) - 1
+        ideal_extra = remaining * capacity / total_capacity
+        extra = min(capacity, math.floor(ideal_extra))
+        allocation[query_class] += extra
+        allocated_extra += extra
+        remainders.append((ideal_extra - extra, query_class))
+    for _remainder, query_class in sorted(remainders, key=lambda item: (-item[0], item[1])):
+        if allocated_extra >= remaining:
+            break
+        if allocation[query_class] < len(by_class[query_class]):
+            allocation[query_class] += 1
+            allocated_extra += 1
+
+    selected_ids: set[str] = set()
+    for query_class, class_judgments in sorted(by_class.items()):
+        ranked = sorted(
+            class_judgments,
+            key=lambda judgment: hashlib.sha256(
+                (
+                    f"{_SAMPLE_ALGORITHM_VERSION}:{seed}:{query_class}:{judgment.question_id}"
+                ).encode()
+            ).hexdigest(),
+        )
+        selected_ids.update(judgment.question_id for judgment in ranked[: allocation[query_class]])
+    return [judgment for judgment in judgments if judgment.question_id in selected_ids]

@@ -63,6 +63,19 @@ def test_compute_checksums_excludes_the_checksums_file_itself(tmp_path: Path) ->
     assert "a.txt" in checksums
 
 
+def test_compute_checksums_excludes_explicit_non_root_artifacts(tmp_path: Path) -> None:
+    """A self-referential manifest can be omitted from the artifact root calculation."""
+    (tmp_path / "manifest.json").write_text("manifest", encoding="utf-8")
+    (tmp_path / "report.json").write_text("report", encoding="utf-8")
+
+    checksums = compute_checksums(
+        tmp_path,
+        excluded_paths=frozenset({"manifest.json"}),
+    )
+
+    assert checksums == {"report.json": snapshot_hash(tmp_path / "report.json")}
+
+
 def test_write_checksums_file_matches_compute_checksums(tmp_path: Path) -> None:
     """The written checksums.sha256 file's contents exactly reflect compute_checksums' output."""
     (tmp_path / "a.txt").write_text("aaa", encoding="utf-8")
@@ -74,6 +87,15 @@ def test_write_checksums_file_matches_compute_checksums(tmp_path: Path) -> None:
     parsed = dict(line.split("  ", 1)[::-1] for line in lines)
     expected = compute_checksums(tmp_path)
     assert parsed == expected
+
+
+def test_write_checksums_file_accepts_a_precomputed_final_inventory(tmp_path: Path) -> None:
+    """Finalization can list the intended final manifest before publishing it."""
+    write_checksums_file(tmp_path, {"manifest.json": "abc123"})
+
+    assert (tmp_path / "checksums.sha256").read_text(encoding="utf-8") == (
+        "abc123  manifest.json\n"
+    )
 
 
 def test_write_checksums_file_on_empty_directory_writes_empty_file(tmp_path: Path) -> None:

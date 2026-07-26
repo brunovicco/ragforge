@@ -217,7 +217,17 @@ Artifacts SHALL use:
 4. atomic rename or transaction;
 5. checksum generation after all files close.
 
-Manifest status changes to `completed` only after checksum verification.
+`artifact_root_hash` covers every final artifact except `manifest.json` and
+`checksums.sha256`; excluding the manifest avoids a circular hash because the
+root is stored inside that manifest. `checksums.sha256` SHALL still cover the
+exact final `manifest.json` bytes. The checksum inventory is published before
+the final atomic manifest rename, so manifest status changes to `completed`
+only when the final inventory is ready.
+
+New and resumed auditable runs SHALL require a clean Git worktree, excluding
+only untracked generated output under `artifacts/`, `experiments/`, and
+`.ragforge/`. A resume SHALL preserve the original `started_at` and Git SHA
+and fail closed when the current commit or another manifest identity differs.
 
 A failed run remains inspectable.
 

@@ -52,6 +52,7 @@ An optional LLMCache (ADR-0004) and ProviderLimiter (ADR-0014) instead wrap
 evaluate() as a whole - the granularity available at this boundary.
 """
 
+import asyncio
 import json
 import math
 import os
@@ -150,7 +151,7 @@ def _build_async_openai_embeddings(
 class _ScoredMetric(Protocol):
     """Shape shared by ragas.metrics.collections' single-turn metric classes."""
 
-    def score(self, **kwargs: object) -> object: ...  # returns a ragas MetricResult (has .value)
+    async def ascore(self, **kwargs: object) -> object: ...
 
 
 class _MetricResult(Protocol):
@@ -163,9 +164,15 @@ class _MetricResult(Protocol):
 class _GeneratingLLM(Protocol):
     """Shape of ragas.llms.InstructorLLM this module actually calls directly (abstention)."""
 
-    def generate(
+    async def agenerate(
         self, prompt: str, response_model: type[_AbstentionOutput]
     ) -> _AbstentionOutput: ...
+
+
+class _AsyncCloseable(Protocol):
+    """Minimal asynchronous resource lifecycle used by provider clients."""
+
+    async def close(self) -> None: ...
 
 
 class RagasJudge:
@@ -179,6 +186,7 @@ class RagasJudge:
         identity: ModelIdentity,
         cache: LLMCache | None = None,
         max_in_flight: int = _DEFAULT_MAX_IN_FLIGHT,
+        closeables: tuple[_AsyncCloseable, ...] = (),
     ) -> None:
         """Wire the judge to its already-constructed RAGAS metrics and abstention LLM.
 
@@ -193,6 +201,8 @@ class RagasJudge:
                 caching - every evaluate() call reaches the real metrics.
             max_in_flight: Bounds concurrent evaluate() calls to this
                 provider, process-wide (ADR-0014).
+            closeables: Provider clients that must close on this judge's
+                persistent event loop before it is shut down.
         """
         self._faithfulness = faithfulness
         self._answer_relevancy = answer_relevancy
@@ -200,6 +210,9 @@ class RagasJudge:
         self._identity = identity
         self._cache = cache
         self._limiter = get_limiter(identity.provider, max_in_flight)
+        self._closeables = closeables
+        self._runner = asyncio.Runner()
+        self._closed = False
 
     @property
     def identity(self) -> ModelIdentity:
@@ -233,32 +246,37 @@ class RagasJudge:
         )
 
     def _evaluate_uncached(self, sample: JudgeSample) -> JudgeResult:
+        if self._closed:
+            raise GenerationError("RAGAS judge is closed")
         try:
             with self._limiter:
-                faithfulness_score = _score_metric(
-                    self._faithfulness,
-                    "faithfulness",
-                    user_input=sample.question,
-                    response=sample.answer,
-                    retrieved_contexts=list(sample.contexts),
-                )
-                answer_relevancy_score = _score_metric(
-                    self._answer_relevancy,
-                    "answer_relevancy",
-                    user_input=sample.question,
-                    response=sample.answer,
-                )
-                abstention = self._abstention_llm.generate(
-                    _ABSTENTION_PROMPT_TEMPLATE.format(
-                        question=sample.question,
-                        answerable="não" if sample.unanswerable else "sim",
-                        answer=sample.answer,
-                    ),
-                    response_model=_AbstentionOutput,
-                )
+                return self._runner.run(self._evaluate_async(sample))
         except Exception as exc:
             raise GenerationError(f"RAGAS judge scoring failed: {exc}") from exc
 
+    async def _evaluate_async(self, sample: JudgeSample) -> JudgeResult:
+        """Score all dimensions on one persistent event loop owned by this worker."""
+        faithfulness_score = await _score_metric(
+            self._faithfulness,
+            "faithfulness",
+            user_input=sample.question,
+            response=sample.answer,
+            retrieved_contexts=list(sample.contexts),
+        )
+        answer_relevancy_score = await _score_metric(
+            self._answer_relevancy,
+            "answer_relevancy",
+            user_input=sample.question,
+            response=sample.answer,
+        )
+        abstention = await self._abstention_llm.agenerate(
+            _ABSTENTION_PROMPT_TEMPLATE.format(
+                question=sample.question,
+                answerable="não" if sample.unanswerable else "sim",
+                answer=sample.answer,
+            ),
+            response_model=_AbstentionOutput,
+        )
         return JudgeResult(
             schema_version=_OUTPUT_SCHEMA_VERSION,
             faithfulness=MetricScore(score=faithfulness_score),
@@ -268,12 +286,23 @@ class RagasJudge:
             ),
         )
 
+    def close(self) -> None:
+        """Close provider clients on their owning loop, then release the loop."""
+        if self._closed:
+            return
+        try:
+            for closeable in self._closeables:
+                self._runner.run(closeable.close())
+        finally:
+            self._runner.close()
+            self._closed = True
 
-def _score_metric(metric: _ScoredMetric, name: str, **kwargs: object) -> float:
+
+async def _score_metric(metric: _ScoredMetric, name: str, **kwargs: object) -> float:
     """Return one valid bounded score, retrying a semantically invalid result once."""
     invalid_value: float | None = None
     for _attempt in range(_METRIC_SCORE_ATTEMPTS):
-        result = cast(_MetricResult, metric.score(**kwargs))
+        result = cast(_MetricResult, await metric.ascore(**kwargs))
         value = float(result.value)
         if math.isfinite(value) and 0.0 <= value <= 1.0:
             return value
@@ -359,8 +388,11 @@ def build_gemini_ragas_judge(
     ragas_embeddings = GoogleEmbeddings(client=genai_client, model=embedding_model_name)
 
     return RagasJudge(
-        faithfulness=Faithfulness(llm=ragas_llm),
-        answer_relevancy=AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),
+        faithfulness=cast(_ScoredMetric, Faithfulness(llm=ragas_llm)),
+        answer_relevancy=cast(
+            _ScoredMetric,
+            AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),
+        ),
         abstention_llm=abstention_llm,
         identity=ModelIdentity(
             provider="gemini",
@@ -416,13 +448,16 @@ def build_openai_ragas_judge(
     if max_output_tokens <= 0:
         raise ValueError("max_output_tokens must be positive")
     try:
-        instructor_client = instructor.from_provider(
-            f"openai/{llm_model_name}",
-            async_client=True,
-            api_key=key,
+        openai_client = AsyncOpenAI(api_key=key)
+        instructor_client = instructor.from_openai(
+            openai_client,
             mode=instructor.Mode.RESPONSES_TOOLS,
         )
-        ragas_embeddings = _build_async_openai_embeddings(key, embedding_model_name)
+        embeddings_client = AsyncOpenAI(api_key=key)
+        ragas_embeddings = OpenAIEmbeddings(
+            client=embeddings_client,
+            model=embedding_model_name,
+        )
     except Exception as exc:
         raise GenerationError(f"failed to create RAGAS judge client: {exc}") from exc
 
@@ -442,8 +477,11 @@ def build_openai_ragas_judge(
         system_prompt=_ABSTENTION_SYSTEM_PROMPT,
     )
     return RagasJudge(
-        faithfulness=Faithfulness(llm=ragas_llm),
-        answer_relevancy=AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),
+        faithfulness=cast(_ScoredMetric, Faithfulness(llm=ragas_llm)),
+        answer_relevancy=cast(
+            _ScoredMetric,
+            AnswerRelevancy(llm=ragas_llm, embeddings=ragas_embeddings),
+        ),
         abstention_llm=abstention_llm,
         identity=ModelIdentity(
             provider="openai",
@@ -454,4 +492,5 @@ def build_openai_ragas_judge(
         ),
         cache=cache,
         max_in_flight=max_in_flight,
+        closeables=(openai_client, embeddings_client),
     )

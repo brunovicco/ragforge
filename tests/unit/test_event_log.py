@@ -5,6 +5,8 @@ import dataclasses
 import json
 from pathlib import Path
 
+import pytest
+
 from ragforge.evaluation.event_log import EventLog, compute_event_hash
 from ragforge.evaluation.lineage_ports import EventEnvelope
 
@@ -41,6 +43,29 @@ def test_emit_writes_one_json_line_per_event(tmp_path: Path) -> None:
     lines = (tmp_path / "events.jsonl").read_text(encoding="utf-8").splitlines()
     assert len(lines) == 2
     assert [json.loads(line)["sequence"] for line in lines] == [1, 2]
+
+
+def test_reopened_log_continues_the_existing_sequence_and_hash_chain(tmp_path: Path) -> None:
+    """--resume appends to ADR-0017 evidence instead of starting a second chain."""
+    path = tmp_path / "events.jsonl"
+    original = EventLog("run-1", path)
+    original.emit("indexing", "started", {"stage": "base"})
+    previous = original.emit("indexing", "completed", {"stage": "base"})
+
+    resumed = EventLog("run-1", path)
+    appended = resumed.emit("strategy", "started", {"label": "dense"})
+
+    assert appended.sequence == 3
+    assert appended.previous_event_hash == previous.event_hash
+
+
+def test_reopened_log_rejects_a_different_run_id(tmp_path: Path) -> None:
+    """Evidence from one run cannot be extended under another run identity."""
+    path = tmp_path / "events.jsonl"
+    EventLog("run-1", path).emit("indexing", "started", {"stage": "base"})
+
+    with pytest.raises(ValueError, match="run_id mismatch"):
+        EventLog("run-2", path)
 
 
 def test_emit_defaults_correlation_id_to_the_run_id(tmp_path: Path) -> None:
