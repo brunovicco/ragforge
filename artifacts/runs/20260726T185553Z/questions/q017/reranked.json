@@ -1,0 +1,101 @@
+{
+  "question_record": {
+    "question_id": "q017",
+    "query_class": "unanswerable",
+    "strategy": "reranked",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-54",
+      "LEI-13709/2018::art-54::par-unico",
+      "ICVM-607/2019::art-71::par-4",
+      "ICVM-607/2019::art-61",
+      "ICVM-607/2019::art-61::inc-i",
+      "ICVM-607/2019::art-61::inc-ii",
+      "ICVM-607/2019::art-61::inc-iii",
+      "ICVM-607/2019::art-61::inc-iv",
+      "ICVM-607/2019::art-61::par-1",
+      "ICVM-607/2019::art-61::par-2",
+      "LEI-13709/2018::art-52::par-4",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre a \"RES-CMN-5274/2025\" ou sobre prazos de adaptação até março de 2026, portanto não é possível responder à sua pergunta com base nos documentos disponibilizados.",
+    "answer_citations": [],
+    "metrics": {
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.0,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q017",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-54",
+      "structural_ids": [
+        "LEI-13709/2018::art-54",
+        "LEI-13709/2018::art-54::par-unico"
+      ],
+      "raw_score": 3.428812026977539
+    },
+    {
+      "query_id": "q017",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-71::par-4",
+      "structural_ids": [
+        "ICVM-607/2019::art-71::par-4"
+      ],
+      "raw_score": 0.9156650304794312
+    },
+    {
+      "query_id": "q017",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-61",
+      "structural_ids": [
+        "ICVM-607/2019::art-61",
+        "ICVM-607/2019::art-61::inc-i",
+        "ICVM-607/2019::art-61::inc-ii",
+        "ICVM-607/2019::art-61::inc-iii",
+        "ICVM-607/2019::art-61::inc-iv",
+        "ICVM-607/2019::art-61::par-1",
+        "ICVM-607/2019::art-61::par-2"
+      ],
+      "raw_score": 0.7876455783843994
+    },
+    {
+      "query_id": "q017",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-52::par-4",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::par-4"
+      ],
+      "raw_score": 0.44769734144210815
+    },
+    {
+      "query_id": "q017",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": -0.4516361355781555
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "latest_run_id": "20260726T185553Z",
+  "runs": [
+    {
+      "run_id": "20260726T185553Z",
+      "title": "RAGForge v0.1 deterministic stratified benchmark",
+      "sample": {
+        "kind": "deterministic_stratified_sample",
+        "question_count": 60,
+        "source_split_question_count": 194,
+        "sampling_seed": "regrag-br-benchmark-sample-v1"
+      },
+      "recommendation": {
+        "strategy": "sac",
+        "rationale": "Best balanced profile in this run: highest nDCG@5, MRR, and citation accuracy, with zero document-level retrieval mismatch.",
+        "scope": "RAGForge v0.1 deterministic stratified sample of 60 test questions; not a claim about the complete 194-question test split."
+      }
+    }
+  ]
+}

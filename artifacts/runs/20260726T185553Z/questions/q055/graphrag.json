@@ -1,0 +1,91 @@
+{
+  "question_record": {
+    "question_id": "q055",
+    "query_class": "exact_factual",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-7::par-1",
+      "LEI-13709/2018::art-18::inc-ix",
+      "LEI-13709/2018::art-11::par-2",
+      "LEI-13709/2018::art-4::par-2",
+      "LC-105/2001::art-8"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre como o consentimento do titular deve ser fornecido, mencionando apenas a revogação do consentimento nos termos do § 5º do art. 8º da LGPD [LEI-13709/2018::art-18::inc-ix].",
+    "answer_citations": [
+      "LEI-13709/2018::art-18::inc-ix"
+    ],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.0,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q055",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-7::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::par-1"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q055",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-18::inc-ix",
+      "structural_ids": [
+        "LEI-13709/2018::art-18::inc-ix"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q055",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-11::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-11::par-2"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q055",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-4::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q055",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LC-105/2001::art-8",
+      "structural_ids": [
+        "LC-105/2001::art-8"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

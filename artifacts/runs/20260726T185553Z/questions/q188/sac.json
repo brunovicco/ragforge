@@ -1,0 +1,118 @@
+{
+  "question_record": {
+    "question_id": "q188",
+    "query_class": "section_comparative",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-93",
+      "ICVM-607/2019::art-93::par-1",
+      "ICVM-607/2019::art-93::par-2",
+      "ICVM-607/2019::art-93::par-3",
+      "ICVM-607/2019::art-93::par-4",
+      "ICVM-607/2019::art-89",
+      "ICVM-607/2019::art-89::par-1",
+      "ICVM-607/2019::art-89::par-2",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-92::inc-i",
+      "ICVM-607/2019::art-92::inc-ii"
+    ],
+    "answer_text": "Os efeitos dos dois institutos previstos na Instrução CVM nº 607/2019 são distintos conforme a natureza do acordo:\n\n**Termo de Compromisso (art. 88):**\nA celebração do termo de compromisso produz os seguintes efeitos:\n*   A suspensão de um processo administrativo que já esteja em curso, durante o prazo estipulado para o cumprimento do compromisso [ICVM-607/2019::art-88::inc-i]; ou\n*   A não instauração de processo administrativo sancionador, caso a proposta seja apresentada antes ou durante a fase de apuração [ICVM-607/2019::art-88::inc-ii].\n\n**Acordo de Supervisão (art. 92):**\nA celebração do Acordo de Supervisão, que exige a confissão da prática de infração e cooperação efetiva, plena e permanente, produz os seguintes efeitos:\n*   A extinção da ação punitiva da CVM; ou\n*   A redução de 1/3 (um terço) a 2/3 (dois terços) da penalidade aplicável [ICVM-607/2019::art-92].\n\nVale ressaltar que, diferentemente do termo de compromisso, a proposta de Acordo de Supervisão não impede as atividades de investigação, instrução ou a tramitação de processo administrativo sancionador que já tenha sido instaurado para apurar as condutas narradas [ICVM-607/2019::art-93::par-2].",
+    "answer_citations": [
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-93::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.8503449055347546,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8327270764043573,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.25
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 0.7986857645271707
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 0.7840135856728204
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-93",
+      "structural_ids": [
+        "ICVM-607/2019::art-93",
+        "ICVM-607/2019::art-93::par-1",
+        "ICVM-607/2019::art-93::par-2",
+        "ICVM-607/2019::art-93::par-3",
+        "ICVM-607/2019::art-93::par-4"
+      ],
+      "raw_score": 0.7779571200995071
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-89",
+      "structural_ids": [
+        "ICVM-607/2019::art-89",
+        "ICVM-607/2019::art-89::par-1",
+        "ICVM-607/2019::art-89::par-2"
+      ],
+      "raw_score": 0.7755264696243211
+    },
+    {
+      "query_id": "q188",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-92",
+      "structural_ids": [
+        "ICVM-607/2019::art-92",
+        "ICVM-607/2019::art-92::inc-i",
+        "ICVM-607/2019::art-92::inc-ii"
+      ],
+      "raw_score": 0.774684856814289
+    }
+  ]
+}

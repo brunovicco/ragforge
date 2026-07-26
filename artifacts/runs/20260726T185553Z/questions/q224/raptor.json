@@ -1,0 +1,163 @@
+{
+  "question_record": {
+    "question_id": "q224",
+    "query_class": "exact_factual",
+    "strategy": "raptor",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-31",
+      "ICVM-607/2019::art-31::par-1",
+      "ICVM-607/2019::art-31::par-2",
+      "ICVM-607/2019::art-32",
+      "ICVM-607/2019::art-32::inc-i",
+      "ICVM-607/2019::art-32::inc-ii",
+      "ICVM-607/2019::art-32::inc-iii",
+      "ICVM-607/2019::art-32::inc-iv",
+      "ICVM-607/2019::art-32::inc-v",
+      "ICVM-607/2019::art-32::inc-vi",
+      "ICVM-607/2019::art-32::par-1",
+      "ICVM-607/2019::art-32::par-2",
+      "ICVM-607/2019::art-32::par-3",
+      "ICVM-607/2019::art-32::par-4",
+      "ICVM-607/2019::art-32::par-5",
+      "ICVM-607/2019::art-33",
+      "ICVM-607/2019::art-34",
+      "ICVM-607/2019::art-35",
+      "ICVM-607/2019::art-36",
+      "ICVM-607/2019::art-36::inc-i",
+      "ICVM-607/2019::art-36::inc-ii",
+      "ICVM-607/2019::art-36::par-1",
+      "ICVM-607/2019::art-36::par-2",
+      "ICVM-607/2019::art-36::par-3",
+      "ICVM-607/2019::art-36::par-4",
+      "ICVM-607/2019::art-36::par-5",
+      "ICVM-607/2019::art-36::par-6",
+      "ICVM-607/2019::art-36::par-6-inc-i",
+      "ICVM-607/2019::art-36::par-6-inc-ii"
+    ],
+    "answer_text": "Segundo o art. 31, § 1º da Instrução CVM nº 607/2019, o sorteio deve ser realizado de forma ostensiva, durante reunião ordinária do Colegiado, utilizando um mecanismo passível de verificação que assegure a distribuição uniforme de processos entre os membros do Colegiado [ICVM-607/2019::art-31::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-31::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.6,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6822167466589241,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q224",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-31::raptor-l1-10",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2",
+        "ICVM-607/2019::art-32",
+        "ICVM-607/2019::art-32::inc-i",
+        "ICVM-607/2019::art-32::inc-ii",
+        "ICVM-607/2019::art-32::inc-iii",
+        "ICVM-607/2019::art-32::inc-iv",
+        "ICVM-607/2019::art-32::inc-v",
+        "ICVM-607/2019::art-32::inc-vi",
+        "ICVM-607/2019::art-32::par-1",
+        "ICVM-607/2019::art-32::par-2",
+        "ICVM-607/2019::art-32::par-3",
+        "ICVM-607/2019::art-32::par-4",
+        "ICVM-607/2019::art-32::par-5"
+      ],
+      "raw_score": 0.8016708079437699
+    },
+    {
+      "query_id": "q224",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-31",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2"
+      ],
+      "raw_score": 0.7925580159925483
+    },
+    {
+      "query_id": "q224",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-32::par-3::raptor-l1-12",
+      "structural_ids": [
+        "ICVM-607/2019::art-32::par-3",
+        "ICVM-607/2019::art-32::par-4",
+        "ICVM-607/2019::art-32::par-5",
+        "ICVM-607/2019::art-33",
+        "ICVM-607/2019::art-34"
+      ],
+      "raw_score": 0.7655827678258303
+    },
+    {
+      "query_id": "q224",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-31::raptor-l1-10::raptor-l2-2",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2",
+        "ICVM-607/2019::art-32",
+        "ICVM-607/2019::art-32::inc-i",
+        "ICVM-607/2019::art-32::inc-ii",
+        "ICVM-607/2019::art-32::inc-iii",
+        "ICVM-607/2019::art-32::inc-iv",
+        "ICVM-607/2019::art-32::inc-v",
+        "ICVM-607/2019::art-32::inc-vi",
+        "ICVM-607/2019::art-32::par-1",
+        "ICVM-607/2019::art-32::par-2",
+        "ICVM-607/2019::art-32::par-3",
+        "ICVM-607/2019::art-32::par-4",
+        "ICVM-607/2019::art-32::par-5",
+        "ICVM-607/2019::art-33",
+        "ICVM-607/2019::art-34",
+        "ICVM-607/2019::art-35",
+        "ICVM-607/2019::art-36",
+        "ICVM-607/2019::art-36::inc-i",
+        "ICVM-607/2019::art-36::inc-ii",
+        "ICVM-607/2019::art-36::par-1",
+        "ICVM-607/2019::art-36::par-2",
+        "ICVM-607/2019::art-36::par-3",
+        "ICVM-607/2019::art-36::par-4",
+        "ICVM-607/2019::art-36::par-5",
+        "ICVM-607/2019::art-36::par-6",
+        "ICVM-607/2019::art-36::par-6-inc-i",
+        "ICVM-607/2019::art-36::par-6-inc-ii"
+      ],
+      "raw_score": 0.7611344717970489
+    },
+    {
+      "query_id": "q224",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-33",
+      "structural_ids": [
+        "ICVM-607/2019::art-33"
+      ],
+      "raw_score": 0.7083098577054681
+    }
+  ]
+}

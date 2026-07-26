@@ -1,0 +1,104 @@
+{
+  "question_record": {
+    "question_id": "q188",
+    "query_class": "section_comparative",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii",
+      "ICVM-607/2019::art-101::par-5",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-89",
+      "ICVM-607/2019::art-89::par-1",
+      "ICVM-607/2019::art-89::par-2",
+      "ICVM-607/2019::art-91"
+    ],
+    "answer_text": "Com base no contexto fornecido, não é possível responder à sua pergunta. O texto disponibilizado não contém o artigo 92 da Instrução CVM nº 607/2019, que trata do Acordo de Supervisão, impossibilitando a comparação solicitada.\n\nQuanto aos efeitos do termo de compromisso, o artigo 88 estabelece que a sua celebração tem por efeito:\n* A suspensão do processo administrativo em curso, pelo prazo estipulado para o cumprimento do compromisso [ICVM-607/2019::art-88::inc-i]; ou\n* A não instauração de processo administrativo sancionador, nos casos em que a proposta for apresentada ainda em fase de apuração ou antes desta [ICVM-607/2019::art-88::inc-ii].",
+    "answer_citations": [
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii"
+    ],
+    "metrics": {
+      "recall_at_k": 0.5,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.6131471927654584,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.5714285714285714,
+      "answer_relevancy": 0.7488437327561522,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q188",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 5.155935287475586
+    },
+    {
+      "query_id": "q188",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-101::par-5",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::par-5"
+      ],
+      "raw_score": 2.7709312438964844
+    },
+    {
+      "query_id": "q188",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 2.5272927284240723
+    },
+    {
+      "query_id": "q188",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-89",
+      "structural_ids": [
+        "ICVM-607/2019::art-89",
+        "ICVM-607/2019::art-89::par-1",
+        "ICVM-607/2019::art-89::par-2"
+      ],
+      "raw_score": 1.460289478302002
+    },
+    {
+      "query_id": "q188",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-91",
+      "structural_ids": [
+        "ICVM-607/2019::art-91"
+      ],
+      "raw_score": 1.3368208408355713
+    }
+  ]
+}

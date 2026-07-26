@@ -1,0 +1,107 @@
+{
+  "question_record": {
+    "question_id": "q152",
+    "query_class": "numeric_tabular",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-72",
+      "ICVM-607/2019::art-72::par-unico",
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-64",
+      "ICVM-607/2019::art-64::par-unico",
+      "ICVM-607/2019::art-67",
+      "ICVM-607/2019::art-67::par-unico"
+    ],
+    "answer_text": "Segundo o art. 63, § 3º da Instrução CVM nº 607/2019, a pena-base das penalidades descritas nos incisos III a VI do art. 60 deve ser fixada em meses e não pode ser superior a 10 (dez) anos [ICVM-607/2019::art-63::par-3].",
+    "answer_citations": [
+      "ICVM-607/2019::art-63::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8342711081433558,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q152",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 5.30079460144043
+    },
+    {
+      "query_id": "q152",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-72",
+      "structural_ids": [
+        "ICVM-607/2019::art-72",
+        "ICVM-607/2019::art-72::par-unico"
+      ],
+      "raw_score": 4.040460586547852
+    },
+    {
+      "query_id": "q152",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 3.67807936668396
+    },
+    {
+      "query_id": "q152",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-64",
+      "structural_ids": [
+        "ICVM-607/2019::art-64",
+        "ICVM-607/2019::art-64::par-unico"
+      ],
+      "raw_score": 2.964860439300537
+    },
+    {
+      "query_id": "q152",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-67",
+      "structural_ids": [
+        "ICVM-607/2019::art-67",
+        "ICVM-607/2019::art-67::par-unico"
+      ],
+      "raw_score": 2.865565299987793
+    }
+  ]
+}

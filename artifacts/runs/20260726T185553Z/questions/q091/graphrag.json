@@ -1,0 +1,141 @@
+{
+  "question_record": {
+    "question_id": "q091",
+    "query_class": "unanswerable",
+    "strategy": "graphrag",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-52::inc-iii",
+      "ICVM-607/2019::art-113::inc-viii",
+      "ICVM-607/2019::art-113",
+      "ICVM-607/2019::art-113::inc-i",
+      "ICVM-607/2019::art-113::inc-ii",
+      "ICVM-607/2019::art-113::inc-iii",
+      "ICVM-607/2019::art-113::inc-iv",
+      "ICVM-607/2019::art-113::inc-v",
+      "ICVM-607/2019::art-113::inc-vi",
+      "ICVM-607/2019::art-113::inc-vii",
+      "ICVM-607/2019::art-113::inc-ix",
+      "ICVM-607/2019::art-113::inc-x",
+      "ICVM-607/2019::art-61",
+      "ICVM-607/2019::art-61::inc-i",
+      "ICVM-607/2019::art-61::inc-ii",
+      "ICVM-607/2019::art-61::inc-iii",
+      "ICVM-607/2019::art-61::inc-iv",
+      "ICVM-607/2019::art-61::par-1",
+      "ICVM-607/2019::art-61::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o valor mínimo da multa diária prevista no art. 52, inciso III, da Lei nº 13.709/2018 (LGPD). O documento apenas menciona a existência da penalidade de multa diária [LEI-13709/2018::art-52::inc-iii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-52::inc-iii"
+    ],
+    "metrics": {
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.7655721987979026,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q091",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-52::inc-iii",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::inc-iii"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q091",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-113::inc-viii",
+      "structural_ids": [
+        "ICVM-607/2019::art-113::inc-viii"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q091",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-113",
+      "structural_ids": [
+        "ICVM-607/2019::art-113",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix",
+        "ICVM-607/2019::art-113::inc-x",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q091",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-61",
+      "structural_ids": [
+        "ICVM-607/2019::art-61",
+        "ICVM-607/2019::art-61::inc-i",
+        "ICVM-607/2019::art-61::inc-ii",
+        "ICVM-607/2019::art-61::inc-iii",
+        "ICVM-607/2019::art-61::inc-iv",
+        "ICVM-607/2019::art-61::par-1",
+        "ICVM-607/2019::art-61::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q091",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-113::inc-v",
+      "structural_ids": [
+        "ICVM-607/2019::art-113::inc-v"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

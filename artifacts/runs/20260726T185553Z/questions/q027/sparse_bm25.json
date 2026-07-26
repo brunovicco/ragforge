@@ -1,0 +1,97 @@
+{
+  "question_record": {
+    "question_id": "q027",
+    "query_class": "exact_factual",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-18",
+      "RES-CMN-4893/2021::preamble",
+      "RES-CMN-4893/2021::art-26",
+      "RES-CMN-4893/2021::art-25",
+      "RES-CMN-4893/2021::art-25::inc-i",
+      "RES-CMN-4893/2021::art-25::inc-ii",
+      "RES-CMN-4893/2021::art-25::par-unico",
+      "RES-CMN-5274/2025::preamble"
+    ],
+    "answer_text": "O disposto nos arts. 11 a 17 da Resolução CMN nº 4.893/2021 não se aplica à contratação de sistemas operados por câmaras, por prestadores de serviços de compensação e de liquidação ou por entidades que exerçam atividades de registro ou de depósito centralizado [RES-CMN-4893/2021::art-18].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-18"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6702926072205373,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q027",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-18",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-18"
+      ],
+      "raw_score": 28.005539
+    },
+    {
+      "query_id": "q027",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::preamble",
+      "structural_ids": [
+        "RES-CMN-4893/2021::preamble"
+      ],
+      "raw_score": 23.179258
+    },
+    {
+      "query_id": "q027",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-26",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-26"
+      ],
+      "raw_score": 21.910696
+    },
+    {
+      "query_id": "q027",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-4893/2021::art-25",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-25",
+        "RES-CMN-4893/2021::art-25::inc-i",
+        "RES-CMN-4893/2021::art-25::inc-ii",
+        "RES-CMN-4893/2021::art-25::par-unico"
+      ],
+      "raw_score": 19.862257
+    },
+    {
+      "query_id": "q027",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-5274/2025::preamble",
+      "structural_ids": [
+        "RES-CMN-5274/2025::preamble"
+      ],
+      "raw_score": 19.437975
+    }
+  ]
+}

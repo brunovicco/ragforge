@@ -1,0 +1,133 @@
+{
+  "question_record": {
+    "question_id": "q097",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-61",
+      "RES-CMN-4893/2021::art-17::par-unico",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b",
+      "ICVM-607/2019::art-71",
+      "ICVM-607/2019::art-71::par-1",
+      "ICVM-607/2019::art-71::par-2",
+      "ICVM-607/2019::art-71::par-3",
+      "ICVM-607/2019::art-71::par-3-inc-i",
+      "ICVM-607/2019::art-71::par-3-inc-ii",
+      "ICVM-607/2019::art-71::par-4",
+      "ICVM-607/2019::art-71::par-5",
+      "ICVM-607/2019::art-71::par-6",
+      "ICVM-607/2019::art-71::par-7",
+      "ICVM-607/2019::art-103::par-2",
+      "ICVM-607/2019::art-103::par-2-inc-i",
+      "ICVM-607/2019::art-103::par-2-inc-ii",
+      "LEI-13709/2018::art-34",
+      "LEI-13709/2018::art-34::inc-i",
+      "LEI-13709/2018::art-34::inc-ii",
+      "LEI-13709/2018::art-34::inc-iii",
+      "LEI-13709/2018::art-34::inc-iv",
+      "LEI-13709/2018::art-34::inc-v",
+      "LEI-13709/2018::art-34::inc-vi"
+    ],
+    "answer_text": "Segundo o art. 61 da Lei nº 13.709/2018, a empresa estrangeira será notificada e intimada de todos os atos processuais previstos na referida Lei na pessoa do agente, representante ou pessoa responsável por sua filial, agência, sucursal, estabelecimento ou escritório instalado no Brasil [LEI-13709/2018::art-61]. Essa notificação ocorre independentemente de procuração ou de disposição contratual ou estatutária [LEI-13709/2018::art-61].",
+    "answer_citations": [
+      "LEI-13709/2018::art-61"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.6,
+      "faithfulness": 0.75,
+      "answer_relevancy": 0.8451560479040213,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q097",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-61",
+      "structural_ids": [
+        "LEI-13709/2018::art-61"
+      ],
+      "raw_score": 8.147579193115234
+    },
+    {
+      "query_id": "q097",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-17::par-unico",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-17::par-unico",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b"
+      ],
+      "raw_score": 1.6303598880767822
+    },
+    {
+      "query_id": "q097",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-71",
+      "structural_ids": [
+        "ICVM-607/2019::art-71",
+        "ICVM-607/2019::art-71::par-1",
+        "ICVM-607/2019::art-71::par-2",
+        "ICVM-607/2019::art-71::par-3",
+        "ICVM-607/2019::art-71::par-3-inc-i",
+        "ICVM-607/2019::art-71::par-3-inc-ii",
+        "ICVM-607/2019::art-71::par-4",
+        "ICVM-607/2019::art-71::par-5",
+        "ICVM-607/2019::art-71::par-6",
+        "ICVM-607/2019::art-71::par-7"
+      ],
+      "raw_score": 1.5700459480285645
+    },
+    {
+      "query_id": "q097",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-103::par-2",
+      "structural_ids": [
+        "ICVM-607/2019::art-103::par-2",
+        "ICVM-607/2019::art-103::par-2-inc-i",
+        "ICVM-607/2019::art-103::par-2-inc-ii"
+      ],
+      "raw_score": 1.4751557111740112
+    },
+    {
+      "query_id": "q097",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-34",
+      "structural_ids": [
+        "LEI-13709/2018::art-34",
+        "LEI-13709/2018::art-34::inc-i",
+        "LEI-13709/2018::art-34::inc-ii",
+        "LEI-13709/2018::art-34::inc-iii",
+        "LEI-13709/2018::art-34::inc-iv",
+        "LEI-13709/2018::art-34::inc-v",
+        "LEI-13709/2018::art-34::inc-vi"
+      ],
+      "raw_score": 1.2039918899536133
+    }
+  ]
+}

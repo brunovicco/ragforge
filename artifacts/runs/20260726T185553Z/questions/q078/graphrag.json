@@ -1,0 +1,100 @@
+{
+  "question_record": {
+    "question_id": "q078",
+    "query_class": "exact_factual",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-27",
+      "LEI-13709/2018::art-27::inc-i",
+      "LEI-13709/2018::art-27::inc-ii",
+      "LEI-13709/2018::art-27::inc-iii",
+      "LEI-13709/2018::art-27::par-unico",
+      "LEI-13709/2018::art-4::par-3",
+      "LEI-13709/2018::art-5::inc-xvi",
+      "LEI-13709/2018::art-4::par-2",
+      "LEI-13709/2018::art-4::par-4"
+    ],
+    "answer_text": "Sim, a comunicação ou o uso compartilhado de dados pessoais de pessoa jurídica de direito público a pessoa de direito privado é permitida, desde que informada à autoridade nacional e mediante consentimento do titular, exceto nas hipóteses previstas em lei, incluindo as exceções constantes do § 1º do art. 26 da LGPD [LEI-13709/2018::art-27][LEI-13709/2018::art-27::inc-iii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-27",
+      "LEI-13709/2018::art-27::inc-iii"
+    ],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7195719782103974,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q078",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-27",
+      "structural_ids": [
+        "LEI-13709/2018::art-27",
+        "LEI-13709/2018::art-27::inc-i",
+        "LEI-13709/2018::art-27::inc-ii",
+        "LEI-13709/2018::art-27::inc-iii",
+        "LEI-13709/2018::art-27::par-unico"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q078",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-4::par-3",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-3"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q078",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-5::inc-xvi",
+      "structural_ids": [
+        "LEI-13709/2018::art-5::inc-xvi"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q078",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-4::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q078",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-4::par-4",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-4"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

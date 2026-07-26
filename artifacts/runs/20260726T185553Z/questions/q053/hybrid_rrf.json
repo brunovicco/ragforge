@@ -1,0 +1,110 @@
+{
+  "question_record": {
+    "question_id": "q053",
+    "query_class": "semantic",
+    "strategy": "hybrid_rrf",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-4::par-1",
+      "LEI-13709/2018::art-6",
+      "LEI-13709/2018::art-6::inc-i",
+      "LEI-13709/2018::art-6::inc-ii",
+      "LEI-13709/2018::art-6::inc-iii",
+      "LEI-13709/2018::art-6::inc-iv",
+      "LEI-13709/2018::art-6::inc-v",
+      "LEI-13709/2018::art-6::inc-vi",
+      "LEI-13709/2018::art-6::inc-vii",
+      "LEI-13709/2018::art-6::inc-viii",
+      "LEI-13709/2018::art-6::inc-ix",
+      "LEI-13709/2018::art-6::inc-x",
+      "LEI-13709/2018::art-36",
+      "LEI-13709/2018::art-7::par-6"
+    ],
+    "answer_text": "O princípio da necessidade caracteriza-se pela limitação do tratamento de dados ao mínimo necessário para a realização de suas finalidades [LEI-13709/2018::art-6::inc-iii]. Isso implica que os dados tratados devem ser pertinentes, proporcionais e não excessivos em relação aos propósitos do tratamento [LEI-13709/2018::art-6::inc-iii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-6::inc-iii"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.6309297535714575,
+      "mrr": 0.5,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.875904884106563,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q053",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-4::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-1"
+      ],
+      "raw_score": 0.032266458495966696
+    },
+    {
+      "query_id": "q053",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-6",
+      "structural_ids": [
+        "LEI-13709/2018::art-6",
+        "LEI-13709/2018::art-6::inc-i",
+        "LEI-13709/2018::art-6::inc-ii",
+        "LEI-13709/2018::art-6::inc-iii",
+        "LEI-13709/2018::art-6::inc-iv",
+        "LEI-13709/2018::art-6::inc-v",
+        "LEI-13709/2018::art-6::inc-vi",
+        "LEI-13709/2018::art-6::inc-vii",
+        "LEI-13709/2018::art-6::inc-viii",
+        "LEI-13709/2018::art-6::inc-ix",
+        "LEI-13709/2018::art-6::inc-x"
+      ],
+      "raw_score": 0.03225806451612903
+    },
+    {
+      "query_id": "q053",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-6::inc-iii",
+      "structural_ids": [
+        "LEI-13709/2018::art-6::inc-iii"
+      ],
+      "raw_score": 0.01639344262295082
+    },
+    {
+      "query_id": "q053",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-36",
+      "structural_ids": [
+        "LEI-13709/2018::art-36"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q053",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-7::par-6",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::par-6"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

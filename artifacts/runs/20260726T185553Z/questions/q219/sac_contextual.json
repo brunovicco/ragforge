@@ -1,0 +1,162 @@
+{
+  "question_record": {
+    "question_id": "q219",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-101::par-8",
+      "ICVM-607/2019::art-101",
+      "ICVM-607/2019::art-101::inc-i",
+      "ICVM-607/2019::art-101::inc-ii",
+      "ICVM-607/2019::art-101::inc-iii",
+      "ICVM-607/2019::art-101::inc-iv",
+      "ICVM-607/2019::art-101::inc-v",
+      "ICVM-607/2019::art-101::inc-vi",
+      "ICVM-607/2019::art-101::inc-vii",
+      "ICVM-607/2019::art-101::inc-viii",
+      "ICVM-607/2019::art-101::inc-viii-ali-a",
+      "ICVM-607/2019::art-101::inc-viii-ali-b",
+      "ICVM-607/2019::art-101::inc-viii-ali-c",
+      "ICVM-607/2019::art-101::inc-viii-ali-d",
+      "ICVM-607/2019::art-101::inc-viii-ali-e",
+      "ICVM-607/2019::art-101::inc-viii-ali-f",
+      "ICVM-607/2019::art-101::inc-viii-ali-g",
+      "ICVM-607/2019::art-101::inc-ix",
+      "ICVM-607/2019::art-101::inc-x",
+      "ICVM-607/2019::art-101::inc-xi",
+      "ICVM-607/2019::art-101::inc-xii",
+      "ICVM-607/2019::art-101::inc-xiii",
+      "ICVM-607/2019::art-101::par-1",
+      "ICVM-607/2019::art-101::par-1-inc-i",
+      "ICVM-607/2019::art-101::par-1-inc-ii",
+      "ICVM-607/2019::art-101::par-1-inc-iii",
+      "ICVM-607/2019::art-101::par-1-inc-iv",
+      "ICVM-607/2019::art-101::par-2",
+      "ICVM-607/2019::art-101::par-3",
+      "ICVM-607/2019::art-101::par-4",
+      "ICVM-607/2019::art-101::par-5",
+      "ICVM-607/2019::art-101::par-6",
+      "ICVM-607/2019::art-101::par-7",
+      "ICVM-607/2019::art-100",
+      "ICVM-607/2019::art-100::par-unico",
+      "ICVM-607/2019::art-104"
+    ],
+    "answer_text": "Não. De acordo com o art. 101, § 8º da Instrução CVM nº 607/2019, a assinatura do Acordo de Supervisão não exime o signatário da obrigação de reparar integralmente o dano porventura causado pela sua conduta [ICVM-607/2019::art-101::par-8].",
+    "answer_citations": [
+      "ICVM-607/2019::art-101::par-8"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.8495829600226523,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q219",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-101::par-8",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::par-8"
+      ],
+      "raw_score": 0.8215890150154156
+    },
+    {
+      "query_id": "q219",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-101",
+      "structural_ids": [
+        "ICVM-607/2019::art-101",
+        "ICVM-607/2019::art-101::inc-i",
+        "ICVM-607/2019::art-101::inc-ii",
+        "ICVM-607/2019::art-101::inc-iii",
+        "ICVM-607/2019::art-101::inc-iv",
+        "ICVM-607/2019::art-101::inc-v",
+        "ICVM-607/2019::art-101::inc-vi",
+        "ICVM-607/2019::art-101::inc-vii",
+        "ICVM-607/2019::art-101::inc-viii",
+        "ICVM-607/2019::art-101::inc-viii-ali-a",
+        "ICVM-607/2019::art-101::inc-viii-ali-b",
+        "ICVM-607/2019::art-101::inc-viii-ali-c",
+        "ICVM-607/2019::art-101::inc-viii-ali-d",
+        "ICVM-607/2019::art-101::inc-viii-ali-e",
+        "ICVM-607/2019::art-101::inc-viii-ali-f",
+        "ICVM-607/2019::art-101::inc-viii-ali-g",
+        "ICVM-607/2019::art-101::inc-ix",
+        "ICVM-607/2019::art-101::inc-x",
+        "ICVM-607/2019::art-101::inc-xi",
+        "ICVM-607/2019::art-101::inc-xii",
+        "ICVM-607/2019::art-101::inc-xiii",
+        "ICVM-607/2019::art-101::par-1",
+        "ICVM-607/2019::art-101::par-1-inc-i",
+        "ICVM-607/2019::art-101::par-1-inc-ii",
+        "ICVM-607/2019::art-101::par-1-inc-iii",
+        "ICVM-607/2019::art-101::par-1-inc-iv",
+        "ICVM-607/2019::art-101::par-2",
+        "ICVM-607/2019::art-101::par-3",
+        "ICVM-607/2019::art-101::par-4",
+        "ICVM-607/2019::art-101::par-5",
+        "ICVM-607/2019::art-101::par-6",
+        "ICVM-607/2019::art-101::par-7",
+        "ICVM-607/2019::art-101::par-8"
+      ],
+      "raw_score": 0.7781696867833265
+    },
+    {
+      "query_id": "q219",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-101::inc-viii",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-viii",
+        "ICVM-607/2019::art-101::inc-viii-ali-a",
+        "ICVM-607/2019::art-101::inc-viii-ali-b",
+        "ICVM-607/2019::art-101::inc-viii-ali-c",
+        "ICVM-607/2019::art-101::inc-viii-ali-d",
+        "ICVM-607/2019::art-101::inc-viii-ali-e",
+        "ICVM-607/2019::art-101::inc-viii-ali-f",
+        "ICVM-607/2019::art-101::inc-viii-ali-g"
+      ],
+      "raw_score": 0.7748821866740796
+    },
+    {
+      "query_id": "q219",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-100",
+      "structural_ids": [
+        "ICVM-607/2019::art-100",
+        "ICVM-607/2019::art-100::par-unico"
+      ],
+      "raw_score": 0.7725369358277823
+    },
+    {
+      "query_id": "q219",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-104",
+      "structural_ids": [
+        "ICVM-607/2019::art-104"
+      ],
+      "raw_score": 0.7626573849827687
+    }
+  ]
+}

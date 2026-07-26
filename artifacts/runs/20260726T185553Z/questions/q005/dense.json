@@ -1,0 +1,156 @@
+{
+  "question_record": {
+    "question_id": "q005",
+    "query_class": "exact_factual",
+    "strategy": "dense",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LC-105/2001::art-6",
+      "LC-105/2001::art-6::par-unico",
+      "LC-105/2001::preamble",
+      "LC-105/2001::art-5",
+      "LC-105/2001::art-5::par-1",
+      "LC-105/2001::art-5::par-1-inc-i",
+      "LC-105/2001::art-5::par-1-inc-ii",
+      "LC-105/2001::art-5::par-1-inc-iii",
+      "LC-105/2001::art-5::par-1-inc-iv",
+      "LC-105/2001::art-5::par-1-inc-v",
+      "LC-105/2001::art-5::par-1-inc-vi",
+      "LC-105/2001::art-5::par-1-inc-vii",
+      "LC-105/2001::art-5::par-1-inc-viii",
+      "LC-105/2001::art-5::par-1-inc-ix",
+      "LC-105/2001::art-5::par-1-inc-x",
+      "LC-105/2001::art-5::par-1-inc-xi",
+      "LC-105/2001::art-5::par-1-inc-xii",
+      "LC-105/2001::art-5::par-1-inc-xiii",
+      "LC-105/2001::art-5::par-1-inc-xiv",
+      "LC-105/2001::art-5::par-1-inc-xv",
+      "LC-105/2001::art-5::par-2",
+      "LC-105/2001::art-5::par-3",
+      "LC-105/2001::art-5::par-4",
+      "LC-105/2001::art-5::par-5",
+      "LC-105/2001::art-2",
+      "LC-105/2001::art-2::par-1",
+      "LC-105/2001::art-2::par-1-inc-i",
+      "LC-105/2001::art-2::par-1-inc-ii",
+      "LC-105/2001::art-2::par-2",
+      "LC-105/2001::art-2::par-3",
+      "LC-105/2001::art-2::par-4",
+      "LC-105/2001::art-2::par-4-inc-i",
+      "LC-105/2001::art-2::par-4-inc-ii",
+      "LC-105/2001::art-2::par-4-inc-ii-ali-a",
+      "LC-105/2001::art-2::par-4-inc-ii-ali-b",
+      "LC-105/2001::art-2::par-5",
+      "LC-105/2001::art-2::par-6"
+    ],
+    "answer_text": "De acordo com o art. 6º da LC 105/2001, as autoridades e os agentes fiscais tributários da União, dos Estados, do Distrito Federal e dos Municípios podem examinar documentos, livros e registros de instituições financeiras (incluindo contas de depósitos e aplicações financeiras) apenas quando houver um processo administrativo instaurado ou um procedimento fiscal em curso, e desde que tais exames sejam considerados indispensáveis pela autoridade administrativa competente [LC-105/2001::art-6].",
+    "answer_citations": [
+      "LC-105/2001::art-6"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8994493171734983,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q005",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LC-105/2001::art-6",
+      "structural_ids": [
+        "LC-105/2001::art-6",
+        "LC-105/2001::art-6::par-unico"
+      ],
+      "raw_score": 0.8431375777497297
+    },
+    {
+      "query_id": "q005",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LC-105/2001::preamble",
+      "structural_ids": [
+        "LC-105/2001::preamble"
+      ],
+      "raw_score": 0.7321235736474488
+    },
+    {
+      "query_id": "q005",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LC-105/2001::art-5",
+      "structural_ids": [
+        "LC-105/2001::art-5",
+        "LC-105/2001::art-5::par-1",
+        "LC-105/2001::art-5::par-1-inc-i",
+        "LC-105/2001::art-5::par-1-inc-ii",
+        "LC-105/2001::art-5::par-1-inc-iii",
+        "LC-105/2001::art-5::par-1-inc-iv",
+        "LC-105/2001::art-5::par-1-inc-v",
+        "LC-105/2001::art-5::par-1-inc-vi",
+        "LC-105/2001::art-5::par-1-inc-vii",
+        "LC-105/2001::art-5::par-1-inc-viii",
+        "LC-105/2001::art-5::par-1-inc-ix",
+        "LC-105/2001::art-5::par-1-inc-x",
+        "LC-105/2001::art-5::par-1-inc-xi",
+        "LC-105/2001::art-5::par-1-inc-xii",
+        "LC-105/2001::art-5::par-1-inc-xiii",
+        "LC-105/2001::art-5::par-1-inc-xiv",
+        "LC-105/2001::art-5::par-1-inc-xv",
+        "LC-105/2001::art-5::par-2",
+        "LC-105/2001::art-5::par-3",
+        "LC-105/2001::art-5::par-4",
+        "LC-105/2001::art-5::par-5"
+      ],
+      "raw_score": 0.713029225211108
+    },
+    {
+      "query_id": "q005",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LC-105/2001::art-2",
+      "structural_ids": [
+        "LC-105/2001::art-2",
+        "LC-105/2001::art-2::par-1",
+        "LC-105/2001::art-2::par-1-inc-i",
+        "LC-105/2001::art-2::par-1-inc-ii",
+        "LC-105/2001::art-2::par-2",
+        "LC-105/2001::art-2::par-3",
+        "LC-105/2001::art-2::par-4",
+        "LC-105/2001::art-2::par-4-inc-i",
+        "LC-105/2001::art-2::par-4-inc-ii",
+        "LC-105/2001::art-2::par-4-inc-ii-ali-a",
+        "LC-105/2001::art-2::par-4-inc-ii-ali-b",
+        "LC-105/2001::art-2::par-5",
+        "LC-105/2001::art-2::par-6"
+      ],
+      "raw_score": 0.7078943614894598
+    },
+    {
+      "query_id": "q005",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LC-105/2001::art-2::par-2",
+      "structural_ids": [
+        "LC-105/2001::art-2::par-2"
+      ],
+      "raw_score": 0.6998059740225437
+    }
+  ]
+}

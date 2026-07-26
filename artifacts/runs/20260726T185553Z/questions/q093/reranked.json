@@ -1,0 +1,154 @@
+{
+  "question_record": {
+    "question_id": "q093",
+    "query_class": "semantic",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-50::par-1",
+      "LEI-13709/2018::art-55-j::inc-viii",
+      "LEI-13709/2018::art-50",
+      "LEI-13709/2018::art-50::par-2",
+      "LEI-13709/2018::art-50::par-2-inc-i",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+      "LEI-13709/2018::art-50::par-2-inc-ii",
+      "LEI-13709/2018::art-50::par-3",
+      "LEI-13709/2018::art-48",
+      "LEI-13709/2018::art-48::par-1",
+      "LEI-13709/2018::art-48::par-1-inc-i",
+      "LEI-13709/2018::art-48::par-1-inc-ii",
+      "LEI-13709/2018::art-48::par-1-inc-iii",
+      "LEI-13709/2018::art-48::par-1-inc-iv",
+      "LEI-13709/2018::art-48::par-1-inc-v",
+      "LEI-13709/2018::art-48::par-1-inc-vi",
+      "LEI-13709/2018::art-48::par-2",
+      "LEI-13709/2018::art-48::par-2-inc-i",
+      "LEI-13709/2018::art-48::par-2-inc-ii",
+      "LEI-13709/2018::art-48::par-3",
+      "LEI-13709/2018::art-41",
+      "LEI-13709/2018::art-41::par-1",
+      "LEI-13709/2018::art-41::par-2",
+      "LEI-13709/2018::art-41::par-2-inc-i",
+      "LEI-13709/2018::art-41::par-2-inc-ii",
+      "LEI-13709/2018::art-41::par-2-inc-iii",
+      "LEI-13709/2018::art-41::par-2-inc-iv",
+      "LEI-13709/2018::art-41::par-3",
+      "LEI-13709/2018::art-41::par-4"
+    ],
+    "answer_text": "Ao estabelecer regras de boas práticas, o controlador deve levar em consideração, em relação ao tratamento e aos dados, a natureza, o escopo, a finalidade e a probabilidade e a gravidade dos riscos e dos benefícios decorrentes do tratamento de dados do titular [LEI-13709/2018::art-50::par-1].",
+    "answer_citations": [
+      "LEI-13709/2018::art-50::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7072253712423807,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q093",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-50::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-1"
+      ],
+      "raw_score": 8.391008377075195
+    },
+    {
+      "query_id": "q093",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-viii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-viii"
+      ],
+      "raw_score": 5.411920070648193
+    },
+    {
+      "query_id": "q093",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-50",
+      "structural_ids": [
+        "LEI-13709/2018::art-50",
+        "LEI-13709/2018::art-50::par-1",
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii",
+        "LEI-13709/2018::art-50::par-3"
+      ],
+      "raw_score": 5.391079425811768
+    },
+    {
+      "query_id": "q093",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-48",
+      "structural_ids": [
+        "LEI-13709/2018::art-48",
+        "LEI-13709/2018::art-48::par-1",
+        "LEI-13709/2018::art-48::par-1-inc-i",
+        "LEI-13709/2018::art-48::par-1-inc-ii",
+        "LEI-13709/2018::art-48::par-1-inc-iii",
+        "LEI-13709/2018::art-48::par-1-inc-iv",
+        "LEI-13709/2018::art-48::par-1-inc-v",
+        "LEI-13709/2018::art-48::par-1-inc-vi",
+        "LEI-13709/2018::art-48::par-2",
+        "LEI-13709/2018::art-48::par-2-inc-i",
+        "LEI-13709/2018::art-48::par-2-inc-ii",
+        "LEI-13709/2018::art-48::par-3"
+      ],
+      "raw_score": 4.992491245269775
+    },
+    {
+      "query_id": "q093",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-41",
+      "structural_ids": [
+        "LEI-13709/2018::art-41",
+        "LEI-13709/2018::art-41::par-1",
+        "LEI-13709/2018::art-41::par-2",
+        "LEI-13709/2018::art-41::par-2-inc-i",
+        "LEI-13709/2018::art-41::par-2-inc-ii",
+        "LEI-13709/2018::art-41::par-2-inc-iii",
+        "LEI-13709/2018::art-41::par-2-inc-iv",
+        "LEI-13709/2018::art-41::par-3",
+        "LEI-13709/2018::art-41::par-4"
+      ],
+      "raw_score": 4.258608341217041
+    }
+  ]
+}

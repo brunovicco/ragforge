@@ -1,0 +1,92 @@
+# RAGForge v0.1 main benchmark. Every README number is born from this file (ADR-0004).
+run_id: null  # assigned at run time; results land in experiments/<run-id>/
+corpus:
+  snapshot: datasets/corpus/
+  hash: null  # set by the snapshot script
+dataset:
+  path: datasets/regrag-br/
+  split: test  # dev split is reserved for router few-shot examples (ADR-0003)
+  # Cost-controlled comparison: deterministic, query-class-stratified sample.
+  # Remove max_questions only for the final full-test publication run.
+  max_questions: 60
+  sampling_seed: regrag-br-benchmark-sample-v1
+strategies:
+  - dense
+  - sparse_bm25
+  - hybrid_rrf
+  - reranked
+  - contextual
+  - parent_child
+  - sac
+  - sac_contextual
+  - raptor
+  - graphrag
+embedding:
+  # Canonical publishable configuration (ADR-0005/ADR-0013): the isolated
+  # PT-BR comparison selected gemini-embedding-001 on retrieval quality.
+  # configs/experiments/benchmark-local-v01.yaml keeps Qwen as the
+  # credential-free operational alternative without relabeling it a winner.
+  provider: gemini
+  model: gemini-embedding-001
+  # Matryoshka truncation keeps the vector within pgvector HNSW's limit.
+  dimensions: 1536
+generation:
+  # Not chosen via a dedicated comparison (unlike the embedding model,
+  # ADR-0005) - a placeholder, not a data-driven winner, matching the
+  # reranker model's status.
+  model: gemini-3.1-flash-lite
+  temperature: 0
+judge:
+  # ADR-0018: openai is the canonical judge for publishable results -
+  # independent from the Gemini answer generator, dated snapshot, never the
+  # floating "gpt-5.4-mini" alias. Requires OPENAI_API_KEY. Scores (RAGAS
+  # Faithfulness/Answer Relevancy plus this project's own abstention check)
+  # are unvalidated until the human-calibration exercise (kappa >= 0.6)
+  # happens - see src/ragforge/evaluation/judge_calibration.py.
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  embedding_model: text-embedding-3-small
+  reasoning_effort: medium
+  # Responses API budget includes hidden reasoning tokens and structured
+  # output. RAGAS's 1024-token default truncates long NLI judgments.
+  max_output_tokens: 8192
+  # Development fallback when no OpenAI credential is available (ADR-0018) -
+  # labeled "exploratory_same_provider_judge" in the run record, since
+  # generation is also Gemini-based:
+  #   provider: gemini
+  #   model: gemini-3.1-flash-lite
+  #   embedding_model: gemini-embedding-001
+  # (requires GEMINI_API_KEY or GOOGLE_API_KEY)
+audit:
+  # ADR-0016: post-generation citation/support audit. Off by default - the
+  # semantic verifier + possible rewrite/re-audit measurably increase LLM
+  # cost and latency per question (the ADR's own stated negative
+  # consequence), on top of generation and judging. Set enabled: true to
+  # turn it on; requires OPENAI_API_KEY (openai is the only supported
+  # audit provider today, same independence rationale as the ADR-0018
+  # judge).
+  enabled: false
+  provider: openai
+  model: gpt-5.4-mini-2026-03-17
+  reasoning_effort: medium
+retrieval:
+  top_k: 5
+  rerank_pool: 50
+llm_cache:
+  mode: live  # full deterministic replay remains future ADR-0004 work
+execution:
+  # ADR-0014. Both optional - omitting this whole section falls back to the
+  # same defaults. Not the full execution.stages.* schema from the ADR (a
+  # workers block per stage): only these two values actually control
+  # anything today - answer generation + judge scoring (run_bounded) and the
+  # Gemini ProviderLimiter shared by the embedder/generator/judge.
+  answer_quality_workers: 5
+  gemini_max_in_flight: 4
+  embedding_cache_dir: .ragforge/cache/embeddings
+  index_cache_dir: .ragforge/cache/indexes
+pricing:
+  # Prices are deliberately declared by the experiment, never hard-coded in
+  # code. Fill these with the provider's dated prices to publish cost.
+  generation:
+    input_per_million_usd: null
+    output_per_million_usd: null

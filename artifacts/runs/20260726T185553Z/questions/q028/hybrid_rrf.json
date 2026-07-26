@@ -1,0 +1,137 @@
+{
+  "question_record": {
+    "question_id": "q028",
+    "query_class": "exact_factual",
+    "strategy": "hybrid_rrf",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-26",
+      "RES-CMN-4893/2021::preamble",
+      "RES-CMN-4893/2021::art-24",
+      "RES-CMN-4893/2021::art-24::inc-i",
+      "RES-CMN-4893/2021::art-24::inc-ii",
+      "RES-CMN-4893/2021::art-24::inc-iii",
+      "RES-CMN-4893/2021::art-24::inc-iv",
+      "RES-CMN-4893/2021::art-3::inc-iv",
+      "RES-CMN-4893/2021::art-17",
+      "RES-CMN-4893/2021::art-17::inc-i",
+      "RES-CMN-4893/2021::art-17::inc-ii",
+      "RES-CMN-4893/2021::art-17::inc-iii",
+      "RES-CMN-4893/2021::art-17::inc-iv",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+      "RES-CMN-4893/2021::art-17::inc-iv-ali-b",
+      "RES-CMN-4893/2021::art-17::inc-v",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-a",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-b",
+      "RES-CMN-4893/2021::art-17::inc-v-ali-c",
+      "RES-CMN-4893/2021::art-17::inc-vi",
+      "RES-CMN-4893/2021::art-17::inc-vii",
+      "RES-CMN-4893/2021::art-17::inc-viii",
+      "RES-CMN-4893/2021::art-17::inc-ix",
+      "RES-CMN-4893/2021::art-17::par-unico",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+      "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b"
+    ],
+    "answer_text": "Segundo o art. 26 da Resolução CMN nº 4.893/2021, quando o Banco Central do Brasil constatar a inobservância do disposto na referida norma, ou a limitação à sua atuação, ele poderá vetar ou impor restrições para a contratação de serviços de processamento e armazenamento de dados e de computação em nuvem, estabelecendo um prazo para a adequação dos serviços [RES-CMN-4893/2021::art-26].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-26"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7664142621147523,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q028",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-26",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-26"
+      ],
+      "raw_score": 0.03278688524590164
+    },
+    {
+      "query_id": "q028",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::preamble",
+      "structural_ids": [
+        "RES-CMN-4893/2021::preamble"
+      ],
+      "raw_score": 0.031746031746031744
+    },
+    {
+      "query_id": "q028",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-24",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-24",
+        "RES-CMN-4893/2021::art-24::inc-i",
+        "RES-CMN-4893/2021::art-24::inc-ii",
+        "RES-CMN-4893/2021::art-24::inc-iii",
+        "RES-CMN-4893/2021::art-24::inc-iv"
+      ],
+      "raw_score": 0.016129032258064516
+    },
+    {
+      "query_id": "q028",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-4893/2021::art-3::inc-iv",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-3::inc-iv"
+      ],
+      "raw_score": 0.016129032258064516
+    },
+    {
+      "query_id": "q028",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-17",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-17",
+        "RES-CMN-4893/2021::art-17::inc-i",
+        "RES-CMN-4893/2021::art-17::inc-ii",
+        "RES-CMN-4893/2021::art-17::inc-iii",
+        "RES-CMN-4893/2021::art-17::inc-iv",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-a",
+        "RES-CMN-4893/2021::art-17::inc-iv-ali-b",
+        "RES-CMN-4893/2021::art-17::inc-v",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-a",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-b",
+        "RES-CMN-4893/2021::art-17::inc-v-ali-c",
+        "RES-CMN-4893/2021::art-17::inc-vi",
+        "RES-CMN-4893/2021::art-17::inc-vii",
+        "RES-CMN-4893/2021::art-17::inc-viii",
+        "RES-CMN-4893/2021::art-17::inc-ix",
+        "RES-CMN-4893/2021::art-17::par-unico",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-i",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-a",
+        "RES-CMN-4893/2021::art-17::par-unico-inc-ii-ali-b"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

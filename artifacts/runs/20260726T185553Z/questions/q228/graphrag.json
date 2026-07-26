@@ -1,0 +1,113 @@
+{
+  "question_record": {
+    "question_id": "q228",
+    "query_class": "multi_hop",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-50",
+      "ICVM-607/2019::art-50::par-1",
+      "ICVM-607/2019::art-50::par-2",
+      "ICVM-607/2019::art-50::par-3",
+      "ICVM-607/2019::art-50::par-4",
+      "RES-CMN-5274/2025::art-1::par-1",
+      "ICVM-607/2019::art-55",
+      "ICVM-607/2019::art-55::par-unico",
+      "ICVM-607/2019::art-57",
+      "ICVM-607/2019::art-57::par-1",
+      "ICVM-607/2019::art-57::par-2",
+      "ICVM-607/2019::art-57::par-3",
+      "ICVM-607/2019::art-57::par-4",
+      "ICVM-607/2019::art-57::par-5",
+      "ICVM-607/2019::art-57::par-6"
+    ],
+    "answer_text": "Com base na Instrução CVM nº 607/2019, a relação entre esses dispositivos é a seguinte:\n\nA sessão de julgamento só pode ser realizada com a presença mínima de 3 (três) membros do Colegiado [ICVM-607/2019::art-50]. Caso a sessão não ocorra por motivo de força maior, ela poderá ser transferida para o primeiro dia útil seguinte, no mesmo horário anteriormente marcado, sem a necessidade de nova convocação ou publicação [ICVM-607/2019::art-50::par-4]. \n\nO texto fornecido não estabelece uma relação direta de dependência entre a causa do adiamento (força maior) e a verificação da presença mínima, apenas define as condições para a realização da sessão (quórum) e o procedimento administrativo para a sua remarcação em caso de impedimento por força maior.",
+    "answer_citations": [
+      "ICVM-607/2019::art-50",
+      "ICVM-607/2019::art-50::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.6131471927654584,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 0.625,
+      "answer_relevancy": 0.7266068492776249,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q228",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-50",
+      "structural_ids": [
+        "ICVM-607/2019::art-50",
+        "ICVM-607/2019::art-50::par-1",
+        "ICVM-607/2019::art-50::par-2",
+        "ICVM-607/2019::art-50::par-3",
+        "ICVM-607/2019::art-50::par-4"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q228",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-5274/2025::art-1::par-1",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-1::par-1"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q228",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-55",
+      "structural_ids": [
+        "ICVM-607/2019::art-55",
+        "ICVM-607/2019::art-55::par-unico"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q228",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-57",
+      "structural_ids": [
+        "ICVM-607/2019::art-57",
+        "ICVM-607/2019::art-57::par-1",
+        "ICVM-607/2019::art-57::par-2",
+        "ICVM-607/2019::art-57::par-3",
+        "ICVM-607/2019::art-57::par-4",
+        "ICVM-607/2019::art-57::par-5",
+        "ICVM-607/2019::art-57::par-6"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q228",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-57::par-6",
+      "structural_ids": [
+        "ICVM-607/2019::art-57::par-6"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

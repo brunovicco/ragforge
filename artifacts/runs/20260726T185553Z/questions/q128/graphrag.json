@@ -1,0 +1,109 @@
+{
+  "question_record": {
+    "question_id": "q128",
+    "query_class": "section_comparative",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "LEI-13709/2018::art-55-j::inc-xvii",
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-10::par-unico",
+      "ICVM-607/2019::art-85",
+      "ICVM-607/2019::art-85::par-1",
+      "ICVM-607/2019::art-85::par-2",
+      "ICVM-607/2019::art-25::par-4"
+    ],
+    "answer_text": "De acordo com a Instrução CVM nº 607/2019, os prazos comparados são:\n\n*   **Inquérito Administrativo:** Os trabalhos de investigação devem ser concluídos em 120 dias, contados da data de instauração do inquérito [ICVM-607/2019::art-10]. Este prazo pode ser prorrogado mais de uma vez, mediante pedido motivado encaminhado à Superintendência Geral [ICVM-607/2019::art-10].\n*   **Apresentação de Defesa:** O acusado deve apresentar sua defesa por escrito no prazo de 30 dias após a citação [ICVM-607/2019::art-29]. Este prazo admite uma única prorrogação, pelo mesmo período, mediante pedido devidamente fundamentado [ICVM-607/2019::art-29::par-3].",
+    "answer_citations": [
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.9197207891481876,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 0.875,
+      "answer_relevancy": 0.7727981357556236,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.6666666666666666
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q128",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q128",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-xvii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-xvii"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q128",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-10",
+      "structural_ids": [
+        "ICVM-607/2019::art-10",
+        "ICVM-607/2019::art-10::par-unico"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q128",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-85",
+      "structural_ids": [
+        "ICVM-607/2019::art-85",
+        "ICVM-607/2019::art-85::par-1",
+        "ICVM-607/2019::art-85::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q128",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-25::par-4",
+      "structural_ids": [
+        "ICVM-607/2019::art-25::par-4"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

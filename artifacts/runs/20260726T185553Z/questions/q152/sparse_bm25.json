@@ -1,0 +1,153 @@
+{
+  "question_record": {
+    "question_id": "q152",
+    "query_class": "numeric_tabular",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-72",
+      "ICVM-607/2019::art-72::par-unico",
+      "ICVM-607/2019::art-60",
+      "ICVM-607/2019::art-60::inc-i",
+      "ICVM-607/2019::art-60::inc-ii",
+      "ICVM-607/2019::art-60::inc-iii",
+      "ICVM-607/2019::art-60::inc-iv",
+      "ICVM-607/2019::art-60::inc-v",
+      "ICVM-607/2019::art-60::inc-vi",
+      "ICVM-607/2019::art-60::inc-vii",
+      "ICVM-607/2019::art-71",
+      "ICVM-607/2019::art-71::par-1",
+      "ICVM-607/2019::art-71::par-2",
+      "ICVM-607/2019::art-71::par-3",
+      "ICVM-607/2019::art-71::par-3-inc-i",
+      "ICVM-607/2019::art-71::par-3-inc-ii",
+      "ICVM-607/2019::art-71::par-4",
+      "ICVM-607/2019::art-71::par-5",
+      "ICVM-607/2019::art-71::par-6",
+      "ICVM-607/2019::art-71::par-7",
+      "ICVM-607/2019::art-66",
+      "ICVM-607/2019::art-66::inc-i",
+      "ICVM-607/2019::art-66::inc-ii",
+      "ICVM-607/2019::art-66::inc-iii",
+      "ICVM-607/2019::art-66::inc-iv",
+      "ICVM-607/2019::art-66::inc-v",
+      "ICVM-607/2019::art-66::par-1",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4",
+      "ICVM-607/2019::art-66::par-5"
+    ],
+    "answer_text": "Segundo o art. 63, § 3º da Instrução CVM nº 607/2019, a pena-base das penalidades descritas nos incisos III a VI do art. 60 deve ser fixada em meses e não pode ser superior a 10 (dez) anos [ICVM-607/2019::art-63::par-3].",
+    "answer_citations": [
+      "ICVM-607/2019::art-63::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8005906871617384,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q152",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 45.35767
+    },
+    {
+      "query_id": "q152",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-72",
+      "structural_ids": [
+        "ICVM-607/2019::art-72",
+        "ICVM-607/2019::art-72::par-unico"
+      ],
+      "raw_score": 22.077831
+    },
+    {
+      "query_id": "q152",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-60",
+      "structural_ids": [
+        "ICVM-607/2019::art-60",
+        "ICVM-607/2019::art-60::inc-i",
+        "ICVM-607/2019::art-60::inc-ii",
+        "ICVM-607/2019::art-60::inc-iii",
+        "ICVM-607/2019::art-60::inc-iv",
+        "ICVM-607/2019::art-60::inc-v",
+        "ICVM-607/2019::art-60::inc-vi",
+        "ICVM-607/2019::art-60::inc-vii"
+      ],
+      "raw_score": 21.637783
+    },
+    {
+      "query_id": "q152",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-71",
+      "structural_ids": [
+        "ICVM-607/2019::art-71",
+        "ICVM-607/2019::art-71::par-1",
+        "ICVM-607/2019::art-71::par-2",
+        "ICVM-607/2019::art-71::par-3",
+        "ICVM-607/2019::art-71::par-3-inc-i",
+        "ICVM-607/2019::art-71::par-3-inc-ii",
+        "ICVM-607/2019::art-71::par-4",
+        "ICVM-607/2019::art-71::par-5",
+        "ICVM-607/2019::art-71::par-6",
+        "ICVM-607/2019::art-71::par-7"
+      ],
+      "raw_score": 16.875475
+    },
+    {
+      "query_id": "q152",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-66",
+      "structural_ids": [
+        "ICVM-607/2019::art-66",
+        "ICVM-607/2019::art-66::inc-i",
+        "ICVM-607/2019::art-66::inc-ii",
+        "ICVM-607/2019::art-66::inc-iii",
+        "ICVM-607/2019::art-66::inc-iv",
+        "ICVM-607/2019::art-66::inc-v",
+        "ICVM-607/2019::art-66::par-1",
+        "ICVM-607/2019::art-66::par-2",
+        "ICVM-607/2019::art-66::par-3",
+        "ICVM-607/2019::art-66::par-4",
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 16.40751
+    }
+  ]
+}

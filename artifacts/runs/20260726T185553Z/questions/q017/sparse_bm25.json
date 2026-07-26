@@ -1,0 +1,91 @@
+{
+  "question_record": {
+    "question_id": "q017",
+    "query_class": "unanswerable",
+    "strategy": "sparse_bm25",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-5274/2025::art-2",
+      "LEI-13709/2018::art-54",
+      "LEI-13709/2018::art-54::par-unico",
+      "RES-CMN-5274/2025::preamble",
+      "LEI-13709/2018::art-55-c::inc-v",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o valor de multa pecuniária específica para o descumprimento do prazo de adaptação estabelecido pela Resolução CMN nº 5274/2025. O referido normativo apenas determina que as instituições devem promover as adaptações necessárias até 1º de março de 2026 [RES-CMN-5274/2025::art-2].",
+    "answer_citations": [
+      "RES-CMN-5274/2025::art-2"
+    ],
+    "metrics": {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5986457466826773,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q017",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-5274/2025::art-2",
+      "structural_ids": [
+        "RES-CMN-5274/2025::art-2"
+      ],
+      "raw_score": 22.409374
+    },
+    {
+      "query_id": "q017",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-54",
+      "structural_ids": [
+        "LEI-13709/2018::art-54",
+        "LEI-13709/2018::art-54::par-unico"
+      ],
+      "raw_score": 19.493706
+    },
+    {
+      "query_id": "q017",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-5274/2025::preamble",
+      "structural_ids": [
+        "RES-CMN-5274/2025::preamble"
+      ],
+      "raw_score": 17.037825
+    },
+    {
+      "query_id": "q017",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-55-c::inc-v",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-c::inc-v"
+      ],
+      "raw_score": 12.034933
+    },
+    {
+      "query_id": "q017",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 11.779239
+    }
+  ]
+}

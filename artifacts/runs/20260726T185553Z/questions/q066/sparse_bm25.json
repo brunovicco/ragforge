@@ -1,0 +1,115 @@
+{
+  "question_record": {
+    "question_id": "q066",
+    "query_class": "exact_factual",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-14",
+      "LEI-13709/2018::art-14::par-1",
+      "LEI-13709/2018::art-14::par-2",
+      "LEI-13709/2018::art-14::par-3",
+      "LEI-13709/2018::art-14::par-4",
+      "LEI-13709/2018::art-14::par-5",
+      "LEI-13709/2018::art-14::par-6",
+      "LEI-13709/2018::art-39",
+      "LEI-13709/2018::art-13",
+      "LEI-13709/2018::art-13::par-1",
+      "LEI-13709/2018::art-13::par-2",
+      "LEI-13709/2018::art-13::par-3",
+      "LEI-13709/2018::art-13::par-4",
+      "LEI-13709/2018::preamble"
+    ],
+    "answer_text": "Segundo o art. 14 da LGPD, o tratamento de dados pessoais de crianças deve ser realizado em seu melhor interesse, observando as seguintes diretrizes:\n\n*   **Consentimento:** Deve ser realizado com o consentimento específico e em destaque, fornecido por pelo menos um dos pais ou pelo responsável legal [LEI-13709/2018::art-14::par-1]. O controlador deve realizar esforços razoáveis para verificar que esse consentimento foi dado pelo responsável, considerando as tecnologias disponíveis [LEI-13709/2018::art-14::par-5].\n*   **Transparência:** Os controladores devem manter pública a informação sobre os tipos de dados coletados, a forma de utilização e os procedimentos para o exercício dos direitos dos titulares [LEI-13709/2018::art-14::par-2]. Essas informações devem ser fornecidas de maneira simples, clara e acessível, adaptadas ao entendimento da criança e adequadas aos pais ou responsáveis, podendo utilizar recursos audiovisuais [LEI-13709/2018::art-14::par-6].\n*   **Limitação de dados:** A participação em jogos, aplicações de internet ou outras atividades não deve ser condicionada ao fornecimento de informações pessoais além das estritamente necessárias [LEI-13709/2018::art-14::par-4].\n*   **Exceções ao consentimento:** A coleta de dados sem o consentimento dos pais ou responsáveis é permitida apenas quando necessária para contatar os responsáveis, desde que os dados sejam utilizados uma única vez e não sejam armazenados, ou quando necessária para a proteção da criança. Em nenhum desses casos os dados podem ser repassados a terceiros sem o consentimento dos pais ou responsáveis [LEI-13709/2018::art-14::par-3].",
+    "answer_citations": [
+      "LEI-13709/2018::art-14::par-1",
+      "LEI-13709/2018::art-14::par-5",
+      "LEI-13709/2018::art-14::par-2",
+      "LEI-13709/2018::art-14::par-6",
+      "LEI-13709/2018::art-14::par-4",
+      "LEI-13709/2018::art-14::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8986339738337786,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q066",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-14",
+      "structural_ids": [
+        "LEI-13709/2018::art-14",
+        "LEI-13709/2018::art-14::par-1",
+        "LEI-13709/2018::art-14::par-2",
+        "LEI-13709/2018::art-14::par-3",
+        "LEI-13709/2018::art-14::par-4",
+        "LEI-13709/2018::art-14::par-5",
+        "LEI-13709/2018::art-14::par-6"
+      ],
+      "raw_score": 22.331083
+    },
+    {
+      "query_id": "q066",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-14::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-14::par-1"
+      ],
+      "raw_score": 19.919443
+    },
+    {
+      "query_id": "q066",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-39",
+      "structural_ids": [
+        "LEI-13709/2018::art-39"
+      ],
+      "raw_score": 15.590972
+    },
+    {
+      "query_id": "q066",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-13",
+      "structural_ids": [
+        "LEI-13709/2018::art-13",
+        "LEI-13709/2018::art-13::par-1",
+        "LEI-13709/2018::art-13::par-2",
+        "LEI-13709/2018::art-13::par-3",
+        "LEI-13709/2018::art-13::par-4"
+      ],
+      "raw_score": 13.790829
+    },
+    {
+      "query_id": "q066",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::preamble",
+      "structural_ids": [
+        "LEI-13709/2018::preamble"
+      ],
+      "raw_score": 13.65865
+    }
+  ]
+}

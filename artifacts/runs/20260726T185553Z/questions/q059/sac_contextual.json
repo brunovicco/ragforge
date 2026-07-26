@@ -1,0 +1,140 @@
+{
+  "question_record": {
+    "question_id": "q059",
+    "query_class": "multi_hop",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-2",
+      "LEI-13709/2018::art-8::par-3",
+      "LEI-13709/2018::art-8::par-4",
+      "LEI-13709/2018::art-8::par-5",
+      "LEI-13709/2018::art-8::par-6",
+      "LEI-13709/2018::art-7",
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-7::inc-ii",
+      "LEI-13709/2018::art-7::inc-iii",
+      "LEI-13709/2018::art-7::inc-iv",
+      "LEI-13709/2018::art-7::inc-v",
+      "LEI-13709/2018::art-7::inc-vi",
+      "LEI-13709/2018::art-7::inc-vii",
+      "LEI-13709/2018::art-7::inc-viii",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::inc-x",
+      "LEI-13709/2018::art-7::par-1",
+      "LEI-13709/2018::art-7::par-2",
+      "LEI-13709/2018::art-7::par-3",
+      "LEI-13709/2018::art-7::par-4",
+      "LEI-13709/2018::art-7::par-5",
+      "LEI-13709/2018::art-7::par-6",
+      "LEI-13709/2018::art-7::par-7"
+    ],
+    "answer_text": "O consentimento mencionado no inciso I do art. 7º da LGPD é a hipótese que autoriza o tratamento de dados pessoais mediante a manifestação de vontade do titular [LEI-13709/2018::art-7::inc-i].\n\nQuanto à forma, o art. 8º estabelece que esse consentimento deve ser fornecido por escrito ou por outro meio que demonstre a manifestação de vontade do titular [LEI-13709/2018::art-8]. Caso seja fornecido por escrito, o consentimento deve constar em uma cláusula destacada das demais cláusulas contratuais [LEI-13709/2018::art-8::par-1]. Além disso, o consentimento deve referir-se a finalidades determinadas, sendo nulas as autorizações genéricas [LEI-13709/2018::art-8::par-4].",
+    "answer_citations": [
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-8",
+      "LEI-13709/2018::art-8::par-1",
+      "LEI-13709/2018::art-8::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7825110305459978,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.25
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-8",
+      "structural_ids": [
+        "LEI-13709/2018::art-8",
+        "LEI-13709/2018::art-8::par-1",
+        "LEI-13709/2018::art-8::par-2",
+        "LEI-13709/2018::art-8::par-3",
+        "LEI-13709/2018::art-8::par-4",
+        "LEI-13709/2018::art-8::par-5",
+        "LEI-13709/2018::art-8::par-6"
+      ],
+      "raw_score": 0.7736472862512698
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-7",
+      "structural_ids": [
+        "LEI-13709/2018::art-7",
+        "LEI-13709/2018::art-7::inc-i",
+        "LEI-13709/2018::art-7::inc-ii",
+        "LEI-13709/2018::art-7::inc-iii",
+        "LEI-13709/2018::art-7::inc-iv",
+        "LEI-13709/2018::art-7::inc-v",
+        "LEI-13709/2018::art-7::inc-vi",
+        "LEI-13709/2018::art-7::inc-vii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-ix",
+        "LEI-13709/2018::art-7::inc-x",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-3",
+        "LEI-13709/2018::art-7::par-4",
+        "LEI-13709/2018::art-7::par-5",
+        "LEI-13709/2018::art-7::par-6",
+        "LEI-13709/2018::art-7::par-7"
+      ],
+      "raw_score": 0.7567950314201487
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-7::inc-i",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-i"
+      ],
+      "raw_score": 0.7253703582620943
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-7::inc-viii",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-viii"
+      ],
+      "raw_score": 0.710582356864128
+    },
+    {
+      "query_id": "q059",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-7::inc-v",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-v"
+      ],
+      "raw_score": 0.7101429631805858
+    }
+  ]
+}

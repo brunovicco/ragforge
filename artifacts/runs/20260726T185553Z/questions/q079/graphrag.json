@@ -1,0 +1,109 @@
+{
+  "question_record": {
+    "question_id": "q079",
+    "query_class": "exact_factual",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-27",
+      "LEI-13709/2018::art-27::inc-i",
+      "LEI-13709/2018::art-27::inc-ii",
+      "LEI-13709/2018::art-27::inc-iii",
+      "LEI-13709/2018::art-27::par-unico",
+      "LEI-13709/2018::art-11::par-2",
+      "LEI-13709/2018::art-55-b",
+      "LEI-13709/2018::art-55-g",
+      "LEI-13709/2018::art-55-g::par-1",
+      "LEI-13709/2018::art-55-g::par-2",
+      "LEI-13709/2018::art-44",
+      "LEI-13709/2018::art-44::inc-i",
+      "LEI-13709/2018::art-44::inc-ii",
+      "LEI-13709/2018::art-44::inc-iii",
+      "LEI-13709/2018::art-44::par-unico"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre o artigo 33 da LGPD ou sobre as regras para a transferência internacional de dados pessoais. Portanto, não é possível responder à sua pergunta com base nos documentos disponibilizados.",
+    "answer_citations": [],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.0,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q079",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-27",
+      "structural_ids": [
+        "LEI-13709/2018::art-27",
+        "LEI-13709/2018::art-27::inc-i",
+        "LEI-13709/2018::art-27::inc-ii",
+        "LEI-13709/2018::art-27::inc-iii",
+        "LEI-13709/2018::art-27::par-unico"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q079",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-11::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-11::par-2"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q079",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-55-b",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-b"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q079",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-55-g",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-g",
+        "LEI-13709/2018::art-55-g::par-1",
+        "LEI-13709/2018::art-55-g::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q079",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-44",
+      "structural_ids": [
+        "LEI-13709/2018::art-44",
+        "LEI-13709/2018::art-44::inc-i",
+        "LEI-13709/2018::art-44::inc-ii",
+        "LEI-13709/2018::art-44::inc-iii",
+        "LEI-13709/2018::art-44::par-unico"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

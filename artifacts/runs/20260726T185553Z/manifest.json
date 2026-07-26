@@ -1,0 +1,37 @@
+{
+  "schema_version": 1,
+  "run_id": "20260726T185553Z",
+  "status": "completed",
+  "git_sha": "81029c6079df98dd6f6a771bcf5bf710c802efa0",
+  "started_at": "2026-07-26T18:55:54.502177+00:00",
+  "completed_at": "2026-07-26T19:59:59.385334+00:00",
+  "corpus_hash": "6f4fa5d2787f0b019fd9bf80049c496638a738237c514fd82a42a6bcf799ffc2",
+  "dataset_hash": "29459edb9e793db1e526f5d96903878dcf29035e9932b8f672d4ded19be4e064",
+  "split_hash": "a0b549ef563c1984f105bfc2deef4337fe57d09eb6065ae3448cdc4e8e706f01",
+  "configuration_hash": "8a0df40c743df9c983576ae699081d25add94f5d4fb87bc3cbf465c8df232dd7",
+  "models": {
+    "embedding": "gemini/gemini-embedding-001",
+    "generation": "gemini-3.1-flash-lite",
+    "judge": "openai/gpt-5.4-mini-2026-03-17",
+    "audit": "disabled"
+  },
+  "strategies": [
+    "dense",
+    "sparse_bm25",
+    "hybrid_rrf",
+    "reranked",
+    "contextual",
+    "parent_child",
+    "sac",
+    "sac_contextual",
+    "raptor",
+    "graphrag"
+  ],
+  "execution": {
+    "answer_quality_workers": 5,
+    "gemini_max_in_flight": 4,
+    "embedding_cache_dir": ".ragforge/cache/embeddings",
+    "index_cache_dir": ".ragforge/cache/indexes"
+  },
+  "artifact_root_hash": "b11b4f0c04e431276a56c884528bb64f79d79d5a5025a12b4f858acf64553ea5"
+}

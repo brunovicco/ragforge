@@ -1,0 +1,129 @@
+{
+  "question_record": {
+    "question_id": "q219",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-101::par-8",
+      "ICVM-607/2019::art-102",
+      "ICVM-607/2019::art-102::par-unico",
+      "ICVM-607/2019::art-94",
+      "ICVM-607/2019::art-94::inc-i",
+      "ICVM-607/2019::art-94::inc-ii",
+      "ICVM-607/2019::art-94::inc-iii",
+      "ICVM-607/2019::art-94::par-unico",
+      "ICVM-607/2019::art-107",
+      "ICVM-607/2019::art-107::inc-i",
+      "ICVM-607/2019::art-107::inc-ii",
+      "ICVM-607/2019::art-107::par-1",
+      "ICVM-607/2019::art-107::par-2",
+      "ICVM-607/2019::art-107::par-2-inc-i",
+      "ICVM-607/2019::art-107::par-2-inc-ii",
+      "ICVM-607/2019::art-107::par-2-inc-iii",
+      "ICVM-607/2019::art-101::inc-viii",
+      "ICVM-607/2019::art-101::inc-viii-ali-a",
+      "ICVM-607/2019::art-101::inc-viii-ali-b",
+      "ICVM-607/2019::art-101::inc-viii-ali-c",
+      "ICVM-607/2019::art-101::inc-viii-ali-d",
+      "ICVM-607/2019::art-101::inc-viii-ali-e",
+      "ICVM-607/2019::art-101::inc-viii-ali-f",
+      "ICVM-607/2019::art-101::inc-viii-ali-g"
+    ],
+    "answer_text": "Não. A assinatura do Acordo de Supervisão não exime o signatário da obrigação de reparar integralmente o dano que porventura tenha sido causado por sua conduta [ICVM-607/2019::art-101::par-8].",
+    "answer_citations": [
+      "ICVM-607/2019::art-101::par-8"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.7899907003742127,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q219",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-101::par-8",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::par-8"
+      ],
+      "raw_score": 7.932057857513428
+    },
+    {
+      "query_id": "q219",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-102",
+      "structural_ids": [
+        "ICVM-607/2019::art-102",
+        "ICVM-607/2019::art-102::par-unico"
+      ],
+      "raw_score": 5.258450508117676
+    },
+    {
+      "query_id": "q219",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-94",
+      "structural_ids": [
+        "ICVM-607/2019::art-94",
+        "ICVM-607/2019::art-94::inc-i",
+        "ICVM-607/2019::art-94::inc-ii",
+        "ICVM-607/2019::art-94::inc-iii",
+        "ICVM-607/2019::art-94::par-unico"
+      ],
+      "raw_score": 4.957582473754883
+    },
+    {
+      "query_id": "q219",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-107",
+      "structural_ids": [
+        "ICVM-607/2019::art-107",
+        "ICVM-607/2019::art-107::inc-i",
+        "ICVM-607/2019::art-107::inc-ii",
+        "ICVM-607/2019::art-107::par-1",
+        "ICVM-607/2019::art-107::par-2",
+        "ICVM-607/2019::art-107::par-2-inc-i",
+        "ICVM-607/2019::art-107::par-2-inc-ii",
+        "ICVM-607/2019::art-107::par-2-inc-iii"
+      ],
+      "raw_score": 4.938974380493164
+    },
+    {
+      "query_id": "q219",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-101::inc-viii",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-viii",
+        "ICVM-607/2019::art-101::inc-viii-ali-a",
+        "ICVM-607/2019::art-101::inc-viii-ali-b",
+        "ICVM-607/2019::art-101::inc-viii-ali-c",
+        "ICVM-607/2019::art-101::inc-viii-ali-d",
+        "ICVM-607/2019::art-101::inc-viii-ali-e",
+        "ICVM-607/2019::art-101::inc-viii-ali-f",
+        "ICVM-607/2019::art-101::inc-viii-ali-g"
+      ],
+      "raw_score": 4.587279796600342
+    }
+  ]
+}

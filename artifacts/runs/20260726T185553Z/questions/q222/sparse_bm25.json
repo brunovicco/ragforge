@@ -1,0 +1,111 @@
+{
+  "question_record": {
+    "question_id": "q222",
+    "query_class": "exact_factual",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-59",
+      "ICVM-607/2019::art-78",
+      "ICVM-607/2019::art-56",
+      "ICVM-607/2019::art-36",
+      "ICVM-607/2019::art-36::inc-i",
+      "ICVM-607/2019::art-36::inc-ii",
+      "ICVM-607/2019::art-36::par-1",
+      "ICVM-607/2019::art-36::par-2",
+      "ICVM-607/2019::art-36::par-3",
+      "ICVM-607/2019::art-36::par-4",
+      "ICVM-607/2019::art-36::par-5",
+      "ICVM-607/2019::art-36::par-6",
+      "ICVM-607/2019::art-36::par-6-inc-i",
+      "ICVM-607/2019::art-36::par-6-inc-ii",
+      "RES-CMN-4893/2021::art-5"
+    ],
+    "answer_text": "Segundo o art. 59 da ICVM 607/2019, a ementa da decisão proferida deve conter, no mínimo, a identificação dos acusados, as infrações a eles imputadas e as penalidades ou absolvições, conforme o caso [ICVM-607/2019::art-59].",
+    "answer_citations": [
+      "ICVM-607/2019::art-59"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8961159430079988,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q222",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-59",
+      "structural_ids": [
+        "ICVM-607/2019::art-59"
+      ],
+      "raw_score": 33.30919
+    },
+    {
+      "query_id": "q222",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-78",
+      "structural_ids": [
+        "ICVM-607/2019::art-78"
+      ],
+      "raw_score": 20.514015
+    },
+    {
+      "query_id": "q222",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-56",
+      "structural_ids": [
+        "ICVM-607/2019::art-56"
+      ],
+      "raw_score": 15.437896
+    },
+    {
+      "query_id": "q222",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-36",
+      "structural_ids": [
+        "ICVM-607/2019::art-36",
+        "ICVM-607/2019::art-36::inc-i",
+        "ICVM-607/2019::art-36::inc-ii",
+        "ICVM-607/2019::art-36::par-1",
+        "ICVM-607/2019::art-36::par-2",
+        "ICVM-607/2019::art-36::par-3",
+        "ICVM-607/2019::art-36::par-4",
+        "ICVM-607/2019::art-36::par-5",
+        "ICVM-607/2019::art-36::par-6",
+        "ICVM-607/2019::art-36::par-6-inc-i",
+        "ICVM-607/2019::art-36::par-6-inc-ii"
+      ],
+      "raw_score": 11.834363
+    },
+    {
+      "query_id": "q222",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-5",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-5"
+      ],
+      "raw_score": 11.734463
+    }
+  ]
+}

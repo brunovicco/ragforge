@@ -1,0 +1,122 @@
+{
+  "question_record": {
+    "question_id": "q011",
+    "query_class": "section_comparative",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LC-105/2001::art-4",
+      "LC-105/2001::art-4::par-1",
+      "LC-105/2001::art-4::par-2",
+      "LC-105/2001::art-3",
+      "LC-105/2001::art-3::par-1",
+      "LC-105/2001::art-3::par-2",
+      "LC-105/2001::art-3::par-3",
+      "LC-105/2001::art-1::par-4",
+      "LC-105/2001::art-1::par-4-inc-i",
+      "LC-105/2001::art-1::par-4-inc-ii",
+      "LC-105/2001::art-1::par-4-inc-iii",
+      "LC-105/2001::art-1::par-4-inc-iv",
+      "LC-105/2001::art-1::par-4-inc-v",
+      "LC-105/2001::art-1::par-4-inc-vi",
+      "LC-105/2001::art-1::par-4-inc-vii",
+      "LC-105/2001::art-1::par-4-inc-viii",
+      "LC-105/2001::art-1::par-4-inc-ix",
+      "LC-105/2001::art-2::par-5",
+      "LC-105/2001::art-2::par-6"
+    ],
+    "answer_text": "As regras para o fornecimento de informações sigilosas ao Poder Judiciário e ao Poder Legislativo Federal, conforme a LC 105/2001, apresentam as seguintes características:\n\n**Fornecimento ao Poder Judiciário (Art. 3º):**\n*   **Obrigatoriedade:** O Banco Central do Brasil, a Comissão de Valores Mobiliários (CVM) e as instituições financeiras devem prestar as informações ordenadas pelo Poder Judiciário [LC-105/2001::art-3].\n*   **Preservação do sigilo:** O caráter sigiloso deve ser preservado mediante acesso restrito às partes, que não podem utilizar as informações para fins estranhos à lide [LC-105/2001::art-3].\n*   **Comissões de inquérito administrativo:** O fornecimento de informações a comissões de inquérito administrativo (para apurar responsabilidade de servidor público) depende de prévia autorização judicial, independentemente da existência de processo judicial em curso [LC-105/2001::art-3::par-1, LC-105/2001::art-3::par-2].\n\n**Fornecimento ao Poder Legislativo Federal (Art. 4º):**\n*   **Obrigatoriedade:** O Banco Central, a CVM e as instituições financeiras devem fornecer informações e documentos sigilosos ao Poder Legislativo Federal quando fundamentadamente necessários ao exercício de suas competências constitucionais e legais [LC-105/2001::art-4].\n*   **Comissões Parlamentares de Inquérito (CPIs):** As CPIs podem obter as informações diretamente das instituições financeiras ou por intermédio do Banco Central ou da CVM [LC-105/2001::art-4::par-1].\n*   **Aprovação prévia:** Diferente do Poder Judiciário, as solicitações do Poder Legislativo devem ser previamente aprovadas pelo Plenário da Câmara dos Deputados, do Senado Federal ou pelo plenário de suas respectivas comissões parlamentares de inquérito [LC-105/2001::art-4::par-2].",
+    "answer_citations": [
+      "LC-105/2001::art-3",
+      "LC-105/2001::art-4",
+      "LC-105/2001::art-4::par-1",
+      "LC-105/2001::art-4::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8533757710338894,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LC-105/2001::art-4",
+      "structural_ids": [
+        "LC-105/2001::art-4",
+        "LC-105/2001::art-4::par-1",
+        "LC-105/2001::art-4::par-2"
+      ],
+      "raw_score": 0.810460127048692
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LC-105/2001::art-3",
+      "structural_ids": [
+        "LC-105/2001::art-3",
+        "LC-105/2001::art-3::par-1",
+        "LC-105/2001::art-3::par-2",
+        "LC-105/2001::art-3::par-3"
+      ],
+      "raw_score": 0.7916252964477918
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LC-105/2001::art-1::par-4",
+      "structural_ids": [
+        "LC-105/2001::art-1::par-4",
+        "LC-105/2001::art-1::par-4-inc-i",
+        "LC-105/2001::art-1::par-4-inc-ii",
+        "LC-105/2001::art-1::par-4-inc-iii",
+        "LC-105/2001::art-1::par-4-inc-iv",
+        "LC-105/2001::art-1::par-4-inc-v",
+        "LC-105/2001::art-1::par-4-inc-vi",
+        "LC-105/2001::art-1::par-4-inc-vii",
+        "LC-105/2001::art-1::par-4-inc-viii",
+        "LC-105/2001::art-1::par-4-inc-ix"
+      ],
+      "raw_score": 0.7524037684809213
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LC-105/2001::art-2::par-5",
+      "structural_ids": [
+        "LC-105/2001::art-2::par-5"
+      ],
+      "raw_score": 0.7478635938328813
+    },
+    {
+      "query_id": "q011",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LC-105/2001::art-2::par-6",
+      "structural_ids": [
+        "LC-105/2001::art-2::par-6"
+      ],
+      "raw_score": 0.7477630548877574
+    }
+  ]
+}

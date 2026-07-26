@@ -1,0 +1,140 @@
+{
+  "question_record": {
+    "question_id": "q136",
+    "query_class": "exact_factual",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-21",
+      "ICVM-607/2019::art-21::par-1",
+      "ICVM-607/2019::art-21::par-1-inc-i",
+      "ICVM-607/2019::art-21::par-1-inc-ii",
+      "ICVM-607/2019::art-21::par-1-inc-iii",
+      "ICVM-607/2019::art-21::par-1-inc-iv",
+      "ICVM-607/2019::art-21::par-1-inc-v",
+      "ICVM-607/2019::art-21::par-1-inc-vi",
+      "ICVM-607/2019::art-21::par-1-inc-vii",
+      "ICVM-607/2019::art-21::par-2",
+      "ICVM-607/2019::art-21::par-3",
+      "ICVM-607/2019::art-21::par-4",
+      "ICVM-607/2019::art-28",
+      "ICVM-607/2019::art-23",
+      "ICVM-607/2019::art-23::par-1",
+      "ICVM-607/2019::art-23::par-1-inc-i",
+      "ICVM-607/2019::art-23::par-1-inc-ii",
+      "ICVM-607/2019::art-23::par-2",
+      "ICVM-607/2019::art-23::par-2-inc-i",
+      "ICVM-607/2019::art-23::par-2-inc-ii",
+      "ICVM-607/2019::art-23::par-3",
+      "ICVM-607/2019::art-23::par-3-inc-i",
+      "ICVM-607/2019::art-23::par-3-inc-ii",
+      "ICVM-607/2019::art-23::par-3-inc-iii",
+      "ICVM-607/2019::art-23::par-3-inc-iv",
+      "ICVM-607/2019::art-23::par-3-inc-v",
+      "ICVM-607/2019::art-23::par-3-inc-vi",
+      "ICVM-607/2019::art-74::par-1"
+    ],
+    "answer_text": "Segundo o art. 21, § 4º da Instrução CVM nº 607/2019, o acusado é considerado revel quando, embora citado, não apresenta defesa [ICVM-607/2019::art-21::par-4].",
+    "answer_citations": [
+      "ICVM-607/2019::art-21::par-4"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7594458629299217,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q136",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-21",
+      "structural_ids": [
+        "ICVM-607/2019::art-21",
+        "ICVM-607/2019::art-21::par-1",
+        "ICVM-607/2019::art-21::par-1-inc-i",
+        "ICVM-607/2019::art-21::par-1-inc-ii",
+        "ICVM-607/2019::art-21::par-1-inc-iii",
+        "ICVM-607/2019::art-21::par-1-inc-iv",
+        "ICVM-607/2019::art-21::par-1-inc-v",
+        "ICVM-607/2019::art-21::par-1-inc-vi",
+        "ICVM-607/2019::art-21::par-1-inc-vii",
+        "ICVM-607/2019::art-21::par-2",
+        "ICVM-607/2019::art-21::par-3",
+        "ICVM-607/2019::art-21::par-4"
+      ],
+      "raw_score": 0.7779040652623415
+    },
+    {
+      "query_id": "q136",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-28",
+      "structural_ids": [
+        "ICVM-607/2019::art-28"
+      ],
+      "raw_score": 0.7563940371615792
+    },
+    {
+      "query_id": "q136",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-23",
+      "structural_ids": [
+        "ICVM-607/2019::art-23",
+        "ICVM-607/2019::art-23::par-1",
+        "ICVM-607/2019::art-23::par-1-inc-i",
+        "ICVM-607/2019::art-23::par-1-inc-ii",
+        "ICVM-607/2019::art-23::par-2",
+        "ICVM-607/2019::art-23::par-2-inc-i",
+        "ICVM-607/2019::art-23::par-2-inc-ii",
+        "ICVM-607/2019::art-23::par-3",
+        "ICVM-607/2019::art-23::par-3-inc-i",
+        "ICVM-607/2019::art-23::par-3-inc-ii",
+        "ICVM-607/2019::art-23::par-3-inc-iii",
+        "ICVM-607/2019::art-23::par-3-inc-iv",
+        "ICVM-607/2019::art-23::par-3-inc-v",
+        "ICVM-607/2019::art-23::par-3-inc-vi"
+      ],
+      "raw_score": 0.7494593957848164
+    },
+    {
+      "query_id": "q136",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-74::par-1",
+      "structural_ids": [
+        "ICVM-607/2019::art-74::par-1"
+      ],
+      "raw_score": 0.7458725568210162
+    },
+    {
+      "query_id": "q136",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-23::par-2",
+      "structural_ids": [
+        "ICVM-607/2019::art-23::par-2",
+        "ICVM-607/2019::art-23::par-2-inc-i",
+        "ICVM-607/2019::art-23::par-2-inc-ii"
+      ],
+      "raw_score": 0.740788843974464
+    }
+  ]
+}

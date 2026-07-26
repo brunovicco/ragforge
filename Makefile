@@ -8,7 +8,7 @@ lint:
 	uv run ruff format --check src tests apps
 
 type:
-	uv run mypy src
+	uv run mypy src apps
 
 test:
 	uv run pytest

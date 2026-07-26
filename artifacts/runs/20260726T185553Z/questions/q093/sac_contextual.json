@@ -1,0 +1,124 @@
+{
+  "question_record": {
+    "question_id": "q093",
+    "query_class": "semantic",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-50",
+      "LEI-13709/2018::art-50::par-1",
+      "LEI-13709/2018::art-50::par-2",
+      "LEI-13709/2018::art-50::par-2-inc-i",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+      "LEI-13709/2018::art-50::par-2-inc-ii",
+      "LEI-13709/2018::art-50::par-3",
+      "LEI-13709/2018::art-49"
+    ],
+    "answer_text": "Ao estabelecer regras de boas práticas, o controlador deve levar em consideração, em relação ao tratamento e aos dados, a natureza, o escopo, a finalidade, bem como a probabilidade e a gravidade dos riscos e dos benefícios decorrentes do tratamento de dados do titular [LEI-13709/2018::art-50::par-1].",
+    "answer_citations": [
+      "LEI-13709/2018::art-50::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6685860782032461,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q093",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-50",
+      "structural_ids": [
+        "LEI-13709/2018::art-50",
+        "LEI-13709/2018::art-50::par-1",
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii",
+        "LEI-13709/2018::art-50::par-3"
+      ],
+      "raw_score": 0.7898874872059961
+    },
+    {
+      "query_id": "q093",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-50::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-1"
+      ],
+      "raw_score": 0.7818414455275788
+    },
+    {
+      "query_id": "q093",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-50::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii"
+      ],
+      "raw_score": 0.7412179318624166
+    },
+    {
+      "query_id": "q093",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-50::par-3",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-3"
+      ],
+      "raw_score": 0.7168136874820303
+    },
+    {
+      "query_id": "q093",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-49",
+      "structural_ids": [
+        "LEI-13709/2018::art-49"
+      ],
+      "raw_score": 0.6937809546263684
+    }
+  ]
+}

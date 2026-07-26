@@ -1,0 +1,150 @@
+{
+  "question_record": {
+    "question_id": "q160",
+    "query_class": "multi_hop",
+    "strategy": "hybrid_rrf",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-65",
+      "ICVM-607/2019::art-65::inc-i",
+      "ICVM-607/2019::art-65::inc-ii",
+      "ICVM-607/2019::art-65::inc-iii",
+      "ICVM-607/2019::art-65::inc-iv",
+      "ICVM-607/2019::art-65::inc-v",
+      "ICVM-607/2019::art-65::inc-vi",
+      "ICVM-607/2019::art-65::inc-vii",
+      "ICVM-607/2019::art-65::inc-viii",
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-65::par-3",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "ICVM-607/2019::art-66",
+      "ICVM-607/2019::art-66::inc-i",
+      "ICVM-607/2019::art-66::inc-ii",
+      "ICVM-607/2019::art-66::inc-iii",
+      "ICVM-607/2019::art-66::inc-iv",
+      "ICVM-607/2019::art-66::inc-v",
+      "ICVM-607/2019::art-66::par-1",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4",
+      "ICVM-607/2019::art-66::par-5"
+    ],
+    "answer_text": "De acordo com a Instrução CVM 607/2019, a dosimetria da pena segue uma ordem específica: o Colegiado fixa inicialmente a pena-base (observando os princípios da proporcionalidade, razoabilidade, capacidade econômica do infrator e os motivos da penalidade) e, na sequência, aplica as circunstâncias agravantes e atenuantes [ICVM-607/2019::art-62, ICVM-607/2019::art-63].\n\nEm relação ao cálculo, as circunstâncias agravantes do art. 65 impactam a pena da seguinte forma:\n\n*   **Multa:** A penalidade de multa é acrescida em até 25% para cada agravante verificada [ICVM-607/2019::art-65::par-1].\n*   **Suspensão, inabilitação e proibição:** Estas penalidades são acrescidas em até 25% para cada agravante verificada, calculando-se o acréscimo sobre o número de meses da pena-base e desprezando-se as frações [ICVM-607/2019::art-65::par-2].\n\nVale ressaltar que as agravantes só são aplicadas quando não constituem ou qualificam a própria infração [ICVM-607/2019::art-65].",
+    "answer_citations": [
+      "ICVM-607/2019::art-62, ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-65"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.9197207891481876,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7715785879645054,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.25
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q160",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 0.03252247488101534
+    },
+    {
+      "query_id": "q160",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 0.03200204813108039
+    },
+    {
+      "query_id": "q160",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-65",
+      "structural_ids": [
+        "ICVM-607/2019::art-65",
+        "ICVM-607/2019::art-65::inc-i",
+        "ICVM-607/2019::art-65::inc-ii",
+        "ICVM-607/2019::art-65::inc-iii",
+        "ICVM-607/2019::art-65::inc-iv",
+        "ICVM-607/2019::art-65::inc-v",
+        "ICVM-607/2019::art-65::inc-vi",
+        "ICVM-607/2019::art-65::inc-vii",
+        "ICVM-607/2019::art-65::inc-viii",
+        "ICVM-607/2019::art-65::par-1",
+        "ICVM-607/2019::art-65::par-2",
+        "ICVM-607/2019::art-65::par-3"
+      ],
+      "raw_score": 0.03177805800756621
+    },
+    {
+      "query_id": "q160",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q160",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-66",
+      "structural_ids": [
+        "ICVM-607/2019::art-66",
+        "ICVM-607/2019::art-66::inc-i",
+        "ICVM-607/2019::art-66::inc-ii",
+        "ICVM-607/2019::art-66::inc-iii",
+        "ICVM-607/2019::art-66::inc-iv",
+        "ICVM-607/2019::art-66::inc-v",
+        "ICVM-607/2019::art-66::par-1",
+        "ICVM-607/2019::art-66::par-2",
+        "ICVM-607/2019::art-66::par-3",
+        "ICVM-607/2019::art-66::par-4",
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

@@ -1,0 +1,140 @@
+{
+  "question_record": {
+    "question_id": "q032",
+    "query_class": "semantic",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "RES-CMN-4893/2021::art-3::inc-iv",
+      "RES-CMN-4893/2021::art-25",
+      "RES-CMN-4893/2021::art-25::inc-i",
+      "RES-CMN-4893/2021::art-25::inc-ii",
+      "RES-CMN-4893/2021::art-25::par-unico",
+      "RES-CMN-4893/2021::art-16",
+      "RES-CMN-4893/2021::art-16::inc-i",
+      "RES-CMN-4893/2021::art-16::inc-ii",
+      "RES-CMN-4893/2021::art-16::inc-iii",
+      "RES-CMN-4893/2021::art-16::inc-iv",
+      "RES-CMN-4893/2021::art-16::par-1",
+      "RES-CMN-4893/2021::art-16::par-1-inc-i",
+      "RES-CMN-4893/2021::art-16::par-1-inc-ii",
+      "RES-CMN-4893/2021::art-16::par-2",
+      "RES-CMN-4893/2021::art-16::par-3",
+      "RES-CMN-4893/2021::art-15",
+      "RES-CMN-4893/2021::art-15::par-1",
+      "RES-CMN-4893/2021::art-15::par-1-inc-i",
+      "RES-CMN-4893/2021::art-15::par-1-inc-ii",
+      "RES-CMN-4893/2021::art-15::par-1-inc-iii",
+      "RES-CMN-4893/2021::art-15::par-2",
+      "RES-CMN-4893/2021::art-15::par-3",
+      "RES-CMN-4893/2021::art-20",
+      "RES-CMN-4893/2021::art-20::inc-i",
+      "RES-CMN-4893/2021::art-20::inc-ii",
+      "RES-CMN-4893/2021::art-20::inc-iii",
+      "RES-CMN-4893/2021::art-20::par-unico"
+    ],
+    "answer_text": "De acordo com o art. 16 da Resolução CMN nº 4.893/2021, a contratação de serviços relevantes de processamento, armazenamento de dados e computação em nuvem prestados no exterior deve observar os seguintes requisitos:\n\n*   **Convênio de informações:** Deve existir convênio para troca de informações entre o Banco Central do Brasil e as autoridades supervisoras dos países onde os serviços poderão ser prestados [RES-CMN-4893/2021::art-16::inc-i]. Caso não exista tal convênio, a instituição deve solicitar autorização ao Banco Central do Brasil com antecedência mínima de sessenta dias antes da contratação [RES-CMN-4893/2021::art-16::par-1::inc-i].\n*   **Regular funcionamento:** A instituição contratante deve assegurar que a prestação dos serviços não cause prejuízos ao seu regular funcionamento nem embaraço à atuação do Banco Central do Brasil [RES-CMN-4893/2021::art-16::inc-ii].\n*   **Definição de locais:** A instituição deve definir, previamente à contratação, os países e as regiões onde os serviços poderão ser prestados e os dados poderão ser armazenados, processados e gerenciados [RES-CMN-4893/2021::art-16::inc-iii].\n*   **Continuidade de negócios:** A instituição deve prever alternativas para a continuidade dos negócios caso ocorra a impossibilidade de manutenção ou a extinção do contrato [RES-CMN-4893/2021::art-16::inc-iv].\n*   **Acesso a dados:** As instituições devem assegurar que a legislação e a regulamentação dos países e regiões onde os serviços serão prestados não restrinjam nem impeçam o acesso da instituição contratante e do Banco Central do Brasil aos dados e informações [RES-CMN-4893/2021::art-16::par-2].\n\nAlém disso, a comprovação do atendimento a esses requisitos deve ser devidamente documentada [RES-CMN-4893/2021::art-16::par-3].",
+    "answer_citations": [
+      "RES-CMN-4893/2021::art-16::inc-i",
+      "RES-CMN-4893/2021::art-16::inc-ii",
+      "RES-CMN-4893/2021::art-16::inc-iii",
+      "RES-CMN-4893/2021::art-16::inc-iv",
+      "RES-CMN-4893/2021::art-16::par-2",
+      "RES-CMN-4893/2021::art-16::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.5,
+      "mrr": 0.3333333333333333,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7848042947388515,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q032",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "RES-CMN-4893/2021::art-3::inc-iv",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-3::inc-iv"
+      ],
+      "raw_score": 30.868475
+    },
+    {
+      "query_id": "q032",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-25",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-25",
+        "RES-CMN-4893/2021::art-25::inc-i",
+        "RES-CMN-4893/2021::art-25::inc-ii",
+        "RES-CMN-4893/2021::art-25::par-unico"
+      ],
+      "raw_score": 29.623814
+    },
+    {
+      "query_id": "q032",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "RES-CMN-4893/2021::art-16",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-16",
+        "RES-CMN-4893/2021::art-16::inc-i",
+        "RES-CMN-4893/2021::art-16::inc-ii",
+        "RES-CMN-4893/2021::art-16::inc-iii",
+        "RES-CMN-4893/2021::art-16::inc-iv",
+        "RES-CMN-4893/2021::art-16::par-1",
+        "RES-CMN-4893/2021::art-16::par-1-inc-i",
+        "RES-CMN-4893/2021::art-16::par-1-inc-ii",
+        "RES-CMN-4893/2021::art-16::par-2",
+        "RES-CMN-4893/2021::art-16::par-3"
+      ],
+      "raw_score": 28.675669
+    },
+    {
+      "query_id": "q032",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "RES-CMN-4893/2021::art-15",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-15",
+        "RES-CMN-4893/2021::art-15::par-1",
+        "RES-CMN-4893/2021::art-15::par-1-inc-i",
+        "RES-CMN-4893/2021::art-15::par-1-inc-ii",
+        "RES-CMN-4893/2021::art-15::par-1-inc-iii",
+        "RES-CMN-4893/2021::art-15::par-2",
+        "RES-CMN-4893/2021::art-15::par-3"
+      ],
+      "raw_score": 27.33393
+    },
+    {
+      "query_id": "q032",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "RES-CMN-4893/2021::art-20",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-20",
+        "RES-CMN-4893/2021::art-20::inc-i",
+        "RES-CMN-4893/2021::art-20::inc-ii",
+        "RES-CMN-4893/2021::art-20::inc-iii",
+        "RES-CMN-4893/2021::art-20::par-unico"
+      ],
+      "raw_score": 25.585144
+    }
+  ]
+}

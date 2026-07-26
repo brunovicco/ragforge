@@ -1,0 +1,124 @@
+{
+  "question_record": {
+    "question_id": "q194",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-86",
+      "ICVM-607/2019::art-86::par-1",
+      "ICVM-607/2019::art-86::par-2",
+      "ICVM-607/2019::art-83",
+      "ICVM-607/2019::art-83::par-1",
+      "ICVM-607/2019::art-83::par-2",
+      "ICVM-607/2019::art-83::par-3",
+      "ICVM-607/2019::art-83::par-4",
+      "ICVM-607/2019::art-83::par-5",
+      "ICVM-607/2019::art-83::par-6",
+      "ICVM-607/2019::art-93",
+      "ICVM-607/2019::art-93::par-1",
+      "ICVM-607/2019::art-93::par-2",
+      "ICVM-607/2019::art-93::par-3",
+      "ICVM-607/2019::art-93::par-4",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3"
+    ],
+    "answer_text": "Na deliberação da proposta de termo de compromisso, o Colegiado considerará, dentre outros elementos: a oportunidade e a conveniência na celebração do compromisso, a natureza e a gravidade das infrações objeto do processo, os antecedentes dos acusados ou investigados, a colaboração de boa-fé destes e a efetiva possibilidade de punição no caso concreto [ICVM-607/2019::art-86].",
+    "answer_citations": [
+      "ICVM-607/2019::art-86"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.759709910249347,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q194",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-86",
+      "structural_ids": [
+        "ICVM-607/2019::art-86",
+        "ICVM-607/2019::art-86::par-1",
+        "ICVM-607/2019::art-86::par-2"
+      ],
+      "raw_score": 7.265005588531494
+    },
+    {
+      "query_id": "q194",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-83",
+      "structural_ids": [
+        "ICVM-607/2019::art-83",
+        "ICVM-607/2019::art-83::par-1",
+        "ICVM-607/2019::art-83::par-2",
+        "ICVM-607/2019::art-83::par-3",
+        "ICVM-607/2019::art-83::par-4",
+        "ICVM-607/2019::art-83::par-5",
+        "ICVM-607/2019::art-83::par-6"
+      ],
+      "raw_score": 5.491365432739258
+    },
+    {
+      "query_id": "q194",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-93",
+      "structural_ids": [
+        "ICVM-607/2019::art-93",
+        "ICVM-607/2019::art-93::par-1",
+        "ICVM-607/2019::art-93::par-2",
+        "ICVM-607/2019::art-93::par-3",
+        "ICVM-607/2019::art-93::par-4"
+      ],
+      "raw_score": 4.832432746887207
+    },
+    {
+      "query_id": "q194",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-83::par-3",
+      "structural_ids": [
+        "ICVM-607/2019::art-83::par-3"
+      ],
+      "raw_score": 4.517190456390381
+    },
+    {
+      "query_id": "q194",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 4.3541460037231445
+    }
+  ]
+}

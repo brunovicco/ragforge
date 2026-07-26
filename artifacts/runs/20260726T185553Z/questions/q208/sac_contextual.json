@@ -1,0 +1,159 @@
+{
+  "question_record": {
+    "question_id": "q208",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-112",
+      "ICVM-607/2019::art-113",
+      "ICVM-607/2019::art-113::inc-i",
+      "ICVM-607/2019::art-113::inc-ii",
+      "ICVM-607/2019::art-113::inc-iii",
+      "ICVM-607/2019::art-113::inc-iv",
+      "ICVM-607/2019::art-113::inc-v",
+      "ICVM-607/2019::art-113::inc-vi",
+      "ICVM-607/2019::art-113::inc-vii",
+      "ICVM-607/2019::art-113::inc-viii",
+      "ICVM-607/2019::art-113::inc-ix",
+      "ICVM-607/2019::art-113::inc-x",
+      "ICVM-607/2019::art-111",
+      "ICVM-607/2019::art-25",
+      "ICVM-607/2019::art-25::par-1",
+      "ICVM-607/2019::art-25::par-1-inc-i",
+      "ICVM-607/2019::art-25::par-1-inc-ii",
+      "ICVM-607/2019::art-25::par-1-inc-iii",
+      "ICVM-607/2019::art-25::par-1-inc-iv",
+      "ICVM-607/2019::art-25::par-1-inc-v",
+      "ICVM-607/2019::art-25::par-1-inc-vi",
+      "ICVM-607/2019::art-25::par-2",
+      "ICVM-607/2019::art-25::par-3",
+      "ICVM-607/2019::art-25::par-4",
+      "ICVM-607/2019::art-25::par-5",
+      "ICVM-607/2019::preamble"
+    ],
+    "answer_text": "A Instrução CVM nº 607/2019 entrou em vigor no dia 1º de setembro de 2019 [ICVM-607/2019::art-112].",
+    "answer_citations": [
+      "ICVM-607/2019::art-112"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7438156110205446,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q208",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-112",
+      "structural_ids": [
+        "ICVM-607/2019::art-112"
+      ],
+      "raw_score": 0.7652718915312455
+    },
+    {
+      "query_id": "q208",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-113",
+      "structural_ids": [
+        "ICVM-607/2019::art-113",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix",
+        "ICVM-607/2019::art-113::inc-x",
+        "ICVM-607/2019::art-113::inc-i",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ii",
+        "ICVM-607/2019::art-113::inc-iii",
+        "ICVM-607/2019::art-113::inc-iv",
+        "ICVM-607/2019::art-113::inc-v",
+        "ICVM-607/2019::art-113::inc-vi",
+        "ICVM-607/2019::art-113::inc-vii",
+        "ICVM-607/2019::art-113::inc-viii",
+        "ICVM-607/2019::art-113::inc-ix"
+      ],
+      "raw_score": 0.7326049512204932
+    },
+    {
+      "query_id": "q208",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-111",
+      "structural_ids": [
+        "ICVM-607/2019::art-111"
+      ],
+      "raw_score": 0.7148856477465515
+    },
+    {
+      "query_id": "q208",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-25",
+      "structural_ids": [
+        "ICVM-607/2019::art-25",
+        "ICVM-607/2019::art-25::par-1",
+        "ICVM-607/2019::art-25::par-1-inc-i",
+        "ICVM-607/2019::art-25::par-1-inc-ii",
+        "ICVM-607/2019::art-25::par-1-inc-iii",
+        "ICVM-607/2019::art-25::par-1-inc-iv",
+        "ICVM-607/2019::art-25::par-1-inc-v",
+        "ICVM-607/2019::art-25::par-1-inc-vi",
+        "ICVM-607/2019::art-25::par-2",
+        "ICVM-607/2019::art-25::par-3",
+        "ICVM-607/2019::art-25::par-4",
+        "ICVM-607/2019::art-25::par-5"
+      ],
+      "raw_score": 0.7110703439438851
+    },
+    {
+      "query_id": "q208",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::preamble",
+      "structural_ids": [
+        "ICVM-607/2019::preamble"
+      ],
+      "raw_score": 0.7087420093538384
+    }
+  ]
+}

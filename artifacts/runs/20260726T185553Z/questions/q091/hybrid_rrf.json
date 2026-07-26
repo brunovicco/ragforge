@@ -1,0 +1,160 @@
+{
+  "question_record": {
+    "question_id": "q091",
+    "query_class": "unanswerable",
+    "strategy": "hybrid_rrf",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-52::inc-iii",
+      "LEI-13709/2018::art-54",
+      "LEI-13709/2018::art-54::par-unico",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "LEI-13709/2018::art-52",
+      "LEI-13709/2018::art-52::inc-i",
+      "LEI-13709/2018::art-52::inc-ii",
+      "LEI-13709/2018::art-52::inc-iv",
+      "LEI-13709/2018::art-52::inc-v",
+      "LEI-13709/2018::art-52::inc-vi",
+      "LEI-13709/2018::art-52::inc-vii",
+      "LEI-13709/2018::art-52::inc-viii",
+      "LEI-13709/2018::art-52::inc-ix",
+      "LEI-13709/2018::art-52::inc-x",
+      "LEI-13709/2018::art-52::inc-xi",
+      "LEI-13709/2018::art-52::inc-xii",
+      "LEI-13709/2018::art-52::par-1",
+      "LEI-13709/2018::art-52::par-1-inc-i",
+      "LEI-13709/2018::art-52::par-1-inc-ii",
+      "LEI-13709/2018::art-52::par-1-inc-iii",
+      "LEI-13709/2018::art-52::par-1-inc-iv",
+      "LEI-13709/2018::art-52::par-1-inc-v",
+      "LEI-13709/2018::art-52::par-1-inc-vi",
+      "LEI-13709/2018::art-52::par-1-inc-vii",
+      "LEI-13709/2018::art-52::par-1-inc-viii",
+      "LEI-13709/2018::art-52::par-1-inc-ix",
+      "LEI-13709/2018::art-52::par-1-inc-x",
+      "LEI-13709/2018::art-52::par-1-inc-xi",
+      "LEI-13709/2018::art-52::par-2",
+      "LEI-13709/2018::art-52::par-3",
+      "LEI-13709/2018::art-52::par-4",
+      "LEI-13709/2018::art-52::par-5",
+      "LEI-13709/2018::art-52::par-6",
+      "LEI-13709/2018::art-52::par-6-inc-i",
+      "LEI-13709/2018::art-52::par-6-inc-ii",
+      "LEI-13709/2018::art-52::par-7",
+      "LEI-13709/2018::art-55-d::par-1"
+    ],
+    "answer_text": "O contexto fornecido não estabelece um valor mínimo para a multa diária prevista no inciso III do art. 52 da LGPD. O texto determina apenas que o valor da multa diária deve observar a gravidade da falta e a extensão do dano ou prejuízo causado, devendo ser fundamentado pela autoridade nacional [LEI-13709/2018::art-54]. Além disso, a aplicação da multa diária está sujeita ao limite total estabelecido para a multa simples (até 2% do faturamento, limitada a R$ 50.000.000,00 por infração) [LEI-13709/2018::art-52::inc-ii, LEI-13709/2018::art-52::inc-iii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-54"
+    ],
+    "metrics": {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9332592520687942,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q091",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-52::inc-iii",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::inc-iii"
+      ],
+      "raw_score": 0.03278688524590164
+    },
+    {
+      "query_id": "q091",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-54",
+      "structural_ids": [
+        "LEI-13709/2018::art-54",
+        "LEI-13709/2018::art-54::par-unico"
+      ],
+      "raw_score": 0.03225806451612903
+    },
+    {
+      "query_id": "q091",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 0.03149801587301587
+    },
+    {
+      "query_id": "q091",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-52",
+      "structural_ids": [
+        "LEI-13709/2018::art-52",
+        "LEI-13709/2018::art-52::inc-i",
+        "LEI-13709/2018::art-52::inc-ii",
+        "LEI-13709/2018::art-52::inc-iii",
+        "LEI-13709/2018::art-52::inc-iv",
+        "LEI-13709/2018::art-52::inc-v",
+        "LEI-13709/2018::art-52::inc-vi",
+        "LEI-13709/2018::art-52::inc-vii",
+        "LEI-13709/2018::art-52::inc-viii",
+        "LEI-13709/2018::art-52::inc-ix",
+        "LEI-13709/2018::art-52::inc-x",
+        "LEI-13709/2018::art-52::inc-xi",
+        "LEI-13709/2018::art-52::inc-xii",
+        "LEI-13709/2018::art-52::inc-x",
+        "LEI-13709/2018::art-52::inc-xi",
+        "LEI-13709/2018::art-52::inc-xii",
+        "LEI-13709/2018::art-52::par-1",
+        "LEI-13709/2018::art-52::par-1-inc-i",
+        "LEI-13709/2018::art-52::par-1-inc-ii",
+        "LEI-13709/2018::art-52::par-1-inc-iii",
+        "LEI-13709/2018::art-52::par-1-inc-iv",
+        "LEI-13709/2018::art-52::par-1-inc-v",
+        "LEI-13709/2018::art-52::par-1-inc-vi",
+        "LEI-13709/2018::art-52::par-1-inc-vii",
+        "LEI-13709/2018::art-52::par-1-inc-viii",
+        "LEI-13709/2018::art-52::par-1-inc-ix",
+        "LEI-13709/2018::art-52::par-1-inc-x",
+        "LEI-13709/2018::art-52::par-1-inc-xi",
+        "LEI-13709/2018::art-52::par-2",
+        "LEI-13709/2018::art-52::par-2",
+        "LEI-13709/2018::art-52::par-3",
+        "LEI-13709/2018::art-52::par-3",
+        "LEI-13709/2018::art-52::par-4",
+        "LEI-13709/2018::art-52::par-5",
+        "LEI-13709/2018::art-52::par-6",
+        "LEI-13709/2018::art-52::par-6",
+        "LEI-13709/2018::art-52::par-6-inc-i",
+        "LEI-13709/2018::art-52::par-6-inc-ii",
+        "LEI-13709/2018::art-52::par-7"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q091",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-55-d::par-1",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-d::par-1"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

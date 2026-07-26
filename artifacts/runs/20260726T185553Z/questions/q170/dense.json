@@ -1,0 +1,127 @@
+{
+  "question_record": {
+    "question_id": "q170",
+    "query_class": "exact_factual",
+    "strategy": "dense",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-72",
+      "ICVM-607/2019::art-72::par-unico",
+      "ICVM-607/2019::art-71",
+      "ICVM-607/2019::art-71::par-1",
+      "ICVM-607/2019::art-71::par-2",
+      "ICVM-607/2019::art-71::par-3",
+      "ICVM-607/2019::art-71::par-3-inc-i",
+      "ICVM-607/2019::art-71::par-3-inc-ii",
+      "ICVM-607/2019::art-71::par-4",
+      "ICVM-607/2019::art-71::par-5",
+      "ICVM-607/2019::art-71::par-6",
+      "ICVM-607/2019::art-71::par-7",
+      "ICVM-607/2019::art-70",
+      "ICVM-607/2019::art-60",
+      "ICVM-607/2019::art-60::inc-i",
+      "ICVM-607/2019::art-60::inc-ii",
+      "ICVM-607/2019::art-60::inc-iii",
+      "ICVM-607/2019::art-60::inc-iv",
+      "ICVM-607/2019::art-60::inc-v",
+      "ICVM-607/2019::art-60::inc-vi",
+      "ICVM-607/2019::art-60::inc-vii"
+    ],
+    "answer_text": "Sim, o recurso interposto contra decisão que impuser as penalidades de advertência ou de multa tem efeito suspensivo [ICVM-607/2019::art-72]. \n\nCaso haja cumulação com outras penalidades previstas no art. 60, o efeito suspensivo automático aplica-se apenas às penalidades de advertência ou multa, sendo facultado ao apenado requerer o efeito suspensivo para as demais penalidades, conforme o procedimento estabelecido no art. 71 [ICVM-607/2019::art-72::par-unico].",
+    "answer_citations": [
+      "ICVM-607/2019::art-72",
+      "ICVM-607/2019::art-72::par-unico"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8299240970830394,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q170",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-72",
+      "structural_ids": [
+        "ICVM-607/2019::art-72",
+        "ICVM-607/2019::art-72::par-unico"
+      ],
+      "raw_score": 0.8478823312774311
+    },
+    {
+      "query_id": "q170",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-71",
+      "structural_ids": [
+        "ICVM-607/2019::art-71",
+        "ICVM-607/2019::art-71::par-1",
+        "ICVM-607/2019::art-71::par-2",
+        "ICVM-607/2019::art-71::par-3",
+        "ICVM-607/2019::art-71::par-3-inc-i",
+        "ICVM-607/2019::art-71::par-3-inc-ii",
+        "ICVM-607/2019::art-71::par-4",
+        "ICVM-607/2019::art-71::par-5",
+        "ICVM-607/2019::art-71::par-6",
+        "ICVM-607/2019::art-71::par-7"
+      ],
+      "raw_score": 0.7896349672596646
+    },
+    {
+      "query_id": "q170",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-71::par-3",
+      "structural_ids": [
+        "ICVM-607/2019::art-71::par-3",
+        "ICVM-607/2019::art-71::par-3-inc-i",
+        "ICVM-607/2019::art-71::par-3-inc-ii"
+      ],
+      "raw_score": 0.751195901957843
+    },
+    {
+      "query_id": "q170",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-70",
+      "structural_ids": [
+        "ICVM-607/2019::art-70"
+      ],
+      "raw_score": 0.7184067506801447
+    },
+    {
+      "query_id": "q170",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-60",
+      "structural_ids": [
+        "ICVM-607/2019::art-60",
+        "ICVM-607/2019::art-60::inc-i",
+        "ICVM-607/2019::art-60::inc-ii",
+        "ICVM-607/2019::art-60::inc-iii",
+        "ICVM-607/2019::art-60::inc-iv",
+        "ICVM-607/2019::art-60::inc-v",
+        "ICVM-607/2019::art-60::inc-vi",
+        "ICVM-607/2019::art-60::inc-vii"
+      ],
+      "raw_score": 0.7126153479089071
+    }
+  ]
+}

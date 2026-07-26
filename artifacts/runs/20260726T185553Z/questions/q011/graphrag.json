@@ -1,0 +1,94 @@
+{
+  "question_record": {
+    "question_id": "q011",
+    "query_class": "section_comparative",
+    "strategy": "graphrag",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LC-105/2001::preamble",
+      "RES-CMN-4893/2021::art-22",
+      "RES-CMN-4893/2021::art-22::par-1",
+      "RES-CMN-4893/2021::art-22::par-2",
+      "LEI-13709/2018::art-55-j::inc-ii",
+      "LEI-13709/2018::art-4::par-2"
+    ],
+    "answer_text": "O contexto fornecido não contém informações sobre as regras de fornecimento de informações sigilosas ao Poder Judiciário (art. 3º) ou ao Poder Legislativo Federal (art. 4º) da Lei Complementar nº 105/2001. O trecho disponível da referida lei limita-se apenas ao seu preâmbulo [LC-105/2001::preamble].",
+    "answer_citations": [
+      "LC-105/2001::preamble"
+    ],
+    "metrics": {
+      "recall_at_k": 0.0,
+      "precision_at_k": 0.0,
+      "ndcg_at_k": 0.0,
+      "mrr": 0.0,
+      "drm_at_k": 0.8,
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.7136346777824029,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q011",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LC-105/2001::preamble",
+      "structural_ids": [
+        "LC-105/2001::preamble"
+      ],
+      "raw_score": 1.0
+    },
+    {
+      "query_id": "q011",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "RES-CMN-4893/2021::art-22",
+      "structural_ids": [
+        "RES-CMN-4893/2021::art-22",
+        "RES-CMN-4893/2021::art-22::par-1",
+        "RES-CMN-4893/2021::art-22::par-2"
+      ],
+      "raw_score": 0.5
+    },
+    {
+      "query_id": "q011",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-55-j::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-55-j::inc-ii"
+      ],
+      "raw_score": 0.3333333333333333
+    },
+    {
+      "query_id": "q011",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-4::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-2"
+      ],
+      "raw_score": 0.25
+    },
+    {
+      "query_id": "q011",
+      "strategy": "graphrag",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-4::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-4::par-2"
+      ],
+      "raw_score": 0.2
+    }
+  ]
+}

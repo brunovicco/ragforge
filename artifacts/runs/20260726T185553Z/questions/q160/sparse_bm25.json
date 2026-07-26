@@ -1,0 +1,132 @@
+{
+  "question_record": {
+    "question_id": "q160",
+    "query_class": "multi_hop",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4",
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "ICVM-607/2019::art-67",
+      "ICVM-607/2019::art-67::par-unico",
+      "ICVM-607/2019::art-65",
+      "ICVM-607/2019::art-65::inc-i",
+      "ICVM-607/2019::art-65::inc-ii",
+      "ICVM-607/2019::art-65::inc-iii",
+      "ICVM-607/2019::art-65::inc-iv",
+      "ICVM-607/2019::art-65::inc-v",
+      "ICVM-607/2019::art-65::inc-vi",
+      "ICVM-607/2019::art-65::inc-vii",
+      "ICVM-607/2019::art-65::inc-viii",
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-65::par-3"
+    ],
+    "answer_text": "De acordo com a Instrução CVM 607/2019, a dosimetria da pena segue uma ordem específica: o Colegiado fixa inicialmente a pena-base (conforme os critérios do art. 63) e, na sequência, aplica as circunstâncias agravantes e atenuantes [ICVM-607/2019::art-62].\n\nA relação das agravantes do art. 65 com o cálculo da pena ocorre da seguinte forma:\n\n*   **Multa:** A penalidade de multa é acrescida em até 25% para cada agravante verificada [ICVM-607/2019::art-65::par-1].\n*   **Suspensão, inabilitação e proibição:** Estas penalidades também são acrescidas em até 25% para cada agravante, calculadas sobre o número de meses da pena-base, desprezando-se as frações [ICVM-607/2019::art-65::par-2].\n\nVale ressaltar que, ao fixar a pena-base (etapa anterior à aplicação das agravantes), o Colegiado deve observar os princípios da proporcionalidade e da razoabilidade, a capacidade econômica do infrator e os motivos que justifiquem a penalidade [ICVM-607/2019::art-63].",
+    "answer_citations": [
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-65::par-1",
+      "ICVM-607/2019::art-65::par-2",
+      "ICVM-607/2019::art-63"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 0.8503449055347546,
+      "mrr": 1.0,
+      "drm_at_k": 0.2,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7729324114183216,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q160",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 23.878113
+    },
+    {
+      "query_id": "q160",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 22.980883
+    },
+    {
+      "query_id": "q160",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 18.380188
+    },
+    {
+      "query_id": "q160",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-67",
+      "structural_ids": [
+        "ICVM-607/2019::art-67",
+        "ICVM-607/2019::art-67::par-unico"
+      ],
+      "raw_score": 18.116962
+    },
+    {
+      "query_id": "q160",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-65",
+      "structural_ids": [
+        "ICVM-607/2019::art-65",
+        "ICVM-607/2019::art-65::inc-i",
+        "ICVM-607/2019::art-65::inc-ii",
+        "ICVM-607/2019::art-65::inc-iii",
+        "ICVM-607/2019::art-65::inc-iv",
+        "ICVM-607/2019::art-65::inc-v",
+        "ICVM-607/2019::art-65::inc-vi",
+        "ICVM-607/2019::art-65::inc-vii",
+        "ICVM-607/2019::art-65::inc-viii",
+        "ICVM-607/2019::art-65::par-1",
+        "ICVM-607/2019::art-65::par-2",
+        "ICVM-607/2019::art-65::par-3"
+      ],
+      "raw_score": 17.80584
+    }
+  ]
+}

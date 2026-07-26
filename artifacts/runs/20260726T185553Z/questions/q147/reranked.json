@@ -1,0 +1,129 @@
+{
+  "question_record": {
+    "question_id": "q147",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-60",
+      "ICVM-607/2019::art-60::inc-i",
+      "ICVM-607/2019::art-60::inc-ii",
+      "ICVM-607/2019::art-60::inc-iii",
+      "ICVM-607/2019::art-60::inc-iv",
+      "ICVM-607/2019::art-60::inc-v",
+      "ICVM-607/2019::art-60::inc-vi",
+      "ICVM-607/2019::art-60::inc-vii",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-92::inc-i",
+      "ICVM-607/2019::art-92::inc-ii",
+      "ICVM-607/2019::art-69",
+      "ICVM-607/2019::art-69::par-unico",
+      "ICVM-607/2019::art-73",
+      "ICVM-607/2019::art-73::par-1",
+      "ICVM-607/2019::art-73::par-2",
+      "ICVM-607/2019::art-63",
+      "ICVM-607/2019::art-63::par-1",
+      "ICVM-607/2019::art-63::par-2",
+      "ICVM-607/2019::art-63::par-3",
+      "ICVM-607/2019::art-63::par-4"
+    ],
+    "answer_text": "Segundo o art. 60 da Instrução CVM nº 607/2019, a CVM pode impor as seguintes penalidades, de forma isolada ou cumulativa:\n\n*   **Advertência** [ICVM-607/2019::art-60::inc-i];\n*   **Multa** [ICVM-607/2019::art-60::inc-ii];\n*   **Inabilitação temporária**, até o máximo de 20 anos, para o exercício de cargo de administrador ou de conselheiro fiscal de companhia aberta, de entidade do sistema de distribuição ou de outras entidades que dependam de autorização ou registro na CVM [ICVM-607/2019::art-60::inc-iii];\n*   **Suspensão da autorização ou registro** para o exercício das atividades previstas na Lei nº 6.385/1976 [ICVM-607/2019::art-60::inc-iv];\n*   **Inabilitação temporária**, até o máximo de 20 anos, para o exercício das atividades previstas na Lei nº 6.385/1976 [ICVM-607/2019::art-60::inc-v];\n*   **Proibição temporária**, até o máximo de 20 anos, de praticar determinadas atividades ou operações, para integrantes do sistema de distribuição ou outras entidades que dependam de autorização ou registro na CVM [ICVM-607/2019::art-60::inc-vi];\n*   **Proibição temporária**, até o máximo de 10 anos, de atuar, direta ou indiretamente, em uma ou mais modalidades de operação no mercado de valores mobiliários [ICVM-607/2019::art-60::inc-vii].",
+    "answer_citations": [
+      "ICVM-607/2019::art-60::inc-i",
+      "ICVM-607/2019::art-60::inc-ii",
+      "ICVM-607/2019::art-60::inc-iii",
+      "ICVM-607/2019::art-60::inc-iv",
+      "ICVM-607/2019::art-60::inc-v",
+      "ICVM-607/2019::art-60::inc-vi",
+      "ICVM-607/2019::art-60::inc-vii"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9533329415627246,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q147",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-60",
+      "structural_ids": [
+        "ICVM-607/2019::art-60",
+        "ICVM-607/2019::art-60::inc-i",
+        "ICVM-607/2019::art-60::inc-ii",
+        "ICVM-607/2019::art-60::inc-iii",
+        "ICVM-607/2019::art-60::inc-iv",
+        "ICVM-607/2019::art-60::inc-v",
+        "ICVM-607/2019::art-60::inc-vi",
+        "ICVM-607/2019::art-60::inc-vii"
+      ],
+      "raw_score": 6.628547191619873
+    },
+    {
+      "query_id": "q147",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-92",
+      "structural_ids": [
+        "ICVM-607/2019::art-92",
+        "ICVM-607/2019::art-92::inc-i",
+        "ICVM-607/2019::art-92::inc-ii"
+      ],
+      "raw_score": 5.130448818206787
+    },
+    {
+      "query_id": "q147",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-69",
+      "structural_ids": [
+        "ICVM-607/2019::art-69",
+        "ICVM-607/2019::art-69::par-unico"
+      ],
+      "raw_score": 4.983062267303467
+    },
+    {
+      "query_id": "q147",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-73",
+      "structural_ids": [
+        "ICVM-607/2019::art-73",
+        "ICVM-607/2019::art-73::par-1",
+        "ICVM-607/2019::art-73::par-2"
+      ],
+      "raw_score": 4.219531059265137
+    },
+    {
+      "query_id": "q147",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-63",
+      "structural_ids": [
+        "ICVM-607/2019::art-63",
+        "ICVM-607/2019::art-63::par-1",
+        "ICVM-607/2019::art-63::par-2",
+        "ICVM-607/2019::art-63::par-3",
+        "ICVM-607/2019::art-63::par-4"
+      ],
+      "raw_score": 4.202425956726074
+    }
+  ]
+}

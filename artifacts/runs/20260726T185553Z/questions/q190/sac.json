@@ -1,0 +1,125 @@
+{
+  "question_record": {
+    "question_id": "q190",
+    "query_class": "unanswerable",
+    "strategy": "sac",
+    "unanswerable": true,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-98",
+      "ICVM-607/2019::art-98::inc-i",
+      "ICVM-607/2019::art-98::inc-ii",
+      "ICVM-607/2019::art-98::inc-iii",
+      "ICVM-607/2019::art-98::inc-iv",
+      "ICVM-607/2019::art-98::inc-v",
+      "ICVM-607/2019::art-98::par-unico",
+      "ICVM-607/2019::art-96",
+      "ICVM-607/2019::art-96::par-1",
+      "ICVM-607/2019::art-96::par-2",
+      "ICVM-607/2019::art-96::par-3",
+      "ICVM-607/2019::art-96::par-4",
+      "ICVM-607/2019::art-96::par-5",
+      "ICVM-607/2019::art-94",
+      "ICVM-607/2019::art-94::inc-i",
+      "ICVM-607/2019::art-94::inc-ii",
+      "ICVM-607/2019::art-94::inc-iii",
+      "ICVM-607/2019::art-94::par-unico",
+      "ICVM-607/2019::art-92",
+      "ICVM-607/2019::art-92::inc-i",
+      "ICVM-607/2019::art-92::inc-ii",
+      "ICVM-607/2019::art-93",
+      "ICVM-607/2019::art-93::par-1",
+      "ICVM-607/2019::art-93::par-2",
+      "ICVM-607/2019::art-93::par-3",
+      "ICVM-607/2019::art-93::par-4"
+    ],
+    "answer_text": "As informações fornecidas no contexto não contêm dados estatísticos ou percentuais sobre a aceitação de propostas de Acordo de Supervisão pela CVM desde a edição da Instrução CVM nº 607/2019. O texto limita-se a descrever os procedimentos, critérios e prazos aplicáveis a esses acordos.",
+    "answer_citations": [],
+    "metrics": {
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8131886129733507,
+      "abstention_appropriate": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q190",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-98",
+      "structural_ids": [
+        "ICVM-607/2019::art-98",
+        "ICVM-607/2019::art-98::inc-i",
+        "ICVM-607/2019::art-98::inc-ii",
+        "ICVM-607/2019::art-98::inc-iii",
+        "ICVM-607/2019::art-98::inc-iv",
+        "ICVM-607/2019::art-98::inc-v",
+        "ICVM-607/2019::art-98::par-unico"
+      ],
+      "raw_score": 0.7902432367924429
+    },
+    {
+      "query_id": "q190",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-96",
+      "structural_ids": [
+        "ICVM-607/2019::art-96",
+        "ICVM-607/2019::art-96::par-1",
+        "ICVM-607/2019::art-96::par-2",
+        "ICVM-607/2019::art-96::par-3",
+        "ICVM-607/2019::art-96::par-4",
+        "ICVM-607/2019::art-96::par-5"
+      ],
+      "raw_score": 0.77706954690344
+    },
+    {
+      "query_id": "q190",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-94",
+      "structural_ids": [
+        "ICVM-607/2019::art-94",
+        "ICVM-607/2019::art-94::inc-i",
+        "ICVM-607/2019::art-94::inc-ii",
+        "ICVM-607/2019::art-94::inc-iii",
+        "ICVM-607/2019::art-94::par-unico"
+      ],
+      "raw_score": 0.7738748938750457
+    },
+    {
+      "query_id": "q190",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-92",
+      "structural_ids": [
+        "ICVM-607/2019::art-92",
+        "ICVM-607/2019::art-92::inc-i",
+        "ICVM-607/2019::art-92::inc-ii"
+      ],
+      "raw_score": 0.7726417903554896
+    },
+    {
+      "query_id": "q190",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-93",
+      "structural_ids": [
+        "ICVM-607/2019::art-93",
+        "ICVM-607/2019::art-93::par-1",
+        "ICVM-607/2019::art-93::par-2",
+        "ICVM-607/2019::art-93::par-3",
+        "ICVM-607/2019::art-93::par-4"
+      ],
+      "raw_score": 0.7709054553821937
+    }
+  ]
+}

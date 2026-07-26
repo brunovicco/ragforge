@@ -1,0 +1,99 @@
+{
+  "question_record": {
+    "question_id": "q224",
+    "query_class": "exact_factual",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-38",
+      "ICVM-607/2019::art-38::par-unico",
+      "ICVM-607/2019::art-31",
+      "ICVM-607/2019::art-31::par-1",
+      "ICVM-607/2019::art-31::par-2",
+      "ICVM-607/2019::art-41",
+      "ICVM-607/2019::art-41::par-unico",
+      "ICVM-607/2019::art-32::par-3",
+      "ICVM-607/2019::art-74::par-1"
+    ],
+    "answer_text": "Segundo o art. 31, § 1º da ICVM 607/2019, o sorteio deve assegurar a distribuição uniforme de processos entre os membros do Colegiado [ICVM-607/2019::art-31::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-31::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.6309297535714575,
+      "mrr": 0.5,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7679296673222274,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q224",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-38",
+      "structural_ids": [
+        "ICVM-607/2019::art-38",
+        "ICVM-607/2019::art-38::par-unico"
+      ],
+      "raw_score": 6.8035125732421875
+    },
+    {
+      "query_id": "q224",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-31",
+      "structural_ids": [
+        "ICVM-607/2019::art-31",
+        "ICVM-607/2019::art-31::par-1",
+        "ICVM-607/2019::art-31::par-2"
+      ],
+      "raw_score": 6.673025131225586
+    },
+    {
+      "query_id": "q224",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-41",
+      "structural_ids": [
+        "ICVM-607/2019::art-41",
+        "ICVM-607/2019::art-41::par-unico"
+      ],
+      "raw_score": 5.550783157348633
+    },
+    {
+      "query_id": "q224",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-32::par-3",
+      "structural_ids": [
+        "ICVM-607/2019::art-32::par-3"
+      ],
+      "raw_score": 5.332929611206055
+    },
+    {
+      "query_id": "q224",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-74::par-1",
+      "structural_ids": [
+        "ICVM-607/2019::art-74::par-1"
+      ],
+      "raw_score": 5.316286087036133
+    }
+  ]
+}

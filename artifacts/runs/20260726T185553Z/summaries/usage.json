@@ -1,0 +1,92 @@
+{
+  "dense": {
+    "calls": 60,
+    "latency_seconds": 134.31962112800102,
+    "prompt_tokens": 263117,
+    "completion_tokens": 12532,
+    "total_tokens": 275649,
+    "cache_hits": 0,
+    "estimated_cost_usd": null
+  },
+  "sparse_bm25": {
+    "calls": 60,
+    "latency_seconds": 79.81806250199588,
+    "prompt_tokens": 146909,
+    "completion_tokens": 11715,
+    "total_tokens": 158624,
+    "cache_hits": 0,
+    "estimated_cost_usd": null
+  },
+  "hybrid_rrf": {
+    "calls": 60,
+    "latency_seconds": 73.96638087098472,
+    "prompt_tokens": 200335,
+    "completion_tokens": 11952,
+    "total_tokens": 212287,
+    "cache_hits": 1,
+    "estimated_cost_usd": null
+  },
+  "reranked": {
+    "calls": 60,
+    "latency_seconds": 73.37238041799719,
+    "prompt_tokens": 148925,
+    "completion_tokens": 10941,
+    "total_tokens": 159866,
+    "cache_hits": 0,
+    "estimated_cost_usd": null
+  },
+  "parent_child": {
+    "calls": 60,
+    "latency_seconds": 59.189223831013805,
+    "prompt_tokens": 172707,
+    "completion_tokens": 9077,
+    "total_tokens": 181784,
+    "cache_hits": 17,
+    "estimated_cost_usd": null
+  },
+  "contextual": {
+    "calls": 60,
+    "latency_seconds": 72.42608988000211,
+    "prompt_tokens": 213634,
+    "completion_tokens": 11368,
+    "total_tokens": 225002,
+    "cache_hits": 5,
+    "estimated_cost_usd": null
+  },
+  "sac": {
+    "calls": 60,
+    "latency_seconds": 76.5777599979956,
+    "prompt_tokens": 179697,
+    "completion_tokens": 12238,
+    "total_tokens": 191935,
+    "cache_hits": 3,
+    "estimated_cost_usd": null
+  },
+  "sac_contextual": {
+    "calls": 60,
+    "latency_seconds": 71.97612174499227,
+    "prompt_tokens": 190080,
+    "completion_tokens": 11980,
+    "total_tokens": 202060,
+    "cache_hits": 0,
+    "estimated_cost_usd": null
+  },
+  "raptor": {
+    "calls": 60,
+    "latency_seconds": 85.97498566800277,
+    "prompt_tokens": 313892,
+    "completion_tokens": 12577,
+    "total_tokens": 326469,
+    "cache_hits": 3,
+    "estimated_cost_usd": null
+  },
+  "graphrag": {
+    "calls": 60,
+    "latency_seconds": 62.27851428998838,
+    "prompt_tokens": 213880,
+    "completion_tokens": 7943,
+    "total_tokens": 221823,
+    "cache_hits": 5,
+    "estimated_cost_usd": null
+  }
+}

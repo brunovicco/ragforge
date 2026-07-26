@@ -1,0 +1,109 @@
+{
+  "question_record": {
+    "question_id": "q128",
+    "query_class": "section_comparative",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-10::par-unico",
+      "ICVM-607/2019::art-46",
+      "ICVM-607/2019::art-30",
+      "ICVM-607/2019::art-30::par-1",
+      "ICVM-607/2019::art-30::par-2",
+      "ICVM-607/2019::art-74::par-2"
+    ],
+    "answer_text": "De acordo com a Instrução CVM nº 607/2019, os prazos comparados são:\n\n*   **Inquérito Administrativo:** Os trabalhos de investigação devem ser concluídos no prazo de 120 (cento e vinte) dias, contados da data de instauração do inquérito [ICVM-607/2019::art-10]. Este prazo pode ser prorrogado mais de uma vez, mediante pedido motivado encaminhado à Superintendência Geral [ICVM-607/2019::art-10].\n*   **Apresentação de Defesa:** O acusado deve apresentar sua defesa por escrito no prazo de 30 (trinta) dias após a citação [ICVM-607/2019::art-29]. Este prazo admite uma única prorrogação, pelo mesmo período de 30 dias, mediante pedido devidamente fundamentado [ICVM-607/2019::art-29::par-3].",
+    "answer_citations": [
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-3"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 0.8,
+      "answer_relevancy": 0.7793021381327122,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.6666666666666666
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q128",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 0.8294799662758268
+    },
+    {
+      "query_id": "q128",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-10",
+      "structural_ids": [
+        "ICVM-607/2019::art-10",
+        "ICVM-607/2019::art-10::par-unico"
+      ],
+      "raw_score": 0.8174318066865521
+    },
+    {
+      "query_id": "q128",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-46",
+      "structural_ids": [
+        "ICVM-607/2019::art-46"
+      ],
+      "raw_score": 0.7932849425481945
+    },
+    {
+      "query_id": "q128",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-30",
+      "structural_ids": [
+        "ICVM-607/2019::art-30",
+        "ICVM-607/2019::art-30::par-1",
+        "ICVM-607/2019::art-30::par-2"
+      ],
+      "raw_score": 0.7889317860365573
+    },
+    {
+      "query_id": "q128",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-74::par-2",
+      "structural_ids": [
+        "ICVM-607/2019::art-74::par-2"
+      ],
+      "raw_score": 0.7832910699321637
+    }
+  ]
+}

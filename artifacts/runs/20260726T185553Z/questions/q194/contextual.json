@@ -1,0 +1,130 @@
+{
+  "question_record": {
+    "question_id": "q194",
+    "query_class": "exact_factual",
+    "strategy": "contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-86",
+      "ICVM-607/2019::art-86::par-1",
+      "ICVM-607/2019::art-86::par-2",
+      "ICVM-607/2019::art-83",
+      "ICVM-607/2019::art-83::par-1",
+      "ICVM-607/2019::art-83::par-2",
+      "ICVM-607/2019::art-83::par-3",
+      "ICVM-607/2019::art-83::par-4",
+      "ICVM-607/2019::art-83::par-5",
+      "ICVM-607/2019::art-83::par-6",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-106",
+      "ICVM-607/2019::art-106::inc-i",
+      "ICVM-607/2019::art-106::inc-ii",
+      "ICVM-607/2019::art-106::inc-iii",
+      "ICVM-607/2019::art-106::par-unico"
+    ],
+    "answer_text": "Na deliberação da proposta de termo de compromisso, o Colegiado considera, dentre outros elementos [ICVM-607/2019::art-86]:\n\n*   A oportunidade e a conveniência na celebração do compromisso [ICVM-607/2019::art-86];\n*   A natureza e a gravidade das infrações objeto do processo [ICVM-607/2019::art-86];\n*   Os antecedentes dos acusados ou investigados [ICVM-607/2019::art-86];\n*   A colaboração de boa-fé dos acusados ou investigados [ICVM-607/2019::art-86];\n*   A efetiva possibilidade de punição, no caso concreto [ICVM-607/2019::art-86].\n\nAdicionalmente, caso a proposta seja apresentada ainda em fase de apuração ou antes dela, o Colegiado também considera a natureza e as circunstâncias da infração para avaliar a conveniência do termo de compromisso frente aos benefícios de um eventual acordo administrativo de supervisão [ICVM-607/2019::art-86::par-2].",
+    "answer_citations": [
+      "ICVM-607/2019::art-86",
+      "ICVM-607/2019::art-86::par-2"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.788438294593627,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q194",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-86",
+      "structural_ids": [
+        "ICVM-607/2019::art-86",
+        "ICVM-607/2019::art-86::par-1",
+        "ICVM-607/2019::art-86::par-2"
+      ],
+      "raw_score": 0.03278688524590164
+    },
+    {
+      "query_id": "q194",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-83",
+      "structural_ids": [
+        "ICVM-607/2019::art-83",
+        "ICVM-607/2019::art-83::par-1",
+        "ICVM-607/2019::art-83::par-2",
+        "ICVM-607/2019::art-83::par-3",
+        "ICVM-607/2019::art-83::par-4",
+        "ICVM-607/2019::art-83::par-5",
+        "ICVM-607/2019::art-83::par-6"
+      ],
+      "raw_score": 0.03225806451612903
+    },
+    {
+      "query_id": "q194",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q194",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 0.015873015873015872
+    },
+    {
+      "query_id": "q194",
+      "strategy": "hybrid",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-106",
+      "structural_ids": [
+        "ICVM-607/2019::art-106",
+        "ICVM-607/2019::art-106::inc-i",
+        "ICVM-607/2019::art-106::inc-ii",
+        "ICVM-607/2019::art-106::inc-iii",
+        "ICVM-607/2019::art-106::par-unico"
+      ],
+      "raw_score": 0.015625
+    }
+  ]
+}

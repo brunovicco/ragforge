@@ -1,0 +1,141 @@
+{
+  "question_record": {
+    "question_id": "q162",
+    "query_class": "global",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-66::par-5",
+      "LEI-13709/2018::art-50::par-2",
+      "LEI-13709/2018::art-50::par-2-inc-i",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+      "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+      "LEI-13709/2018::art-50::par-2-inc-ii",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2",
+      "ICVM-607/2019::art-66",
+      "ICVM-607/2019::art-66::inc-i",
+      "ICVM-607/2019::art-66::inc-ii",
+      "ICVM-607/2019::art-66::inc-iii",
+      "ICVM-607/2019::art-66::inc-iv",
+      "ICVM-607/2019::art-66::inc-v",
+      "ICVM-607/2019::art-66::par-1",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4"
+    ],
+    "answer_text": "De acordo com a Instrução CVM 607/2019, a dosimetria da pena, exceto nos casos de aplicação da penalidade de advertência, segue uma ordem específica de cálculo [ICVM-607/2019::art-62]:\n\n1.  **Fixação da pena-base:** O Colegiado estabelece inicialmente a pena-base [ICVM-607/2019::art-62].\n2.  **Aplicação de circunstâncias:** Na sequência, são aplicadas as circunstâncias agravantes e atenuantes [ICVM-607/2019::art-62].\n3.  **Causa de redução:** Por fim, aplica-se a causa de redução da pena [ICVM-607/2019::art-62].\n\nAlém disso, o Colegiado deve considerar na dosimetria outras sanções aplicadas definitivamente por outras autoridades sobre os mesmos fatos, sendo ônus do acusado demonstrar o cabimento dessa consideração até o julgamento do processo [ICVM-607/2019::art-62::par-unico].\n\nQuanto às circunstâncias atenuantes, a norma estabelece que:\n*   A incidência de atenuantes não descaracteriza a gravidade da conduta [ICVM-607/2019::art-66::par-2].\n*   Para a penalidade de multa, ocorre uma redução de até 25% para cada atenuante verificada [ICVM-607/2019::art-66::par-3].\n*   Para as penalidades de suspensão, inabilitação e proibição, a redução também é de até 25% por atenuante, calculada sobre o número de meses da pena-base e desprezando-se as frações [ICVM-607/2019::art-66::par-4].\n*   A atenuante de confissão do ilícito ou prestação de informações (inciso I do art. 66) não se aplica ao acusado que tenha celebrado acordo administrativo em processo de supervisão (conforme art. 30 da Lei nº 13.506/2017) referente aos mesmos fatos [ICVM-607/2019::art-66::par-5].",
+    "answer_citations": [
+      "ICVM-607/2019::art-62",
+      "ICVM-607/2019::art-62::par-unico",
+      "ICVM-607/2019::art-66::par-2",
+      "ICVM-607/2019::art-66::par-3",
+      "ICVM-607/2019::art-66::par-4",
+      "ICVM-607/2019::art-66::par-5"
+    ],
+    "metrics": {
+      "recall_at_k": 0.2,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.13120507751234178,
+      "mrr": 0.2,
+      "drm_at_k": 0.4,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7918552083713074,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q162",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-62",
+      "structural_ids": [
+        "ICVM-607/2019::art-62",
+        "ICVM-607/2019::art-62::par-unico"
+      ],
+      "raw_score": 14.68202
+    },
+    {
+      "query_id": "q162",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-66::par-5",
+      "structural_ids": [
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 12.525351
+    },
+    {
+      "query_id": "q162",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-50::par-2",
+      "structural_ids": [
+        "LEI-13709/2018::art-50::par-2",
+        "LEI-13709/2018::art-50::par-2-inc-i",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-a",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-b",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-c",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-d",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-e",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-f",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-g",
+        "LEI-13709/2018::art-50::par-2-inc-i-ali-h",
+        "LEI-13709/2018::art-50::par-2-inc-ii"
+      ],
+      "raw_score": 12.096323
+    },
+    {
+      "query_id": "q162",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 11.870018
+    },
+    {
+      "query_id": "q162",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-66",
+      "structural_ids": [
+        "ICVM-607/2019::art-66",
+        "ICVM-607/2019::art-66::inc-i",
+        "ICVM-607/2019::art-66::inc-ii",
+        "ICVM-607/2019::art-66::inc-iii",
+        "ICVM-607/2019::art-66::inc-iv",
+        "ICVM-607/2019::art-66::inc-v",
+        "ICVM-607/2019::art-66::par-1",
+        "ICVM-607/2019::art-66::par-2",
+        "ICVM-607/2019::art-66::par-3",
+        "ICVM-607/2019::art-66::par-4",
+        "ICVM-607/2019::art-66::par-5"
+      ],
+      "raw_score": 10.160063
+    }
+  ]
+}

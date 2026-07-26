@@ -1,0 +1,133 @@
+{
+  "question_record": {
+    "question_id": "q054",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-7",
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-7::inc-ii",
+      "LEI-13709/2018::art-7::inc-iii",
+      "LEI-13709/2018::art-7::inc-iv",
+      "LEI-13709/2018::art-7::inc-v",
+      "LEI-13709/2018::art-7::inc-vi",
+      "LEI-13709/2018::art-7::inc-vii",
+      "LEI-13709/2018::art-7::inc-viii",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::inc-x",
+      "LEI-13709/2018::art-7::par-1",
+      "LEI-13709/2018::art-7::par-2",
+      "LEI-13709/2018::art-7::par-3",
+      "LEI-13709/2018::art-7::par-4",
+      "LEI-13709/2018::art-7::par-5",
+      "LEI-13709/2018::art-7::par-6",
+      "LEI-13709/2018::art-7::par-7"
+    ],
+    "answer_text": "Segundo o art. 7º da Lei nº 13.709/2018 (LGPD), o tratamento de dados pessoais pode ser realizado nas seguintes hipóteses:\n\n*   Mediante o fornecimento de consentimento pelo titular [LEI-13709/2018::art-7::inc-i];\n*   Para o cumprimento de obrigação legal ou regulatória pelo controlador [LEI-13709/2018::art-7::inc-ii];\n*   Pela administração pública, para o tratamento e uso compartilhado de dados necessários à execução de políticas públicas previstas em leis e regulamentos ou respaldadas em contratos, convênios ou instrumentos congêneres, observadas as disposições do Capítulo IV da Lei [LEI-13709/2018::art-7::inc-iii];\n*   Para a realização de estudos por órgão de pesquisa, garantida, sempre que possível, a anonimização dos dados pessoais [LEI-13709/2018::art-7::inc-iv];\n*   Quando necessário para a execução de contrato ou de procedimentos preliminares relacionados a contrato do qual seja parte o titular, a pedido do titular dos dados [LEI-13709/2018::art-7::inc-v];\n*   Para o exercício regular de direitos em processo judicial, administrativo ou arbitral [LEI-13709/2018::art-7::inc-vi];\n*   Para a proteção da vida ou da incolumidade física do titular ou de terceiro [LEI-13709/2018::art-7::inc-vii];\n*   Para a tutela da saúde, exclusivamente, em procedimento realizado por profissionais de saúde, serviços de saúde ou autoridade sanitária [LEI-13709/2018::art-7::inc-viii];\n*   Quando necessário para atender aos interesses legítimos do controlador ou de terceiro, exceto no caso de prevalecerem direitos e liberdades fundamentais do titular que exijam a proteção dos dados pessoais [LEI-13709/2018::art-7::inc-ix];\n*   Para a proteção do crédito, inclusive quanto ao disposto na legislação pertinente [LEI-13709/2018::art-7::inc-x].",
+    "answer_citations": [
+      "LEI-13709/2018::art-7::inc-i",
+      "LEI-13709/2018::art-7::inc-ii",
+      "LEI-13709/2018::art-7::inc-iii",
+      "LEI-13709/2018::art-7::inc-iv",
+      "LEI-13709/2018::art-7::inc-v",
+      "LEI-13709/2018::art-7::inc-vi",
+      "LEI-13709/2018::art-7::inc-vii",
+      "LEI-13709/2018::art-7::inc-viii",
+      "LEI-13709/2018::art-7::inc-ix",
+      "LEI-13709/2018::art-7::inc-x"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9803139775670932,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 0.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q054",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-7",
+      "structural_ids": [
+        "LEI-13709/2018::art-7",
+        "LEI-13709/2018::art-7::inc-i",
+        "LEI-13709/2018::art-7::inc-ii",
+        "LEI-13709/2018::art-7::inc-iii",
+        "LEI-13709/2018::art-7::inc-iv",
+        "LEI-13709/2018::art-7::inc-v",
+        "LEI-13709/2018::art-7::inc-vi",
+        "LEI-13709/2018::art-7::inc-vii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-viii",
+        "LEI-13709/2018::art-7::inc-ix",
+        "LEI-13709/2018::art-7::inc-x",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-1",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-2",
+        "LEI-13709/2018::art-7::par-3",
+        "LEI-13709/2018::art-7::par-4",
+        "LEI-13709/2018::art-7::par-5",
+        "LEI-13709/2018::art-7::par-6",
+        "LEI-13709/2018::art-7::par-7"
+      ],
+      "raw_score": 0.8639246011015345
+    },
+    {
+      "query_id": "q054",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-7::inc-v",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-v"
+      ],
+      "raw_score": 0.7952776778860613
+    },
+    {
+      "query_id": "q054",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-7::inc-i",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-i"
+      ],
+      "raw_score": 0.7951981681566404
+    },
+    {
+      "query_id": "q054",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-7::inc-viii",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-viii"
+      ],
+      "raw_score": 0.7949435314479945
+    },
+    {
+      "query_id": "q054",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-7::inc-vii",
+      "structural_ids": [
+        "LEI-13709/2018::art-7::inc-vii"
+      ],
+      "raw_score": 0.7942559375095382
+    }
+  ]
+}

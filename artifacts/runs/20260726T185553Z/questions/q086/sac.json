@@ -1,0 +1,165 @@
+{
+  "question_record": {
+    "question_id": "q086",
+    "query_class": "numeric_tabular",
+    "strategy": "sac",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "LEI-13709/2018::art-52",
+      "LEI-13709/2018::art-52::inc-i",
+      "LEI-13709/2018::art-52::inc-ii",
+      "LEI-13709/2018::art-52::inc-iii",
+      "LEI-13709/2018::art-52::inc-iv",
+      "LEI-13709/2018::art-52::inc-v",
+      "LEI-13709/2018::art-52::inc-vi",
+      "LEI-13709/2018::art-52::inc-vii",
+      "LEI-13709/2018::art-52::inc-viii",
+      "LEI-13709/2018::art-52::inc-ix",
+      "LEI-13709/2018::art-52::inc-x",
+      "LEI-13709/2018::art-52::inc-xi",
+      "LEI-13709/2018::art-52::inc-xii",
+      "LEI-13709/2018::art-52::par-1",
+      "LEI-13709/2018::art-52::par-1-inc-i",
+      "LEI-13709/2018::art-52::par-1-inc-ii",
+      "LEI-13709/2018::art-52::par-1-inc-iii",
+      "LEI-13709/2018::art-52::par-1-inc-iv",
+      "LEI-13709/2018::art-52::par-1-inc-v",
+      "LEI-13709/2018::art-52::par-1-inc-vi",
+      "LEI-13709/2018::art-52::par-1-inc-vii",
+      "LEI-13709/2018::art-52::par-1-inc-viii",
+      "LEI-13709/2018::art-52::par-1-inc-ix",
+      "LEI-13709/2018::art-52::par-1-inc-x",
+      "LEI-13709/2018::art-52::par-1-inc-xi",
+      "LEI-13709/2018::art-52::par-2",
+      "LEI-13709/2018::art-52::par-3",
+      "LEI-13709/2018::art-52::par-4",
+      "LEI-13709/2018::art-52::par-5",
+      "LEI-13709/2018::art-52::par-6",
+      "LEI-13709/2018::art-52::par-6-inc-i",
+      "LEI-13709/2018::art-52::par-6-inc-ii",
+      "LEI-13709/2018::art-52::par-7",
+      "LEI-13709/2018::art-54",
+      "LEI-13709/2018::art-54::par-unico",
+      "LEI-13709/2018::art-53",
+      "LEI-13709/2018::art-53::par-1",
+      "LEI-13709/2018::art-53::par-2"
+    ],
+    "answer_text": "O valor máximo da multa simples prevista no art. 52, inciso II, da LGPD é de R$ 50.000.000,00 (cinquenta milhões de reais) por infração [LEI-13709/2018::art-52::inc-ii].",
+    "answer_citations": [
+      "LEI-13709/2018::art-52::inc-ii"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.4,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.9940291063255439,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q086",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "LEI-13709/2018::art-52",
+      "structural_ids": [
+        "LEI-13709/2018::art-52",
+        "LEI-13709/2018::art-52::inc-i",
+        "LEI-13709/2018::art-52::inc-ii",
+        "LEI-13709/2018::art-52::inc-iii",
+        "LEI-13709/2018::art-52::inc-iv",
+        "LEI-13709/2018::art-52::inc-v",
+        "LEI-13709/2018::art-52::inc-vi",
+        "LEI-13709/2018::art-52::inc-vii",
+        "LEI-13709/2018::art-52::inc-viii",
+        "LEI-13709/2018::art-52::inc-ix",
+        "LEI-13709/2018::art-52::inc-x",
+        "LEI-13709/2018::art-52::inc-xi",
+        "LEI-13709/2018::art-52::inc-xii",
+        "LEI-13709/2018::art-52::inc-x",
+        "LEI-13709/2018::art-52::inc-xi",
+        "LEI-13709/2018::art-52::inc-xii",
+        "LEI-13709/2018::art-52::par-1",
+        "LEI-13709/2018::art-52::par-1-inc-i",
+        "LEI-13709/2018::art-52::par-1-inc-ii",
+        "LEI-13709/2018::art-52::par-1-inc-iii",
+        "LEI-13709/2018::art-52::par-1-inc-iv",
+        "LEI-13709/2018::art-52::par-1-inc-v",
+        "LEI-13709/2018::art-52::par-1-inc-vi",
+        "LEI-13709/2018::art-52::par-1-inc-vii",
+        "LEI-13709/2018::art-52::par-1-inc-viii",
+        "LEI-13709/2018::art-52::par-1-inc-ix",
+        "LEI-13709/2018::art-52::par-1-inc-x",
+        "LEI-13709/2018::art-52::par-1-inc-xi",
+        "LEI-13709/2018::art-52::par-2",
+        "LEI-13709/2018::art-52::par-2",
+        "LEI-13709/2018::art-52::par-3",
+        "LEI-13709/2018::art-52::par-3",
+        "LEI-13709/2018::art-52::par-4",
+        "LEI-13709/2018::art-52::par-5",
+        "LEI-13709/2018::art-52::par-6",
+        "LEI-13709/2018::art-52::par-6",
+        "LEI-13709/2018::art-52::par-6-inc-i",
+        "LEI-13709/2018::art-52::par-6-inc-ii",
+        "LEI-13709/2018::art-52::par-7"
+      ],
+      "raw_score": 0.7523070869919198
+    },
+    {
+      "query_id": "q086",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "LEI-13709/2018::art-54",
+      "structural_ids": [
+        "LEI-13709/2018::art-54",
+        "LEI-13709/2018::art-54::par-unico"
+      ],
+      "raw_score": 0.6969729220614089
+    },
+    {
+      "query_id": "q086",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "LEI-13709/2018::art-53",
+      "structural_ids": [
+        "LEI-13709/2018::art-53",
+        "LEI-13709/2018::art-53::par-1",
+        "LEI-13709/2018::art-53::par-2"
+      ],
+      "raw_score": 0.6889340151899013
+    },
+    {
+      "query_id": "q086",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-52::par-4",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::par-4"
+      ],
+      "raw_score": 0.6707550858457012
+    },
+    {
+      "query_id": "q086",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-52::inc-ii",
+      "structural_ids": [
+        "LEI-13709/2018::art-52::inc-ii"
+      ],
+      "raw_score": 0.6705806828832538
+    }
+  ]
+}

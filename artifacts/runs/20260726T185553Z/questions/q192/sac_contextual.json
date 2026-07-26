@@ -1,0 +1,103 @@
+{
+  "question_record": {
+    "question_id": "q192",
+    "query_class": "exact_factual",
+    "strategy": "sac_contextual",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-90",
+      "ICVM-607/2019::art-101::inc-ix",
+      "ICVM-607/2019::art-89",
+      "ICVM-607/2019::art-89::par-1",
+      "ICVM-607/2019::art-89::par-2",
+      "ICVM-607/2019::art-87",
+      "ICVM-607/2019::art-87::par-1",
+      "ICVM-607/2019::art-87::par-2",
+      "ICVM-607/2019::art-108",
+      "ICVM-607/2019::art-108::inc-i",
+      "ICVM-607/2019::art-108::inc-ii"
+    ],
+    "answer_text": "Caso as obrigações assumidas pelo compromitente não sejam cumpridas de forma integral e adequada, o processo será instaurado ou seu curso será retomado, conforme o caso, sem prejuízo da aplicação de penalidades ou de outras medidas eventualmente cabíveis [ICVM-607/2019::art-90].",
+    "answer_citations": [
+      "ICVM-607/2019::art-90"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7177950497718619,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q192",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-90",
+      "structural_ids": [
+        "ICVM-607/2019::art-90"
+      ],
+      "raw_score": 0.8397446179915813
+    },
+    {
+      "query_id": "q192",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-101::inc-ix",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-ix"
+      ],
+      "raw_score": 0.7826221029135111
+    },
+    {
+      "query_id": "q192",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-89",
+      "structural_ids": [
+        "ICVM-607/2019::art-89",
+        "ICVM-607/2019::art-89::par-1",
+        "ICVM-607/2019::art-89::par-2"
+      ],
+      "raw_score": 0.7769473981766829
+    },
+    {
+      "query_id": "q192",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-87",
+      "structural_ids": [
+        "ICVM-607/2019::art-87",
+        "ICVM-607/2019::art-87::par-1",
+        "ICVM-607/2019::art-87::par-2"
+      ],
+      "raw_score": 0.7720222348981911
+    },
+    {
+      "query_id": "q192",
+      "strategy": "dense",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-108",
+      "structural_ids": [
+        "ICVM-607/2019::art-108",
+        "ICVM-607/2019::art-108::inc-i",
+        "ICVM-607/2019::art-108::inc-ii"
+      ],
+      "raw_score": 0.7672816658456084
+    }
+  ]
+}

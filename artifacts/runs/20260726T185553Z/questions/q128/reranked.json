@@ -1,0 +1,134 @@
+{
+  "question_record": {
+    "question_id": "q128",
+    "query_class": "section_comparative",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-10::par-unico",
+      "ICVM-607/2019::art-12",
+      "ICVM-607/2019::art-12::inc-i",
+      "ICVM-607/2019::art-12::inc-ii",
+      "ICVM-607/2019::art-12::inc-iii",
+      "ICVM-607/2019::art-12::par-unico",
+      "ICVM-607/2019::art-8",
+      "ICVM-607/2019::art-8::inc-i",
+      "ICVM-607/2019::art-8::inc-ii",
+      "ICVM-607/2019::art-8::par-unico",
+      "ICVM-607/2019::art-21",
+      "ICVM-607/2019::art-21::par-1",
+      "ICVM-607/2019::art-21::par-1-inc-i",
+      "ICVM-607/2019::art-21::par-1-inc-ii",
+      "ICVM-607/2019::art-21::par-1-inc-iii",
+      "ICVM-607/2019::art-21::par-1-inc-iv",
+      "ICVM-607/2019::art-21::par-1-inc-v",
+      "ICVM-607/2019::art-21::par-1-inc-vi",
+      "ICVM-607/2019::art-21::par-1-inc-vii",
+      "ICVM-607/2019::art-21::par-2",
+      "ICVM-607/2019::art-21::par-3",
+      "ICVM-607/2019::art-21::par-4",
+      "ICVM-607/2019::art-88",
+      "ICVM-607/2019::art-88::inc-i",
+      "ICVM-607/2019::art-88::inc-ii"
+    ],
+    "answer_text": "De acordo com a Instrução CVM nº 607/2019, os trabalhos de investigação do inquérito administrativo devem ser concluídos em 120 dias, contados da data de sua instauração, sendo possível a prorrogação deste prazo mediante pedido motivado à Superintendência Geral [ICVM-607/2019::art-10].\n\nQuanto ao prazo para apresentação de defesa, o contexto fornecido não contém informações sobre o artigo 29 ou sobre o prazo específico para a apresentação de defesa em um processo administrativo sancionador, mencionando apenas que a citação deve conter a informação sobre o referido prazo [ICVM-607/2019::art-21::par-1-inc-iv].",
+    "answer_citations": [
+      "ICVM-607/2019::art-10",
+      "ICVM-607/2019::art-21::par-1-inc-iv"
+    ],
+    "metrics": {
+      "recall_at_k": 0.5,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 0.6131471927654584,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6752341515836763,
+      "abstention_appropriate": 0.0,
+      "citation_accuracy": 0.5
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q128",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-10",
+      "structural_ids": [
+        "ICVM-607/2019::art-10",
+        "ICVM-607/2019::art-10::par-unico"
+      ],
+      "raw_score": 6.517692565917969
+    },
+    {
+      "query_id": "q128",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-12",
+      "structural_ids": [
+        "ICVM-607/2019::art-12",
+        "ICVM-607/2019::art-12::inc-i",
+        "ICVM-607/2019::art-12::inc-ii",
+        "ICVM-607/2019::art-12::inc-iii",
+        "ICVM-607/2019::art-12::par-unico"
+      ],
+      "raw_score": 5.237053394317627
+    },
+    {
+      "query_id": "q128",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-8",
+      "structural_ids": [
+        "ICVM-607/2019::art-8",
+        "ICVM-607/2019::art-8::inc-i",
+        "ICVM-607/2019::art-8::inc-ii",
+        "ICVM-607/2019::art-8::par-unico"
+      ],
+      "raw_score": 4.607574462890625
+    },
+    {
+      "query_id": "q128",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-21",
+      "structural_ids": [
+        "ICVM-607/2019::art-21",
+        "ICVM-607/2019::art-21::par-1",
+        "ICVM-607/2019::art-21::par-1-inc-i",
+        "ICVM-607/2019::art-21::par-1-inc-ii",
+        "ICVM-607/2019::art-21::par-1-inc-iii",
+        "ICVM-607/2019::art-21::par-1-inc-iv",
+        "ICVM-607/2019::art-21::par-1-inc-v",
+        "ICVM-607/2019::art-21::par-1-inc-vi",
+        "ICVM-607/2019::art-21::par-1-inc-vii",
+        "ICVM-607/2019::art-21::par-2",
+        "ICVM-607/2019::art-21::par-3",
+        "ICVM-607/2019::art-21::par-4"
+      ],
+      "raw_score": 4.476688385009766
+    },
+    {
+      "query_id": "q128",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-88",
+      "structural_ids": [
+        "ICVM-607/2019::art-88",
+        "ICVM-607/2019::art-88::inc-i",
+        "ICVM-607/2019::art-88::inc-ii"
+      ],
+      "raw_score": 4.470073223114014
+    }
+  ]
+}

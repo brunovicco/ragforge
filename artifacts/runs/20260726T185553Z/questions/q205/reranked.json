@@ -1,0 +1,117 @@
+{
+  "question_record": {
+    "question_id": "q205",
+    "query_class": "numeric_tabular",
+    "strategy": "reranked",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-107",
+      "ICVM-607/2019::art-107::inc-i",
+      "ICVM-607/2019::art-107::inc-ii",
+      "ICVM-607/2019::art-107::par-1",
+      "ICVM-607/2019::art-107::par-2",
+      "ICVM-607/2019::art-107::par-2-inc-i",
+      "ICVM-607/2019::art-107::par-2-inc-ii",
+      "ICVM-607/2019::art-107::par-2-inc-iii",
+      "ICVM-607/2019::art-101::inc-x",
+      "ICVM-607/2019::art-101::inc-ix",
+      "LEI-13709/2018::art-12",
+      "LEI-13709/2018::art-12::par-1",
+      "LEI-13709/2018::art-12::par-2",
+      "LEI-13709/2018::art-12::par-3",
+      "LEI-13709/2018::art-43",
+      "LEI-13709/2018::art-43::inc-i",
+      "LEI-13709/2018::art-43::inc-ii",
+      "LEI-13709/2018::art-43::inc-iii"
+    ],
+    "answer_text": "O benefício para a pessoa natural ou jurídica que não for a primeira a se qualificar com respeito à infração noticiada ou sob investigação é a redução de 1/3 (um terço) da penalidade a ela aplicável [ICVM-607/2019::art-107::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-107::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.4,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7114546014407694,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q205",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-107",
+      "structural_ids": [
+        "ICVM-607/2019::art-107",
+        "ICVM-607/2019::art-107::inc-i",
+        "ICVM-607/2019::art-107::inc-ii",
+        "ICVM-607/2019::art-107::par-1",
+        "ICVM-607/2019::art-107::par-2",
+        "ICVM-607/2019::art-107::par-2-inc-i",
+        "ICVM-607/2019::art-107::par-2-inc-ii",
+        "ICVM-607/2019::art-107::par-2-inc-iii"
+      ],
+      "raw_score": 4.748676300048828
+    },
+    {
+      "query_id": "q205",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-101::inc-x",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-x"
+      ],
+      "raw_score": 4.726679801940918
+    },
+    {
+      "query_id": "q205",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-101::inc-ix",
+      "structural_ids": [
+        "ICVM-607/2019::art-101::inc-ix"
+      ],
+      "raw_score": 1.8097238540649414
+    },
+    {
+      "query_id": "q205",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "LEI-13709/2018::art-12",
+      "structural_ids": [
+        "LEI-13709/2018::art-12",
+        "LEI-13709/2018::art-12::par-1",
+        "LEI-13709/2018::art-12::par-2",
+        "LEI-13709/2018::art-12::par-3"
+      ],
+      "raw_score": 1.0838912725448608
+    },
+    {
+      "query_id": "q205",
+      "strategy": "reranked",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "LEI-13709/2018::art-43",
+      "structural_ids": [
+        "LEI-13709/2018::art-43",
+        "LEI-13709/2018::art-43::inc-i",
+        "LEI-13709/2018::art-43::inc-ii",
+        "LEI-13709/2018::art-43::inc-iii"
+      ],
+      "raw_score": 0.8648533821105957
+    }
+  ]
+}

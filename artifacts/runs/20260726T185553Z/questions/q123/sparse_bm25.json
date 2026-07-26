@@ -1,0 +1,151 @@
+{
+  "question_record": {
+    "question_id": "q123",
+    "query_class": "numeric_tabular",
+    "strategy": "sparse_bm25",
+    "unanswerable": false,
+    "retrieval_status": "succeeded",
+    "generation_status": "succeeded",
+    "judge_status": "succeeded",
+    "retrieved_structural_ids": [
+      "ICVM-607/2019::art-30",
+      "ICVM-607/2019::art-30::par-1",
+      "ICVM-607/2019::art-30::par-2",
+      "ICVM-607/2019::art-29",
+      "ICVM-607/2019::art-29::par-1",
+      "ICVM-607/2019::art-29::par-2",
+      "ICVM-607/2019::art-29::par-3",
+      "ICVM-607/2019::art-29::par-4",
+      "ICVM-607/2019::art-29::par-5",
+      "ICVM-607/2019::art-74",
+      "ICVM-607/2019::art-74::inc-i",
+      "ICVM-607/2019::art-74::inc-ii",
+      "ICVM-607/2019::art-74::inc-iii",
+      "ICVM-607/2019::art-74::par-1",
+      "ICVM-607/2019::art-74::par-2",
+      "ICVM-607/2019::art-74::par-3",
+      "ICVM-607/2019::art-74::par-4",
+      "ICVM-607/2019::art-21",
+      "ICVM-607/2019::art-21::par-1",
+      "ICVM-607/2019::art-21::par-1-inc-i",
+      "ICVM-607/2019::art-21::par-1-inc-ii",
+      "ICVM-607/2019::art-21::par-1-inc-iii",
+      "ICVM-607/2019::art-21::par-1-inc-iv",
+      "ICVM-607/2019::art-21::par-1-inc-v",
+      "ICVM-607/2019::art-21::par-1-inc-vi",
+      "ICVM-607/2019::art-21::par-1-inc-vii",
+      "ICVM-607/2019::art-21::par-2",
+      "ICVM-607/2019::art-21::par-3",
+      "ICVM-607/2019::art-21::par-4",
+      "ICVM-607/2019::art-82",
+      "ICVM-607/2019::art-82::inc-i",
+      "ICVM-607/2019::art-82::inc-ii",
+      "ICVM-607/2019::art-82::par-1",
+      "ICVM-607/2019::art-82::par-2",
+      "ICVM-607/2019::art-82::par-3"
+    ],
+    "answer_text": "O instrumento de mandato de um procurador que não esteja constituído nos autos deve ser apresentado à CVM nos 15 (quinze) dias subsequentes à apresentação da defesa [ICVM-607/2019::art-30::par-1].",
+    "answer_citations": [
+      "ICVM-607/2019::art-30::par-1"
+    ],
+    "metrics": {
+      "recall_at_k": 1.0,
+      "precision_at_k": 0.2,
+      "ndcg_at_k": 1.0,
+      "mrr": 1.0,
+      "drm_at_k": 0.0,
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8871779425963151,
+      "abstention_appropriate": 1.0,
+      "citation_accuracy": 1.0
+    },
+    "errors": []
+  },
+  "candidate_lineage": [
+    {
+      "query_id": "q123",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 0,
+      "chunk_id": "ICVM-607/2019::art-30",
+      "structural_ids": [
+        "ICVM-607/2019::art-30",
+        "ICVM-607/2019::art-30::par-1",
+        "ICVM-607/2019::art-30::par-2"
+      ],
+      "raw_score": 49.34034
+    },
+    {
+      "query_id": "q123",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 1,
+      "chunk_id": "ICVM-607/2019::art-29",
+      "structural_ids": [
+        "ICVM-607/2019::art-29",
+        "ICVM-607/2019::art-29::par-1",
+        "ICVM-607/2019::art-29::par-2",
+        "ICVM-607/2019::art-29::par-3",
+        "ICVM-607/2019::art-29::par-4",
+        "ICVM-607/2019::art-29::par-5"
+      ],
+      "raw_score": 21.592014
+    },
+    {
+      "query_id": "q123",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 2,
+      "chunk_id": "ICVM-607/2019::art-74",
+      "structural_ids": [
+        "ICVM-607/2019::art-74",
+        "ICVM-607/2019::art-74::inc-i",
+        "ICVM-607/2019::art-74::inc-ii",
+        "ICVM-607/2019::art-74::inc-iii",
+        "ICVM-607/2019::art-74::par-1",
+        "ICVM-607/2019::art-74::par-2",
+        "ICVM-607/2019::art-74::par-3",
+        "ICVM-607/2019::art-74::par-4"
+      ],
+      "raw_score": 20.69529
+    },
+    {
+      "query_id": "q123",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 3,
+      "chunk_id": "ICVM-607/2019::art-21",
+      "structural_ids": [
+        "ICVM-607/2019::art-21",
+        "ICVM-607/2019::art-21::par-1",
+        "ICVM-607/2019::art-21::par-1-inc-i",
+        "ICVM-607/2019::art-21::par-1-inc-ii",
+        "ICVM-607/2019::art-21::par-1-inc-iii",
+        "ICVM-607/2019::art-21::par-1-inc-iv",
+        "ICVM-607/2019::art-21::par-1-inc-v",
+        "ICVM-607/2019::art-21::par-1-inc-vi",
+        "ICVM-607/2019::art-21::par-1-inc-vii",
+        "ICVM-607/2019::art-21::par-2",
+        "ICVM-607/2019::art-21::par-3",
+        "ICVM-607/2019::art-21::par-4"
+      ],
+      "raw_score": 18.176395
+    },
+    {
+      "query_id": "q123",
+      "strategy": "sparse",
+      "embedding_identity_hash": "2576a45560963435b32ffa92f8dc31f513ef7e331a242832748c5a4de3d1116e",
+      "candidate_rank": 4,
+      "chunk_id": "ICVM-607/2019::art-82",
+      "structural_ids": [
+        "ICVM-607/2019::art-82",
+        "ICVM-607/2019::art-82::inc-i",
+        "ICVM-607/2019::art-82::inc-ii",
+        "ICVM-607/2019::art-82::par-1",
+        "ICVM-607/2019::art-82::par-2",
+        "ICVM-607/2019::art-82::par-3"
+      ],
+      "raw_score": 18.133091
+    }
+  ]
+}
