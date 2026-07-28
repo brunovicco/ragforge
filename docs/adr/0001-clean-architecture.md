@@ -1,7 +1,7 @@
 # ADR-0001: Adopt Clean Architecture dependency boundaries
 
 - Status: Accepted
-- Date: YYYY-MM-DD
+- Date: 2026-07-21
 
 ## Context
 

@@ -2,8 +2,19 @@
 
 Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; changes supersede via a new ADR.
 
+> **Historical scope note.** ADRs 0002–0007 were accepted while the design
+> targeted **8 strategies and a ~210-question golden set** (with a
+> ~180-question test split). The benchmark later grew to **10 strategy
+> configurations** (SAC and SAC+Contextual, ADR-0015) and **230 questions**
+> (36 validation / 194 test). Per this index's immutability rule those ADRs
+> are not rewritten; read their strategy and question counts as the state at
+> their acceptance date. Short, dated clarification notes appended to an
+> accepted ADR (ADR-0005 after ADR-0013; ADR-0009 after ADR-0020) are the one
+> sanctioned exception: they point at the superseding record and change no
+> decision.
+
 | # | Title | Status |
-|---|-------|--------|
+| --- | ------- | -------- |
 | [0001](0001-clean-architecture.md) | Adopt Clean Architecture dependency boundaries | Accepted |
 | [0002](0002-article-level-relevance-judgments.md) | Relevance judgments at norm-article level, not chunk level | Accepted |
 | [0003](0003-empirical-router-oracle.md) | Empirical per-question oracle for router evaluation | Accepted |
@@ -23,3 +34,4 @@ Format: [MADR-style](https://adr.github.io/). ADRs are immutable once accepted; 
 | [0017](0017-auditable-evidence-lineage.md) | Produce auditable and tamper-evident evidence lineage for every run | Accepted |
 | [0018](0018-independent-llm-judge-provider.md) | Use an independent and calibrated OpenAI LLM judge | Accepted |
 | [0019](0019-temporal-graphrag-experimental-strategy.md) | Add Temporal GraphRAG only as a future experimental strategy | Proposed |
+| [0020](0020-replay-cache-ci-gate.md) | Deliver the deterministic replay cache together with its CI gate | Proposed |

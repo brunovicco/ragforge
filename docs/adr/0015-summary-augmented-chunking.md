@@ -1,6 +1,6 @@
 # ADR-0015: Evaluate Summary-Augmented Chunking as a separate retrieval strategy
 
-- SStatus: Accepted
+- Status: Accepted
 - Date: 2026-07-24
 - Target: Current release
 - Related: ADR-0002, ADR-0004, ADR-0005, ADR-0006, ADR-0013, ADR-0014
