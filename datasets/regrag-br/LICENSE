@@ -1,0 +1,20 @@
+RegRAG-BR dataset
+Copyright (c) 2026 Bruno Vicco
+
+This dataset (question texts, query-class labels, article-level relevance
+judgments, and reference answers in `judgments.json`, plus `split.json` and
+`corpus_manifest.yaml`) is licensed under the Creative Commons Attribution 4.0
+International License (CC BY 4.0).
+
+You should have received a copy of the license along with this work. If not,
+see <https://creativecommons.org/licenses/by/4.0/legalcode>.
+
+Attribution example:
+  "RegRAG-BR golden set, Bruno Vicco, 2026,
+   https://github.com/brunovicco/ragforge, licensed under CC BY 4.0."
+
+Note on the underlying norms: the Brazilian legal and regulatory texts the
+questions reference (CMN/BCB resolutions, CVM instructions, federal laws) are
+official acts and are not protected by copyright under art. 8, I of Law
+9,610/1998. This license covers only the original curated material listed
+above, not the official texts themselves.

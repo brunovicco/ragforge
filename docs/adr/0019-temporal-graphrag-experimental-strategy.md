@@ -1,6 +1,6 @@
 # ADR-0019: Add Temporal GraphRAG only as a future experimental strategy
 
-- Status: Accepted
+- Status: Proposed
 - Date: 2026-07-24
 - Target: Future release
 - Related: ADR-0002, ADR-0003, ADR-0006, ADR-0010, ADR-0011, ADR-0012, ADR-0016, ADR-0017

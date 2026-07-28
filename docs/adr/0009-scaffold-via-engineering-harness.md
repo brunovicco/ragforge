@@ -15,6 +15,8 @@ RAGForge is developed with Claude Code, and the author maintains [claude-python-
 4. **Harness layers adapted to the domain:** `.claude/rules/architecture.md` extended with RAGForge boundaries; protection hooks extended to `datasets/regrag-br/` and `experiments/` (curated data and official results must not be altered by an agent without explicit confirmation - consistent with the immutability required by ADR-0003/0004); the harness human-authorship principle stands (the agent does not commit/publish unrequested).
 5. **Gates inherited without reduction:** Ruff, Mypy, Pytest (core ≥ 80%), Bandit, pip-audit and architecture validation run in the harness `quality.yml`, plus a `make bench` job in cache mode (ADR-0004).
 
+> **Clarification after ADR-0020 (2026-07-28).** Decision item 5 is superseded on one point only: the `make bench` job in cache mode is not part of `quality.yml` and does not become part of it until deterministic replay exists. ADR-0020 owns that gate and requires it to ship in the same change as the replay layer. Every other gate listed in item 5 runs today, unchanged.
+
 ## Consequences
 
 - D1–2 of the schedule shrinks - the harness delivers scaffold, CI and guards ready; the slack absorbs the legal chunker (ADR-0006) and the cache layer (ADR-0004).

@@ -1,19 +1,11 @@
 """Deterministic aggregate rates over post-generation citation audits (ADR-0016).
 
-Every rate here is computed purely from AuditResult/ClaimAudit data already
-produced by citation_audit.py - no LLM call, no human label. ``false
-abstention rate`` from the ADR's own Report list is not implemented: it
-needs a human judgment of what SHOULD have been abstained on, the same
-human-curation constraint every calibration effort in this project runs
-into (see judge_calibration.py). Latency and token usage are the concern of
-the adapters that make the calls (openai_semantic_verifier.py,
-openai_answer_rewriter.py), not this module.
-
-Lives directly under evaluation/, not evaluation/metrics/: that package's
-architecture boundary (ADR-0009) restricts it to domain-only imports, but
-this module needs AuditResult/ClaimAudit from audit_ports.py - the same
-reason judge_calibration.py (which needs its own CalibrationSample) also
-sits at this level rather than under metrics/.
+Every rate is computed purely from AuditResult/ClaimAudit data produced by
+citation_audit.py - no LLM call, no human label. The ADR's "false abstention
+rate" is not implemented (needs human judgment; see judge_calibration.py);
+latency/token usage belong to the calling adapters. Lives under evaluation/,
+not evaluation/metrics/, because that package's boundary (ADR-0009) is
+domain-only and this module needs audit_ports.py.
 """
 
 from ragforge.evaluation.audit_ports import AuditOutcome, AuditResult, ClaimAudit, SupportVerdict
@@ -89,10 +81,9 @@ def uncited_material_claim_rate(results: list[AuditResult]) -> float:
 def unsupported_claim_rate(results: list[AuditResult]) -> float:
     """Fraction of semantically-verified material claims the verifier did not call fully supported.
 
-    Scoped to claims that actually reached the semantic verifier (citations
-    already passed every deterministic check) - a claim that failed a
-    deterministic check is already counted by the citation-level rates
-    above, not here. 0.0 when no material claim was ever verified.
+    Scoped to claims that reached the semantic verifier; deterministic-check
+    failures are counted by the citation-level rates instead. 0.0 when no
+    material claim was ever verified.
     """
     verified = [
         claim_audit

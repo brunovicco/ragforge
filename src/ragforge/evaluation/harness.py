@@ -36,32 +36,14 @@ def evaluate_strategy(
 ) -> EvaluationResult:
     """Run ``strategy`` against every judgment's query; average metrics and record every outcome.
 
-    Every judgment produces exactly one RetrievalRecord, including
-    unanswerable-class questions (no relevant refs) - the ADR-0012
-    requirement that a selected question is never silently dropped from
-    coverage. Their ranking metrics stay out of the aggregate average
-    (Recall/Precision/nDCG/MRR are all trivially 0.0 without a positive
-    class to measure against, which would just dilute the comparison rather
-    than say anything about ranking quality) but their record still exists,
-    with an empty ``metrics`` dict and an explicit "succeeded"/"failed"
-    ``status``. ``n`` reports how many judgments contributed to the average,
-    not how many were selected - see ``len(records)`` for the latter.
-
-    A retrieve() failure for one question (e.g. a transient embedding-API
-    error) is counted in "errors" and excluded from the averages rather than
-    aborting the whole strategy - except that _MAX_CONSECUTIVE_ERRORS
-    consecutive failures is treated as a systemic problem (e.g. depleted API
-    credits, not one flaky question) and stops attempting the remaining
-    questions rather than retrying a run that cannot succeed. Those
-    unattempted questions still get a "skipped" record rather than silently
-    disappearing from coverage.
-
-    ``embedding_identity_hash`` (ADR-0017), when given, populates
-    ``EvaluationResult.candidate_lineage`` with one RetrievalCandidateLineage
-    per candidate a successful retrieve() call returns - rank is the
-    candidate's position in that returned list. Left ``None`` (the default),
-    no lineage is collected - existing callers that don't need it pay
-    nothing extra.
+    Every judgment produces exactly one RetrievalRecord (ADR-0012 - never
+    silently dropped), including unanswerable-class questions, whose ranking
+    metrics stay out of the aggregate (``n`` counts contributors;
+    ``len(records)`` counts selected). A per-question retrieve() failure is
+    counted in "errors" and excluded from averages; _MAX_CONSECUTIVE_ERRORS
+    consecutive failures stops the remaining questions, which still get
+    "skipped" records. ``embedding_identity_hash`` (ADR-0017), when given,
+    populates one RetrievalCandidateLineage per returned candidate.
 
     Raises:
         ValueError: If judgments is empty.

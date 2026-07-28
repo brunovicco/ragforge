@@ -16,7 +16,9 @@ test:
 quality:
 	uv run python scripts/quality_gate.py
 
-# Deterministic benchmark: replays the versioned LLM cache (ADR-0004). No API key required.
+# Deterministic replay (ADR-0004) - NOT IMPLEMENTED YET: this target fails closed
+# with an explanation. Use bench-live. The replay layer and its CI gate ship
+# together (ADR-0020); the target name is kept stable for that change.
 bench:
 	uv run python -m ragforge.evaluation.run --mode cache --config configs/experiments/benchmark-v01.yaml
 

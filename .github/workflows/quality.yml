@@ -31,3 +31,11 @@ jobs:
 
       - name: Project quality gate
         run: uv run python scripts/quality_gate.py
+
+  # A `bench-replay` job belongs here and is deliberately absent (ADR-0020).
+  # ADR-0004's `make bench` replays a versioned LLM call cache; that replay
+  # layer does not exist yet, so `make bench` fails closed and a job invoking
+  # it today would only assert the absence of the feature. The job ships in
+  # the same change as the replay implementation, and must run without
+  # provider credentials in its environment so a cache miss cannot silently
+  # fall through to a live call.

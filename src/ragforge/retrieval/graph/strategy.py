@@ -1,4 +1,4 @@
-"""GraphRAG retrieval via LightRAG, local/global modes (README #8; scope: ADR-0010).
+"""GraphRAG retrieval via LightRAG, local/global modes (README #10; scope: ADR-0010).
 
 Queries a LightRAG index built by ``retrieval.graph.indexing.index_norm`` and
 recovers each result's structural provenance by matching LightRAG's returned

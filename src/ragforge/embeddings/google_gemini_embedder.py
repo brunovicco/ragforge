@@ -1,17 +1,10 @@
 """Google Gemini embedding adapter (ADR-0005): the project's proprietary candidate.
 
-Wraps the Gemini API's embed_content endpoint. Requires GEMINI_API_KEY (or
-GOOGLE_API_KEY) in the environment - never hardcoded, never logged. This is a
-real, metered API: unlike SentenceTransformerEmbedder, every embed() call is a
-network request that costs money, however small at this project's corpus
-scale. Used only for the explicit ADR-0005 embedding comparison.
-
-Retries 429s and transient transport errors via
-ragforge.adapters.gemini_retry, shared with every other Gemini-calling
-adapter in this project. An optional LLMCache (ADR-0004) is consulted per
-individual text before batching - a rerun over an unchanged corpus re-embeds
-only what changed - and a ProviderLimiter (ADR-0014) bounds concurrent
-in-flight embed_content calls process-wide.
+Wraps the metered embed_content API; requires GEMINI_API_KEY (or
+GOOGLE_API_KEY), never hardcoded or logged. Shares
+ragforge.adapters.gemini_retry with every Gemini adapter; an optional
+LLMCache (ADR-0004) is consulted per individual text before batching, and a
+ProviderLimiter (ADR-0014) bounds concurrent calls.
 """
 
 import json
@@ -52,17 +45,10 @@ class GoogleGeminiEmbedder:
     ) -> None:
         """Create the client and probe the model once to learn its output dimension.
 
-        Args:
-            model_name: The Gemini embedding model id, e.g. "gemini-embedding-001".
-            api_key: Overrides GEMINI_API_KEY / GOOGLE_API_KEY from the environment.
-            output_dimensionality: Requests a truncated (Matryoshka) embedding
-                size instead of the model's native dimension (3072 for
-                gemini-embedding-001). Callers indexing into pgvector's HNSW
-                index need this: HNSW rejects columns over 2000 dimensions.
-            cache: Optional LLMCache (ADR-0004). None (the default) disables
-                caching - every embed() call reaches the real API.
-            max_in_flight: Bounds concurrent embed_content calls to this
-                provider, process-wide (ADR-0014).
+        ``output_dimensionality`` requests a truncated (Matryoshka) size
+        instead of the native dimension - required for pgvector HNSW, which
+        rejects columns over 2000 dimensions. ``api_key`` overrides the
+        environment; ``cache``/``max_in_flight`` wire ADR-0004/ADR-0014.
 
         Raises:
             EmbeddingError: If no API key is available, the client can't be
@@ -98,10 +84,8 @@ class GoogleGeminiEmbedder:
     def embed(self, texts: list[str]) -> list[list[float]]:
         """Return one embedding per text, batching requests to the API.
 
-        A cache hit for a given text skips the API entirely for it; only
-        texts missing from the cache are batched into real embed_content
-        calls, in their original relative order, and their fresh vectors are
-        written back to the cache before returning.
+        Cache hits skip the API per text; only misses are batched, in their
+        original relative order, and written back before returning.
 
         Raises:
             EmbeddingError: If a batch request fails, or retries are exhausted.

@@ -1,16 +1,10 @@
 """Evidence lineage schemas and pure builders (ADR-0017).
 
-A reviewer should be able to trace every published score back to exact
-inputs and model identities. This module defines the immutable records that
-make that possible - retrieval candidate lineage, generation lineage, audit/
-judge lineage, the hash-chained event envelope, and the run manifest - plus
-two pure functions (``build_audit_lineage``, ``build_judge_lineage``) that
-derive audit/judge lineage entirely from data the ADR-0016/ADR-0018
-pipelines (citation_audit.py, ragas_judge.py) already compute, without
-touching either module.
-
-No LLM SDK or framework import here (ADR-0009's adapter boundary) - only
-dataclasses and the existing audit_ports.py/judge_ports.py schemas.
+Immutable records tracing every published score to exact inputs and model
+identities - retrieval/generation/audit/judge lineage, the hash-chained
+event envelope, the run manifest - plus pure builders deriving audit/judge
+lineage from data the ADR-0016/0018 pipelines already compute. No LLM SDK
+or framework import here (ADR-0009 boundary).
 """
 
 from dataclasses import dataclass
@@ -37,9 +31,8 @@ class RetrievalCandidateLineage:
 class GenerationLineage:
     """One answer-generation call's full provenance (ADR-0017): the answer generator only.
 
-    Token usage/latency/cache_hit are scoped to the answer generator by the
-    ADR's own field list - audit and judge lineage do not carry these
-    fields (see AuditLineage/JudgeLineage below).
+    Token usage/latency/cache_hit are scoped to the generator by the ADR's
+    field list; audit and judge lineage do not carry them.
     """
 
     provider: str
@@ -84,10 +77,8 @@ class JudgeLineage:
 class EventEnvelope:
     """One hash-chained event in a run's events.jsonl (ADR-0017).
 
-    ``event_hash`` covers the canonical serialization of every other field
-    in this envelope; ``previous_event_hash`` links to the prior event,
-    forming a local tamper-evident chain (event_log.py builds this, never
-    hand-constructed elsewhere).
+    ``event_hash`` covers every other field; ``previous_event_hash`` links
+    the chain. Built only by event_log.py, never hand-constructed.
     """
 
     schema_version: int
@@ -172,10 +163,8 @@ def build_judge_lineage(
 ) -> JudgeLineage:
     """Derive a JudgeLineage entirely from an already-computed JudgeResult (ADR-0018/0017).
 
-    ``prompt_hash`` is supplied by the caller: JudgeResult itself carries no
-    prompt text or hash (ragas_judge.py's cache key already computes one
-    internally but doesn't expose it) - callers pass the same prompt-version
-    constant already used for cache keying (e.g. ABSTENTION_PROMPT_VERSION).
+    ``prompt_hash`` is caller-supplied (JudgeResult exposes no prompt hash);
+    callers pass the same prompt-version constant used for cache keying.
     """
     return JudgeLineage(
         provider=identity.provider,

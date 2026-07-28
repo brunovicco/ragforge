@@ -5,7 +5,7 @@
 
 ## Context
 
-GraphRAG (README strategy #8) integrates LightRAG (`lightrag-hku`, already a declared
+GraphRAG (README strategy #10; #8 at this ADR's acceptance date) integrates LightRAG (`lightrag-hku`, already a declared
 dependency). LightRAG runs its own end-to-end pipeline internally - chunking, entity/relation
 extraction, knowledge-graph construction, community detection for "global" mode - and its public
 `aquery()` returns a synthesized narrative answer (`str`), not a ranked list of source chunks.

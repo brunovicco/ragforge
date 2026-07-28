@@ -42,9 +42,8 @@ def _load_json_object(path: Path) -> dict[str, object]:
 def reject_if_evidence_dir_already_completed(artifacts_dir: Path) -> None:
     """Fail closed if ``artifacts_dir``'s manifest.json already says status="completed" (ADR-0017).
 
-    No manifest yet (a genuinely new run_id, or one whose evidence directory
-    was never started) is not an error - only an already-completed one is
-    rejected, matching "a completed directory SHALL not be overwritten".
+    A missing manifest (genuinely new run) is not an error - only an
+    already-completed directory is rejected, never overwritten.
 
     Raises:
         SystemExit: If a manifest exists there with status "completed".
@@ -67,15 +66,12 @@ def finalize_evidence_directory(
 ) -> RunManifest:
     """Atomically publish a completed manifest covered by the checksum inventory.
 
-    ``artifact_root_hash`` covers every final artifact except
-    ``manifest.json`` and ``checksums.sha256``. Excluding the manifest from
-    that root avoids a self-reference because the root itself is stored in
-    the manifest. ``checksums.sha256`` still includes the exact final
-    manifest bytes, so post-completion changes remain detectable.
-
-    The checksum inventory is written before the final manifest. A crash
-    before the last atomic rename therefore leaves the manifest in
-    ``running`` state rather than exposing a completed-but-unverifiable run.
+    ``artifact_root_hash`` covers every final artifact except manifest.json
+    (avoiding self-reference) and checksums.sha256 - which still records the
+    final manifest bytes, so post-completion changes remain detectable. The
+    inventory is written before the final manifest: a crash before the last
+    atomic rename leaves the manifest "running", never completed-but-
+    unverifiable.
     """
     if run_manifest.status != "running":
         raise ValueError("only a running manifest can be finalized")
@@ -109,12 +105,9 @@ def write_question_artifacts(
 ) -> None:
     """Write ``questions/<question_id>/<label>.json`` (ADR-0017): QuestionRecord + its lineage.
 
-    Only retrieval candidate lineage is embedded here - it is reliably
-    correlatable by ``question_id``. Generation/audit lineage is produced in
-    worker-thread completion order (run_bounded), not canonical question
-    order, so attaching it to a specific question file here would risk
-    mislabeling; it is reported per-strategy in summaries/generation.json
-    and summaries/audit.json instead.
+    Only retrieval candidate lineage is embedded (correlatable by
+    question_id); generation/audit lineage arrives in completion order and
+    is reported per-strategy under summaries/ instead of risking mislabeling.
     """
     lineage_by_question: dict[str, list[RetrievalCandidateLineage]] = {}
     for entry in candidate_lineage:

@@ -1,15 +1,9 @@
 """sentence-transformers-based embedding adapter (ADR-0005).
 
-Wraps a local Hugging Face model (e.g. BGE-M3, Qwen3-Embedding) via
-sentence-transformers. Loading the model is the expensive step (~17s import,
-network on first download, CPU/GPU inference setup) - this adapter is
-deliberately not exercised by the unit test suite; see
-tests/integration/test_sentence_transformer_embedder.py, run via
-`pytest -m integration`.
-
-The specific model is a data-driven choice per ADR-0005 (BGE-M3 vs
-Qwen3-Embedding vs a proprietary model), not hardcoded here - pass it
-explicitly at construction.
+Wraps a local Hugging Face model (e.g. BGE-M3, Qwen3-Embedding). Loading is
+the expensive step (~17s import, first-run download), so this adapter is
+covered by the integration suite only (`pytest -m integration`). The model
+is a data-driven ADR-0005 choice, passed explicitly at construction.
 """
 
 from typing import cast
@@ -27,14 +21,10 @@ class SentenceTransformerEmbedder:
     ) -> None:
         """Load ``model_name`` once; the constructor is the expensive step.
 
-        Args:
-            model_name: The Hugging Face model id, e.g. "Qwen/Qwen3-Embedding-0.6B".
-            device: cpu | mps | cuda. Defaults to sentence-transformers' own
-                auto-detection when omitted.
-            revision: Pinned model revision (git commit/tag), for exact
-                reproducibility (ADR-0013). Defaults to the same "main" HF
-                resolves to when unspecified - recorded as such via
-                ``self.revision`` rather than left ambiguous.
+        ``device`` (cpu/mps/cuda) defaults to sentence-transformers' own
+        auto-detection. ``revision`` pins the model revision for exact
+        reproducibility (ADR-0013); when unspecified, the resolved default
+        is still recorded via ``self.revision`` rather than left ambiguous.
 
         Raises:
             EmbeddingError: If the model cannot be loaded.
@@ -58,12 +48,9 @@ class SentenceTransformerEmbedder:
     def embed(self, texts: list[str]) -> list[list[float]]:
         """Return one embedding per text, encoded in a single batched call.
 
-        Embeddings are L2-normalized so a plain dot product is equivalent to
-        cosine similarity, matching pgvector's cosine distance operator.
-        ``show_progress_bar=True`` renders a tqdm bar to stderr - the only
-        visibility into this call's progress while it runs, which matters
-        because CPU-bound encoding of a full corpus can take a long time
-        with no other output in between.
+        Embeddings are L2-normalized so dot product equals cosine similarity,
+        matching pgvector's cosine operator. A tqdm bar on stderr is the only
+        progress visibility during long CPU-bound encodes.
 
         Raises:
             EmbeddingError: If encoding fails.

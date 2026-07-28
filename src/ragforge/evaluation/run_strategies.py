@@ -106,12 +106,9 @@ def _summarize_documents(
 ) -> dict[str, str]:
     """Return ``{norm_id: summary_text}``, one Gemini call per document, bounded and cached.
 
-    Raises the first summarization failure rather than tolerating it: like
-    contextualize_chunks and build_raptor_tree, this index-building step has
-    no per-item failure isolation (ADR-0014's circuit breaker is for the
-    per-question evaluation loop, not index construction) - a missing
-    summary means the sac/sac_contextual index for that document simply
-    cannot be built.
+    Raises the first failure: index-building steps have no per-item failure
+    isolation (ADR-0014's breaker covers the evaluation loop only), and a
+    missing summary means the sac/sac_contextual index cannot be built.
     """
     norm_ids = list(documents)
 
@@ -139,18 +136,10 @@ def _build_embedder(
 ) -> tuple[EmbeddingModel, EmbeddingIdentity]:
     """Construct the configured embedding provider and its identity (ADR-0013).
 
-    ``provider: local`` is the operational default: no credentials needed,
-    via SentenceTransformerEmbedder - ``dimensions`` is ignored since the
-    model reports its own, and it has no hosted-call cache/limiter to wire
-    (there's no network call to skip). ``device`` (cpu/mps/cuda) is a pure
-    execution knob, not part of ``EmbeddingIdentity`` - it selects hardware,
-    not a different embedding space, and defaults to sentence-transformers'
-    own auto-detection (``None``) when omitted, matching prior behavior.
-    ``provider: gemini`` is the optional hosted comparator, via
-    GoogleGeminiEmbedder with ``dimensions`` requesting a truncated
-    (Matryoshka) size, ``cache`` (ADR-0004) consulted per text, and
-    ``gemini_max_in_flight`` bounding concurrent calls (ADR-0014). Never a
-    silent fallback between the two.
+    ``provider: local`` (default) needs no credentials; ``device`` is an
+    execution knob, not part of ``EmbeddingIdentity``. ``provider: gemini``
+    is the hosted comparator, wired to the ADR-0004 cache and the ADR-0014
+    in-flight bound. Never a silent fallback between the two.
 
     Raises:
         SystemExit: If ``provider`` isn't one of "local"/"gemini".
@@ -200,15 +189,11 @@ def _build_judge_factory(
 ) -> Callable[[], AnswerQualityJudge]:
     """Return a zero-arg factory building the configured judge (ADR-0018).
 
-    ``provider: openai`` is canonical for publishable results, independent
-    from the Gemini answer generator. ``provider: gemini`` is a development
-    fallback - callers should label a run using it (main() does, via
-    "judge_label": "exploratory_same_provider_judge") since the answer
-    generator is also Gemini-based. Never a silent fallback between the two.
-
-    A factory, not an already-built judge: evaluate_answer_quality calls
-    this once per worker thread (RagasJudge's underlying sync wrapper isn't
-    safe to share across threads - see answer_harness.py).
+    ``provider: openai`` is canonical for publishable results; ``gemini`` is
+    a development fallback that callers must label (main() does). Never a
+    silent fallback. A factory, not an instance: each worker thread builds
+    its own judge - RagasJudge's sync wrapper isn't thread-safe to share
+    (see answer_harness.py).
 
     Raises:
         SystemExit: If ``provider`` isn't one of "openai"/"gemini".
@@ -284,13 +269,10 @@ def _evaluate(
 ) -> tuple[dict[str, float], list[QuestionRecord], list[RetrievalCandidateLineage]]:
     """Score ``strategy`` under its canonical experiment label (ADR-0002/0007).
 
-    Merges evaluate_strategy's and evaluate_answer_quality's per-question
-    records into one QuestionRecord per judgment (ADR-0012), alongside the
-    same aggregate metrics dict this returned before. ``embedding_identity_hash``
-    (ADR-0017), when given, is forwarded to evaluate_strategy to populate
-    per-candidate retrieval lineage. ``strategy_label`` deliberately comes
-    from the experiment configuration: implementation names such as
-    ``sparse`` and ``hybrid`` are not stable result identifiers.
+    Merges retrieval and answer-quality records into one QuestionRecord per
+    judgment (ADR-0012); ``embedding_identity_hash`` (ADR-0017), when given,
+    populates per-candidate retrieval lineage. ``strategy_label`` comes from
+    the experiment configuration - implementation names aren't stable IDs.
     """
     retrieval_result = evaluate_strategy(
         strategy, judgments, k=top_k, embedding_identity_hash=embedding_identity_hash

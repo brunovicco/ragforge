@@ -6,11 +6,13 @@
 
 RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarchical (RAPTOR), graph (GraphRAG) and corrective strategies - measuring answer quality, retrieval precision, latency and cost on **RegRAG-BR**, a 230-question golden dataset over CMN/BCB and CVM norms.
 
-> 🚧 v0.1 in progress. See [Status](#status) for what is implemented today versus planned.
+> **v0.1** - benchmark run [`20260726T185553Z`](docs/BENCHMARK-RESULTS.md) published with
+> verifiable evidence. The [Status](#status) table tracks what is implemented today
+> versus planned.
 
 ## Why this exists
 
-Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 10 strategy configurations × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache. See [Status](#status) for what is built so far.
+Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 10 strategy configurations × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache.
 
 ## Benchmarked strategies
 
@@ -25,17 +27,17 @@ Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG str
 | 7 | Summary-Augmented Chunking (SAC) | Document summary + authoritative chunk text | Implemented |
 | 8 | SAC + Contextual | Document summary + per-chunk context + authoritative text | Implemented |
 | 9 | RAPTOR | Recursive summary tree (minimal impl.) | Implemented |
-| 10 | GraphRAG | LightRAG adapter (local + global) | Implemented |
+| 10 | GraphRAG | LightRAG adapter (local mode benchmarked; global planned) | Implemented |
 
 Cross-cutting: **Adaptive Router** (rules + few-shot, planned), **Corrective workflow** (evidence evaluator with retry / reformulation / insufficient-evidence declaration, LangGraph, planned), **governance** (answer → chunk → article citation tracing via Citation Accuracy, plus a post-generation semantic-support audit with bounded rewrite and a tamper-evident evidence trail per run, implemented), **observability** (Langfuse metadata-only tracing implemented; OpenTelemetry planned).
 
 ## Status
 
-RAGForge is under active development (v0.1, see the checkpoint note above). This section tracks what
+RAGForge is under active development. This section tracks what
 is actually running today versus what the design targets - see the [PR history](../../pulls?q=is%3Apr) for how each row landed.
 
 | Component | Status |
-|---|---|
+| --- | --- |
 | Legal structural chunker (ADR-0006) | Implemented |
 | Ingestion pipeline (extraction, snapshot hashing) | Implemented |
 | All 10 benchmarked retrieval configurations (Dense through GraphRAG) | Implemented |
@@ -79,10 +81,11 @@ make api                                           # read-only published-results
 make dashboard                                     # offline analytical benchmark dashboard
 ```
 
-`make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). `make bench` (deterministic, zero-cost replay from a versioned LLM cache) is the target design per [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), but that cache layer doesn't exist yet - only live mode is implemented.
+`make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). `make bench` (deterministic, zero-cost replay from a versioned LLM cache) is the target design per [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), but that cache layer doesn't exist yet - only live mode is implemented. The replay layer and its CI gate ship together ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)).
 
-The canonical publishable matrix uses `gemini-embedding-001`, selected by the isolated PT-BR
-embedding comparison (ADR-0005). `make bench-live-local` uses
+The canonical publishable matrix uses `gemini-embedding-001`, the provisional selection of the
+isolated PT-BR embedding comparison (ADR-0005) - marked `pending_revalidation` in
+`configs/experiments/embeddings-ptbr.yaml`, not a final winner. `make bench-live-local` uses
 `Qwen/Qwen3-Embedding-0.6B` as ADR-0013's credential-free embedding alternative; it is a
 separately identified run, not a silent fallback or a relabeling of the quality winner.
 
@@ -98,9 +101,9 @@ All non-obvious choices are recorded as [ADRs](docs/adr/README.md). The load-bea
 
 - [ADR-0002](docs/adr/0002-article-level-relevance-judgments.md) - relevance judgments at **norm-article level**, so retrieval metrics stay comparable across strategies that chunk differently (or don't return chunks at all).
 - [ADR-0003](docs/adr/0003-empirical-router-oracle.md) - the router is scored against an **empirical per-question oracle** (best strategy measured, not assumed), with a dev/test split preventing few-shot leakage.
-- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - `make bench` replays a versioned LLM cache: bit-for-bit reproduction, zero API cost.
+- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - `make bench` is specified to replay a versioned LLM cache for bit-for-bit reproduction at zero API cost; the replay layer and its CI gate ship together ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)) and are not built yet.
 - [ADR-0006](docs/adr/0006-legal-structural-chunker.md) - domain-aware chunking by legal hierarchy (Art./§/inciso) with stable structural IDs.
-- [ADR-0007](docs/adr/0007-llm-judge-calibration-ptbr.md) - the LLM judge is calibrated against human evaluation in PT-BR and the agreement is published.
+- [ADR-0007](docs/adr/0007-llm-judge-calibration-ptbr.md) - the LLM judge must be calibrated against human evaluation in PT-BR, with the agreement published, before its scores count as validated; until then every judge metric carries that caveat.
 - [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md) - structural IDs that collide across amendment history/appended annexes are excluded from golden-set citations, not fixed at the chunker level.
 - [ADR-0016](docs/adr/0016-post-generation-citation-audit.md) - a semantic-support verifier and at most one bounded rewrite catch unsupported claims a citation-existence check alone would miss.
 - [ADR-0017](docs/adr/0017-auditable-evidence-lineage.md) - every published score traces back to a hash-chained, tamper-evident evidence directory per run - exact inputs, model identities, and retrieval candidates, not just the aggregate metric.
@@ -121,7 +124,7 @@ The core is framework-free: `RetrievalStrategy` is a Protocol; LLM SDKs are bann
 
 ## Dataset - RegRAG-BR
 
-230 questions (7 query classes) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM/CMN norms, with article-level relevance judgments and reference answers, published under CC-BY-4.0 with a datasheet. The deterministic stratified split reserves 36 questions for router development/validation and 194 for official test metrics. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
+230 questions (7 query classes) over selected CMN/BCB resolutions (4,893, risk management, Open Finance, AML) and CVM/CMN norms, with article-level relevance judgments and reference answers, published under CC-BY-4.0 with a [datasheet](datasets/regrag-br/DATASHEET.md). The deterministic stratified split reserves 36 questions for router development/validation and 194 for official test metrics. Norms are official acts (art. 8, I, Law 9,610/98 - not copyright-protected).
 
 Published (`datasets/regrag-br/judgments.json`): 230 hand-curated questions, each with a reference answer, verified against the real parsed text of 5 corpus documents (LC-105/2001, RES-CMN-4893/2021, RES-CMN-5274/2025, LEI-13709/2018-LGPD, ICVM-607/2019). A 6th corpus document, LEI-6385/1976, is not yet curated. Structural IDs known to be ambiguous in the real source text - amendment-history and appended-annex artifacts in 3 of the 5 documents - are excluded from citation; see [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md).
 
@@ -137,4 +140,4 @@ Scaffolded with [claude-python-engineering-harness](https://github.com/brunovicc
 
 ## License
 
-Code: MIT · Dataset (RegRAG-BR): CC-BY-4.0
+Code: [MIT](LICENSE) · Dataset (RegRAG-BR): [CC-BY-4.0](datasets/regrag-br/LICENSE)

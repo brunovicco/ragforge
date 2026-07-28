@@ -1,19 +1,11 @@
 """OpenAI-based bounded answer rewrite for the post-generation citation audit (ADR-0016).
 
-Produces the single corrected answer the audit pipeline (citation_audit.py)
-allows when a claim's citations fail deterministic checks or lack semantic
-support - never a second attempt ("no recursive correction"). Independent
-from the Gemini answer generator, same spirit as the ADR-0018 judge and the
-semantic verifier (openai_semantic_verifier.py).
-
-Reuses ragas.llms.InstructorLLM purely as a structured-completion wrapper,
-same as the semantic verifier - "openai" and "ragas" are both already direct
-project dependencies since Increment 5, no new dependency here.
-
-An optional LLMCache (ADR-0004) keys on the question, original answer, valid
-source texts, and the audit findings driving the rewrite - a changed answer
-or a changed set of findings is always a cache miss; a ProviderLimiter
-(ADR-0014) bounds concurrent in-flight calls process-wide.
+Produces the single corrected answer the audit pipeline allows - never a
+second attempt ("no recursive correction"). Provider-independent from the
+Gemini generator; reuses ragas.llms.InstructorLLM purely as a
+structured-completion wrapper (no new dependency). An optional LLMCache
+(ADR-0004) keys on question, original answer, valid source texts, and the
+audit findings; a ProviderLimiter (ADR-0014) bounds concurrent calls.
 """
 
 import os
@@ -98,16 +90,11 @@ class OpenAIAnswerRewriter:
         cache: LLMCache | None = None,
         max_in_flight: int = _DEFAULT_MAX_IN_FLIGHT,
     ) -> None:
-        """Create the client for ``model_name``.
+        """Create the client for ``model_name`` (a dated OpenAI snapshot).
 
-        Args:
-            model_name: The dated OpenAI generation model snapshot used for rewriting.
-            reasoning_effort: Threaded into every underlying chat.completions.create() call.
-            api_key: Overrides OPENAI_API_KEY from the environment.
-            cache: Optional LLMCache (ADR-0004). None (the default) disables
-                caching - every rewrite() call reaches the real API.
-            max_in_flight: Bounds concurrent rewrite() calls to this provider,
-                process-wide (ADR-0014).
+        ``reasoning_effort`` is forwarded to every underlying call;
+        ``api_key`` overrides OPENAI_API_KEY; ``cache``/``max_in_flight``
+        wire ADR-0004/ADR-0014.
 
         Raises:
             GenerationError: If no API key is available or the client can't be created.

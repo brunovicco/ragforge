@@ -1,55 +1,25 @@
 """RAGAS-based answer quality judge (ADR-0007/ADR-0018): Faithfulness, Answer Relevancy, abstention.
 
 Wraps ragas.metrics.collections' Faithfulness and AnswerRelevancy over a
-Gemini or OpenAI judge model, via instructor (ragas 0.4's structured-output
-backend, already a ragas dependency) and the matching ragas embeddings
-wrapper (GoogleEmbeddings / OpenAIEmbeddings) - no new project dependency for
-Gemini; ``openai`` is already resolved transitively via instructor/ragas/
-langchain-openai and is declared as a direct dependency for this adapter's
-own ``import openai`` (ADR-0018).
+Gemini or OpenAI judge model via instructor (ragas 0.4's structured-output
+backend). Abstention has no native RAGAS metric and is scored by this
+module's own structured-output call, through a second, dedicated
+InstructorLLM so its PT-BR prompt never contaminates RAGAS's internal ones.
 
-Real, verified constraints (ragas 0.4.3, checked against the actual
-library):
+Verified quirks of ragas 0.4.3 this adapter works around: instructor must be
+built with ``async_client=True``; InstructorLLM forwards unknown kwargs (e.g.
+``reasoning_effort``) but mis-maps decimal model snapshots, so the OpenAI
+path uses Instructor's Responses API transport with explicit token/reasoning
+parameters; MetricResult exposes only a scalar ``.value``, so JudgeResult
+carries no per-claim rationale (see judge_ports.py).
 
-- instructor.from_provider(..., async_client=True) is required - ragas's
-  async ascore() path raises if the wrapped client is synchronous.
-- ragas.llms.InstructorLLM.__init__ merges any extra keyword argument (e.g.
-  ``reasoning_effort="medium"``) straight into the dict it eventually passes
-  to the underlying ``client.chat.completions.create(...)`` call. Its
-  ``_map_openai_params`` targets Chat Completions and misclassifies decimal
-  snapshots such as ``gpt-5.4-mini-*``. This adapter uses Instructor's
-  Responses API transport and maps token/reasoning parameters explicitly.
-- ragas.metrics.collections.MetricResult (what Faithfulness/AnswerRelevancy
-  return) exposes only a scalar ``.value`` - no structured rationale or
-  claim breakdown. Reproducing ADR-0018's illustrative
-  ``unsupported_claims``/``rationale`` JSON would mean writing bespoke judge
-  prompts instead of RAGAS's own metric classes - out of scope; JudgeResult
-  only carries what RAGAS actually produces (see judge_ports.py).
+Out of scope here: RAGAS Factual Correctness (not wired in this increment)
+and human calibration (judge_calibration.py) - judge scores stay unvalidated
+until the ADR-0007 kappa exercise runs; report them with that caveat.
 
-Abstention has no native RAGAS metric, so it is scored by this module's own
-small structured-output call, through a *second*, dedicated InstructorLLM
-instance (same client/model/provider as the main one, but its own PT-BR
-system prompt) - kept separate from the instance Faithfulness/AnswerRelevancy
-share so this project's added prompt never contaminates RAGAS's internal
-ones (both ultimately call the same shared InstructorLLM.generate()).
-
-Two things this module deliberately does NOT do:
-
-- Factual Correctness, a third RAGAS metric, needs a reference answer per
-  question to compare against. The current golden set
-  (datasets/regrag-br/judgments.json) has no reference answers - a
-  golden-set curation gap, not a code gap. Not implemented here.
-- Judge calibration against human evaluation (ADR-0007/ADR-0018: ~30
-  hand-scored samples, weighted kappa >= 0.6) is human curation work this
-  module cannot substitute for. Scores from this judge are unvalidated
-  until that calibration happens (see judge_calibration.py) - report them
-  with that caveat, never as ground truth.
-
-RagasJudge does not go through ragforge.adapters.gemini_retry: it calls
-ragas/instructor's own internal async client, not our google-genai/openai
-client directly, so there is no shared retry choke point to hook into here.
-An optional LLMCache (ADR-0004) and ProviderLimiter (ADR-0014) instead wrap
-evaluate() as a whole - the granularity available at this boundary.
+RagasJudge bypasses ragforge.adapters.gemini_retry (ragas/instructor own the
+client); an optional LLMCache (ADR-0004) and ProviderLimiter (ADR-0014) wrap
+``evaluate()`` as a whole instead.
 """
 
 import asyncio
@@ -190,19 +160,10 @@ class RagasJudge:
     ) -> None:
         """Wire the judge to its already-constructed RAGAS metrics and abstention LLM.
 
-        Args:
-            faithfulness: An already-constructed RAGAS Faithfulness metric.
-            answer_relevancy: An already-constructed RAGAS AnswerRelevancy metric.
-            abstention_llm: A dedicated InstructorLLM (or fake) used only for
-                this module's own abstention structured-output call.
-            identity: The exact judge configuration, exposed via .identity
-                for the run manifest (ADR-0018).
-            cache: Optional LLMCache (ADR-0004). None (the default) disables
-                caching - every evaluate() call reaches the real metrics.
-            max_in_flight: Bounds concurrent evaluate() calls to this
-                provider, process-wide (ADR-0014).
-            closeables: Provider clients that must close on this judge's
-                persistent event loop before it is shut down.
+        ``identity`` feeds the run manifest (ADR-0018); ``cache=None``
+        disables ADR-0004 caching; ``max_in_flight`` bounds concurrent
+        evaluate() calls (ADR-0014); ``closeables`` are provider clients to
+        close on this judge's event loop before shutdown.
         """
         self._faithfulness = faithfulness
         self._answer_relevancy = answer_relevancy
@@ -346,20 +307,9 @@ def build_gemini_ragas_judge(
 ) -> RagasJudge:
     """Construct a RagasJudge backed by real Gemini models via ragas + instructor.
 
-    A Gemini judge is a development fallback (ADR-0018), not the canonical
-    choice - callers should label runs using it (e.g. "judge_label":
-    "exploratory_same_provider_judge" in run.py) since the answer generator
-    is also Gemini-based.
-
-    Args:
-        llm_model_name: The Gemini generation model id used as the judge,
-            e.g. "gemini-3.1-flash-lite".
-        embedding_model_name: The Gemini embedding model id for Answer
-            Relevancy, e.g. "gemini-embedding-001".
-        api_key: Overrides GEMINI_API_KEY / GOOGLE_API_KEY from the environment.
-        cache: Optional LLMCache (ADR-0004), forwarded to the RagasJudge.
-        max_in_flight: Bounds concurrent evaluate() calls to this provider,
-            process-wide (ADR-0014).
+    A development fallback, not the canonical judge (ADR-0018) - callers
+    should label runs using it, since the answer generator is also Gemini.
+    ``cache``/``max_in_flight`` wire ADR-0004 caching and ADR-0014 bounds.
 
     Raises:
         GenerationError: If no API key is available or client construction fails.
@@ -416,26 +366,12 @@ def build_openai_ragas_judge(
 ) -> RagasJudge:
     """Construct a RagasJudge backed by real OpenAI models via ragas + instructor (ADR-0018).
 
-    This is the canonical judge for publishable RAGForge results: independent
-    from the Gemini answer generator, with a dated model snapshot (e.g.
-    "gpt-5.4-mini-2026-03-17", never the floating "gpt-5.4-mini" alias) and
-    Structured Outputs support.
-
-    Args:
-        llm_model_name: The dated OpenAI generation model snapshot used as
-            the judge.
-        embedding_model_name: The OpenAI embedding model id for Answer
-            Relevancy, e.g. "text-embedding-3-small".
-        reasoning_effort: Threaded straight into every underlying
-            chat.completions.create() call (ragas.llms.InstructorLLM passes
-            unknown kwargs through) - ADR-0018's "medium" default.
-        max_output_tokens: Responses API budget shared by hidden reasoning
-            and the structured output. RAGAS's 1024-token default is too
-            small for long NLI statement lists.
-        api_key: Overrides OPENAI_API_KEY from the environment.
-        cache: Optional LLMCache (ADR-0004), forwarded to the RagasJudge.
-        max_in_flight: Bounds concurrent evaluate() calls to this provider,
-            process-wide (ADR-0014).
+    The canonical judge for publishable results: independent from the Gemini
+    answer generator, pinned to a dated model snapshot (never a floating
+    alias). ``reasoning_effort`` is forwarded to every underlying call;
+    ``max_output_tokens`` budgets hidden reasoning plus structured output
+    (RAGAS's 1024 default is too small for long NLI statement lists).
+    ``cache``/``max_in_flight`` wire ADR-0004 caching and ADR-0014 bounds.
 
     Raises:
         GenerationError: If no API key is available or client construction fails.

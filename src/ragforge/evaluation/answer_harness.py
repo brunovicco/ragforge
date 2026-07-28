@@ -37,11 +37,8 @@ class _ClosableJudge(Protocol):
 class AnswerEvaluationResult:
     """Aggregate answer-quality metrics plus one AnswerRecord per attempted judgment (ADR-0012).
 
-    Every judgment gets an AnswerRecord now, including unanswerable-class
-    ones (ADR-0018: abstention appropriateness needs them generated and
-    judged too, not skipped) - only Citation Accuracy stays absent from
-    ``metrics`` for unanswerable questions, since it has nothing to check
-    citations against.
+    Unanswerable-class questions get records too (ADR-0018: abstention needs
+    them judged); only Citation Accuracy stays absent for them.
     """
 
     metrics: dict[str, float]
@@ -58,48 +55,16 @@ def evaluate_answer_quality(
 ) -> AnswerEvaluationResult:
     """Generate an answer per judgment's query and average Citation Accuracy/Faithfulness/Relevancy.
 
-    Every judgment - including unanswerable-class questions - goes through
-    retrieve/generate/judge now (ADR-0018): abstention appropriateness only
-    means something if unanswerable questions actually reach the judge.
-    Citation Accuracy is the one metric still skipped for them (nothing to
-    check citations against with no relevant refs).
-
-    Retrieval runs sequentially, one judgment at a time: strategies here can
-    share a store with a single non-thread-safe connection (e.g.
-    DenseChunkStore's one psycopg connection), which a thread pool would hit
-    concurrently and unsafely. Answer generation and judge scoring - the
-    actual bottleneck, at multiple sequential LLM round-trips per question -
-    then run concurrently across up to ``max_workers`` questions at once,
-    since each question's Gemini calls are independent HTTP requests.
-
-    ``generator`` (a plain synchronous HTTP client) is shared safely across
-    worker threads. Each worker thread instead lazily builds and caches its
-    own judge via ``judge_factory`` so one RagasJudge and its persistent
-    asyncio event loop are never touched concurrently from multiple threads.
-    Judges exposing ``close()`` are closed after the worker pool finishes,
-    including when scoring raises.
-
-    A retrieval, generation, or judge-scoring failure for one question is
-    counted in "answer_errors" and excluded from the averages rather than
-    aborting the whole strategy - except that _MAX_CONSECUTIVE_ERRORS
-    consecutive failures is treated as a systemic problem (e.g. depleted API
-    credits, not one flaky question) and stops attempting the remaining
-    questions rather than retrying a run that cannot succeed. Every
-    answerable question still gets exactly one AnswerRecord - "failed" for
-    an actual error, "skipped" for a question left unattempted after the
-    circuit breaker trips - so none silently disappear from coverage.
-    "answer_n" reports how many questions were actually scored, deliberately
-    separate from evaluate_strategy's "n" (retrieval ranking is scored
-    independently and keeps its own count).
-
-    Scoring uses ``ragforge.evaluation.scheduler.run_bounded`` (ADR-0014):
-    workers may still finish generation+judge calls in any order, but the
-    returned ``records`` are always restored to ``retrieved``'s canonical
-    order before this function returns - workers=1 and workers>1 produce
-    identical record order and content, never just equivalent aggregates.
-    The circuit breaker (consecutive scoring failures) observes outcomes in
-    completion order via ``run_bounded``'s ``on_result`` callback, since that
-    is inherently about real-time failure velocity, not artifact order.
+    Every judgment - including unanswerable-class ones - goes through
+    retrieve/generate/judge (ADR-0018); Citation Accuracy alone is skipped
+    without relevant refs. Retrieval runs sequentially (stores may hold one
+    non-thread-safe connection); generation + judging, the real bottleneck,
+    run concurrently across up to ``max_workers`` questions. The generator
+    is shared; each worker builds its own judge via ``judge_factory``
+    (RagasJudge's event loop must not be shared), closed after the pool
+    finishes. Per-question failures are counted in "answer_errors" and
+    excluded from averages; _MAX_CONSECUTIVE_ERRORS consecutive failures is
+    treated as systemic and stops the remaining questions.
 
     Raises:
         ValueError: If judgments is empty.

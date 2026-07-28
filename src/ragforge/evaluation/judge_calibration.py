@@ -1,22 +1,13 @@
 """Judge calibration against human evaluation (ADR-0007/ADR-0018).
 
-Publishing a strategy ranking on an unvalidated LLM judge is the easiest
-attack point on this benchmark - ADR-0007/ADR-0018 require measuring
-judge-vs-human agreement (weighted Cohen's kappa >= 0.60) before treating
-judge scores as more than an unvalidated caveat. This module computes that
-agreement; it does not (and cannot) produce the ~30+ hand-labeled samples
-the calibration exercise needs - that is genuine human curation work
-(stratified by query class, answerable/unanswerable, strong/weak strategies,
-negation, exceptions, cross-references, numerical claims - see ADR-0018),
-which this session has no way to fabricate. Scores from RagasJudge remain
-unvalidated (ragas_judge.py's own docstring) until a real calibration file
-is produced and run through ``compute_calibration_report``.
+Computes judge-vs-human agreement (weighted Cohen's kappa >= 0.60 gate)
+required before judge scores count as more than an unvalidated caveat. It
+cannot produce the ~30+ hand-labeled, stratified samples the exercise needs -
+that is human curation work; until a real calibration file goes through
+``compute_calibration_report``, RagasJudge scores remain unvalidated.
 
-Ordinal kappa needs discrete categories; this project's judge scores are
-continuous (0.0-1.0), so ``_to_ordinal`` bins them into 3 categories -
-disagree/partial/agree - matching the same 0/0.5/1.0 grading scale
-``RelevanceGrade`` already uses for structural relevance judgments
-(domain/models.py), for consistency across the project's ordinal scales.
+Continuous judge scores (0.0-1.0) are binned by ``_to_ordinal`` into three
+categories (0/0.5/1.0), matching ``RelevanceGrade``'s existing ordinal scale.
 """
 
 import json
@@ -50,10 +41,7 @@ def _to_ordinal(score: float) -> int:
 def weighted_cohens_kappa(judge_labels: list[int], human_labels: list[int]) -> float:
     """Return quadratic-weighted Cohen's kappa between two ordinal label sequences.
 
-    1.0 for perfect agreement (including the trivial case where every label,
-    judge and human alike, falls in the same single category - nothing to
-    disagree about). Standard formula: 1 - (weighted observed disagreement)
-    / (weighted expected disagreement under independence).
+    1.0 for perfect agreement (including the all-one-category trivial case).
 
     Raises:
         ValueError: If the two sequences differ in length or are empty.
@@ -163,9 +151,7 @@ def abstention_agreement(samples: list[CalibrationSample]) -> float:
 def compute_calibration_report(samples: list[CalibrationSample]) -> dict[str, float]:
     """Aggregate every ADR-0007/ADR-0018 calibration metric across all dimensions.
 
-    ``spearman_correlation`` is omitted when fewer than 2 samples are given
-    (undefined below that), rather than raising - callers publishing a
-    partial report shouldn't need to special-case a tiny sample.
+    ``spearman_correlation`` is omitted (not raised) below 2 samples.
 
     Raises:
         ValueError: If samples is empty.
@@ -193,21 +179,10 @@ def compute_calibration_report(samples: list[CalibrationSample]) -> dict[str, fl
 def load_calibration_samples(path: Path) -> list[CalibrationSample]:
     """Load calibration samples from a JSON file.
 
-    Expected schema - a JSON array of objects::
-
-        [
-          {
-            "sample_id": "q001-faithfulness",
-            "dimension": "faithfulness",
-            "judge_score": 0.8,
-            "human_score": 1.0
-          },
-          ...
-        ]
-
-    No such file ships with this repository (see module docstring) - this
-    loader exists so the calibration mechanism is ready to consume real
-    human-labeled data the moment a human curator produces it.
+    Expects a JSON array of objects with ``sample_id``, ``dimension``,
+    ``judge_score``, ``human_score``. No such file ships with the repository
+    (see module docstring) - this loader is ready for the moment a human
+    curator produces one.
     """
     payload = json.loads(path.read_text(encoding="utf-8"))
     return [
