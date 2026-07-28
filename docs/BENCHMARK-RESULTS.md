@@ -3,7 +3,7 @@
 ## Published run
 
 | Field | Value |
-|---|---|
+| --- | --- |
 | Run ID | `20260726T185553Z` |
 | Git revision | `81029c6079df98dd6f6a771bcf5bf710c802efa0` |
 | Corpus | 5 documents, 735 chunks |
@@ -28,7 +28,7 @@ abstention evaluation, so all answer metrics use 60 questions.
 ## Scorecard
 
 | Strategy | Recall@5 | Precision@5 | nDCG@5 | MRR | DRM@5 | Citation accuracy | Faithfulness | Answer relevancy | Abstention |
-|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Dense | 0.972 | 0.270 | 0.957 | 0.974 | 0.014 | 0.674 | 0.928 | **0.843** | **1.000** |
 | Sparse BM25 | 0.918 | 0.239 | 0.857 | 0.868 | 0.074 | 0.631 | 0.943 | 0.790 | 0.950 |
 | Hybrid + RRF | 0.965 | 0.260 | 0.932 | 0.949 | 0.035 | 0.674 | 0.951 | 0.834 | 0.967 |
@@ -56,9 +56,8 @@ balanced profile rather than winning every individual metric:
 RAPTOR is preferable when maximizing raw structural recall is the overriding
 goal, but its recursive summaries can enter answer-generation context. Dense
 remains a strong low-complexity baseline. Contextual produces the highest
-Faithfulness but adds one enrichment call per chunk. The current PT-BR
-cross-encoder and GraphRAG configurations should not be selected based on this
-run.
+Faithfulness but adds one enrichment call per chunk. The current cross-encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2`, an English-trained MS MARCO model - a likely cause of Reranked's weak PT-BR results) and the GraphRAG configuration should not be selected based on this
+run; a multilingual reranker (e.g. mMARCO or bge-reranker-v2-m3) is the obvious next experiment.
 
 This recommendation is intentionally scoped to this deterministic sample. A
 future full-split run or a materially different corpus requires a new

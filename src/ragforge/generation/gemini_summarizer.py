@@ -1,4 +1,4 @@
-"""Gemini-based multi-chunk summarization (README strategy #7: RAPTOR, minimal impl.).
+"""Gemini-based multi-chunk summarization (README strategy #9: RAPTOR, minimal impl.).
 
 Summarizes a group of chunk texts into one higher-level tree node, for
 retrieval.raptor.pipeline.build_raptor_tree. Requires GEMINI_API_KEY (or

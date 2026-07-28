@@ -1,29 +1,15 @@
 """Post-generation citation and support audit pipeline (ADR-0016).
 
-Deterministic Citation Accuracy (metrics/citation.py) only checks a golden
-set's judged-relevant IDs; it says nothing at runtime about a citation that
-points to a real structural ID the retrieval step simply never surfaced for
-this question, or a claim that merely looks supported by its cited text.
-This module runs the full audit: deterministic sentence segmentation ->
-per-citation deterministic checks -> semantic support verification (LLM,
-only for claims whose citations already pass every deterministic check) ->
-policy decision -> at most one bounded rewrite + full re-audit -> final
-outcome. No LLM SDK is imported here - only the ``SemanticSupportVerifier``/
-``AnswerRewriter`` Protocols from audit_ports.py (ADR-0009's adapter
-boundary).
+Runtime complement to golden-set Citation Accuracy: deterministic claim
+segmentation -> per-citation deterministic checks -> semantic support
+verification (LLM, only for claims passing every deterministic check) ->
+policy decision -> at most one bounded rewrite + full re-audit. No LLM SDK
+is imported here - only the audit_ports.py Protocols (ADR-0009 boundary).
 
-Segmentation is a simple heuristic, not NLP-grade sentence splitting - the
-ADR itself acknowledges claim segmentation "remain[s] imperfect". A sentence
-matching a small fixed set of abstention/insufficient-evidence markers is
-marked non-material: it asserts nothing legal, so it needs no citation and
-must never trigger a rewrite merely for lacking one - the generator's own
-system prompt explicitly asks for this kind of sentence when the evidence
-is insufficient.
-
-Temporal validity is always ``TemporalStatus.UNKNOWN``: no trustworthy
-temporal corpus exists yet (ADR-0019, a future, currently-blocked release),
-and the ADR is explicit that the system must not equate mere document
-existence with temporal validity.
+Segmentation is a heuristic, not NLP-grade splitting (the ADR acknowledges
+this); abstention/insufficient-evidence sentences are non-material and never
+trigger a rewrite. Temporal validity is always ``TemporalStatus.UNKNOWN``
+until a trustworthy temporal corpus exists (ADR-0019).
 """
 
 import re

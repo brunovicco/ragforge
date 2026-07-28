@@ -1,156 +1,39 @@
 #!/usr/bin/env python3
 """RAGForge v0.1 main benchmark runner (ADR-0004). Entry point for `make bench`/`make bench-live`.
 
-Indexes the real corpus with the configured embedding model (ADR-0013) and
-runs every strategy declared in configs/experiments/benchmark-v01.yaml against the
-real golden set (datasets/regrag-br/judgments.json), reporting
-recall/precision/nDCG/MRR@k per strategy plus, per ADR-0007, a generated
-answer's Citation Accuracy/Faithfulness/Answer Relevancy - and writing a
-versioned run record to experiments/<run_id>/results.json.
+Indexes the corpus with the configured embedding (ADR-0013), runs every
+strategy declared in the experiment config against the golden set, and writes
+per-strategy retrieval metrics (ADR-0002) plus answer quality - Citation
+Accuracy, Faithfulness, Answer Relevancy, abstention (ADR-0007/0018) - to
+experiments/<run_id>/ (results.json, records.jsonl, llm-cache/) and an
+ADR-0017 tamper-evident evidence directory under artifacts/runs/<run_id>/
+(verify with `uv run python scripts/verify_run.py <run_id>`).
 
-Also produces an auditable, tamper-evident evidence directory (ADR-0017) at
-artifacts/runs/<run_id>/ - manifest.json (hash-identified corpus/dataset/
-split/config, git SHA), events.jsonl (hash-chained stage events),
-questions/<question_id>/<strategy>.json (per-question retrieval candidate
-lineage), summaries/*.json (per-strategy generation/audit rollups),
-checksums.sha256, and report.json/report.md - alongside, never replacing,
-experiments/<run_id>/. Verify with `uv run python scripts/verify_run.py
-<run_id>`. Generation lineage (token usage, latency, cache hit) is captured
-only for GeminiAnswerGenerator - the ADR's own field list scopes those three
-fields to the answer generator, not to the judge or auditor, whose
-lineage is built entirely from already-computed AuditResult/JudgeResult
-data instead (see lineage_ports.py). Per-question files carry retrieval
-candidate lineage (reliably correlatable by question_id) but not per-
-question generation/audit lineage - those are only captured in completion
-order inside worker threads, not canonical question order, so attaching
-them to a specific question file would risk mislabeling; they are
-reported per-strategy in summaries/generation.json and summaries/audit.json
-instead, a deliberate, documented scope boundary.
+Key behaviors, each detailed in the ADR that owns it:
 
-Document discovery, expected article counts, and source hashes come only
-from the corpus manifest (datasets/regrag-br/corpus_manifest.yaml) and the
-question selection from the versioned split
-(datasets/regrag-br/split.json), optionally followed by the deterministic
-stratified cost cap declared in the experiment configuration - both
-ADR-0012. A preflight gate
-(ragforge.evaluation.integrity) validates source hashes, split/golden-set
-agreement, and structural-reference resolution before any indexing starts,
-and fails the run closed (SystemExit) rather than silently indexing a
-reduced or drifted corpus. RAPTOR is built once per document, never across a
-document boundary, so a summary node can never blend unrelated norms. Every
-selected question gets one QuestionRecord per strategy - including
-unanswerable-class questions, which are excluded from ranking/citation
-averages (ADR-0018: they are still generated and judged, for abstention
-appropriateness) but never dropped from coverage - atomically persisted to
-experiments/<run_id>/records.jsonl as each strategy finishes. A retried
-incomplete strategy replaces only its own stale records.
+- Fail-closed preflight (ADR-0012): corpus manifest, split, and structural
+  references are validated before any indexing; unanswerable questions are
+  always recorded, never dropped; RAPTOR never crosses a document boundary.
+- Provider choices are explicit config, never silent fallbacks: embedding
+  local/gemini (ADR-0013); judge openai/gemini (ADR-0018, the Gemini judge
+  labeled "exploratory_same_provider_judge"); generation and enrichment stay
+  Gemini in this increment.
+- Optional post-generation audit (ADR-0016): ``audit.enabled``, off by
+  default; the run record always states the audit configuration.
+- Bounded parallelism plus a write-through FileLLMCache (ADR-0014/0004);
+  ``--resume <run_id>`` skips completed strategies and fails closed on any
+  corpus/embedding/model identity mismatch.
+- Only ``--mode live`` is implemented; ``--mode cache`` (bit-for-bit replay,
+  ADR-0004) fails closed until the versioned cache layer exists.
 
-The embedding provider is provider-neutral and config-driven (ADR-0013):
-``embedding.provider: local`` (operational default, no credentials needed,
-via SentenceTransformerEmbedder) or ``embedding.provider: gemini`` (optional
-hosted comparator, via GoogleGeminiEmbedder) - never a silent fallback
-between the two. The base/contextual/RAPTOR pgvector tables and OpenSearch
-indices are named from a namespace derived (ragforge.evaluation.index_namespace)
-from the corpus content hash, the chunking/retrieval-text schema versions,
-and the embedding's complete identity, so an index name alone reflects
-exactly what produced it - even though every run still creates and drops
-these tables fresh (no persistence/caching yet; that is Increment 3's job).
-The embedding step, contextualization, RAPTOR summarization, and GraphRAG's
-entity-extraction LLM stay hard-coded to Gemini/local models regardless of
-``judge.provider`` - only answer generation stays Gemini-hardcoded too
-(GeminiAnswerGenerator). The judge is its own provider-neutral choice
-(ADR-0018): ``judge.provider: openai`` (canonical for publishable results,
-independent from the Gemini answer generator) or ``judge.provider: gemini``
-(development fallback, labeled "exploratory_same_provider_judge" in the run
-record since generation is also Gemini) - never a silent fallback between
-the two.
+Strategy -> index mapping: dense/sparse_bm25/hybrid_rrf/reranked/parent_child
+share the base index; contextual, sac, sac_contextual (ADR-0015), and raptor
+each build a derived index; graphrag is a real LightRAG index queried in
+"local" mode (ADR-0010).
 
-Per strategy, this doubles the LLM calls made per question: one
-GeminiAnswerGenerator.generate() call plus the judge's Faithfulness, Answer
-Relevancy, and abstention scoring calls, on top of whatever the strategy
-itself already costs (contextualization, RAPTOR summarization, GraphRAG
-entity extraction). Judge scores are unvalidated until the ADR-0007/ADR-0018
-human calibration exercise happens (see judge_calibration.py) - report them
-with that caveat.
-
-``audit.enabled: true`` (ADR-0016, off by default) wraps the generator with
-AuditingAnswerGenerator: every answer is segmented into claims, checked
-deterministically (existence, corpus version, retrieved-context presence),
-and - only for claims that already pass every deterministic check -
-semantically verified via OpenAI, with at most one bounded rewrite and
-full re-audit when something fails. Off by default because the semantic
-verifier and any rewrite are real, additional LLM calls the ADR itself
-flags as a cost/latency trade-off; the run record always states
-audit_enabled/audit_provider/audit_model regardless.
-
-Per-question retrieval/generation/judge failures are isolated and counted
-(evaluate_strategy's "errors", evaluate_answer_quality's "answer_errors")
-rather than aborting the strategy; answer generation and judge scoring run
-concurrently (see answer_harness._DEFAULT_MAX_WORKERS) since they are the
-actual bottleneck. results.json is checkpointed after every strategy, so a
-crash during a later strategy or index-build phase (contextualize_chunks,
-build_raptor_tree, GraphRAG indexing - none of which have per-item failure
-isolation) does not lose already-computed results.
-
-Strategy -> index mapping:
-    dense, sparse_bm25, hybrid_rrf, reranked, parent_child
-        Share one base index (chunks unchanged from ADR-0006 chunking).
-    contextual
-        A second index built from contextualize_chunks() output (per-chunk
-        LLM context prepended), queried with Hybrid - Anthropic's technique
-        pairs contextual embeddings with contextual BM25.
-    sac
-        A third index (ADR-0015): base chunks with one per-document summary
-        prepended (apply_document_summary()), queried with Dense - the ADR's
-        `sac` variant, isolating the summary's effect from Contextual
-        Retrieval's per-chunk blurb.
-    sac_contextual
-        A fourth index: contextual's already-context-prepended chunks with
-        the same per-document summary prepended on top (no re-contextualization),
-        queried with Dense - the ADR's `sac_contextual` variant, composing both
-        techniques.
-    raptor
-        A fifth index: the base chunks plus their recursive summary tree
-        (build_raptor_tree()), queried with Dense - the paper's "collapsed
-        tree" retrieval is vector similarity over the flattened tree.
-    graphrag
-        A real LightRAG index (ADR-0010), queried in "local" mode - a
-        deliberate default (entity-focused, closer to this benchmark's
-        mostly single-hop legal lookups); "global" is equally supported by
-        GraphRagRetrieval's mode= parameter for a future side comparison,
-        the same way ADR-0005 ran embeddings as an isolated experiment.
-
-Only --mode live is implemented: with the default local embedding provider,
-it still makes real, metered Gemini API calls for everything except
-embeddings (contextualization, summarization, entity extraction - ADR-0010);
-switching to ``embedding.provider: gemini`` meters embeddings too (ADR-0005/
-ADR-0013). --mode cache (bit-for-bit replay from a versioned LLM call cache,
-ADR-0004) needs a cache-recording/replay layer that does not exist yet in
-this codebase and is intentionally out of scope here.
-
-Bounded parallel execution and a minimal LLM cache (ADR-0014 + ADR-0004):
-a FileLLMCache under experiments/<run_id>/llm-cache/ is shared by the
-embedder, GeminiAnswerGenerator, and the judge (Gemini or OpenAI) - a call
-already made for the exact same (model, prompt) is never repeated. A
-ProviderLimiter bounds concurrent in-flight calls process-wide, per provider
-(execution.gemini_max_in_flight, reused as the shared bound whichever hosted
-provider is active). Answer generation + judge scoring use
-ragforge.evaluation.scheduler.run_bounded (execution.answer_quality_workers
-workers), which always restores canonical question order regardless of
-completion order. ``--resume <run_id>`` reuses an existing run's directory
-(results.json, records.jsonl, llm-cache/), skips strategies already present
-in results.json's metrics, and fails closed if the corpus/embedding/model
-identity doesn't match what produced that run. Resuming still re-runs a
-stage's indexing (contextualization, RAPTOR summarization) even when only
-some of that stage's strategies remain unscored - contextualize_chunks and
-build_raptor_tree are not cache-wired in this increment, only the embedder
-and the two per-question LLM calls are; see docs/adr/0014 for the fuller,
-deferred scope (RPM/TPM limits, `Retry-After`, cross-process coalescing).
-
-This module is the CLI entrypoint and top-level orchestration only:
-strategy/embedder/judge composition lives in run_strategies.py, table
-rendering and the run-record schema in run_reporting.py, and ADR-0017
-evidence-directory writes in run_evidence.py.
+This module is CLI parsing and orchestration only: composition lives in
+run_strategies.py, reporting in run_reporting.py, ADR-0017 evidence writes in
+run_evidence.py, and lineage scoping in lineage_ports.py.
 """
 
 import argparse

@@ -1,18 +1,10 @@
 """Post-generation citation and support audit contract (ADR-0016).
 
-Deterministic Citation Accuracy (metrics/citation.py) is an evaluation
-metric against a golden set - it says nothing about a live answer whose
-citation points to a real, existing structural ID that was simply never
-retrieved for this question, or whose claim merely looks supported by its
-cited text. This module defines the audit's schema and the two LLM-backed
-ports it needs (semantic support verification, bounded rewrite) so
-citation_audit.py's orchestration and its deterministic checks never depend
-on a concrete LLM SDK (ADR-0009's adapter boundary) - only on these
-Protocols.
-
-``ModelIdentity`` is reused from judge_ports.py rather than duplicated: it
-is already exactly "provider + model + reasoning_effort + schema version",
-which is everything ADR-0016 asks the audit's manifest entry to carry.
+Defines the audit's schema and its two LLM-backed ports (semantic support
+verification, bounded rewrite) so citation_audit.py's orchestration never
+depends on a concrete LLM SDK (ADR-0009 boundary) - only on these Protocols.
+``ModelIdentity`` is reused from judge_ports.py: it already carries exactly
+what ADR-0016 asks the audit's manifest entry to record.
 """
 
 from dataclasses import dataclass
@@ -87,10 +79,9 @@ class SemanticSupportResult:
 class ClaimAudit:
     """The complete audit trail for one claim.
 
-    ``semantic_support`` is ``None`` when any of the claim's citations
-    failed a deterministic check - the LLM verifier is never called for a
-    claim deterministic checks have already condemned (ADR-0016: "prefer
-    deterministic checks before LLM verification").
+    ``semantic_support`` is ``None`` when any citation failed a
+    deterministic check - the LLM verifier is never called for a claim
+    deterministic checks already condemned (ADR-0016).
     """
 
     claim: AnswerClaim
@@ -125,11 +116,8 @@ class SemanticSupportVerifier(Protocol):
     ) -> SemanticSupportResult:
         """Return the structured support judgment for ``claim_text`` given only the cited text.
 
-        ``cited_citations`` is ``(structural_id, source_text)`` pairs, not
-        bare text - the verifier needs the ID alongside its text to
-        attribute ``supported_citation_ids``/``unsupported_citation_ids``
-        to specific citations rather than judging the claim as an
-        undifferentiated whole.
+        ``cited_citations`` is ``(structural_id, source_text)`` pairs, so
+        the verifier can attribute support to specific citations.
         """
         ...
 

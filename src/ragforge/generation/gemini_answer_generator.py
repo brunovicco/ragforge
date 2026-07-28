@@ -1,28 +1,13 @@
 """Gemini-based answer generation with structural-ID citations (ADR-0007 prerequisite).
 
-Generates a grounded answer from a query and its retrieved chunks, citing the
-structural ID(s) (ADR-0002/0006) each part of the answer draws from - the
-input Citation Accuracy (ADR-0007) checks against a judgment's relevant set,
-and downstream a RAGAS quality judge scores.
-
-No generation model has been chosen via a dedicated comparison (unlike the
-embedding model, ADR-0005); the model name is a constructor argument, not
-hardcoded, matching every other Gemini adapter in this project.
-
-Retries 429s and transient transport errors via
-ragforge.adapters.gemini_retry, shared with every other Gemini-calling
-adapter in this project. An optional LLMCache (ADR-0004) keys on model +
-prompt, so an identical (query, context) pair reuses its prior answer
-instead of calling the API again; a ProviderLimiter (ADR-0014) bounds
-concurrent in-flight generate_content calls process-wide.
-
-Also captures ADR-0017 "Generation lineage" (token usage, latency,
-cache hit, prompt/answer hashes) via ``drain_generation_lineage()`` - a
-lock-guarded buffer, same pattern as
-``generation.auditing_answer_generator.AuditingAnswerGenerator``'s audit
-buffer. This is the one adapter that needs this: the ADR's own field list
-scopes token usage/latency to the answer generator, not to the judge or
-auditor (see lineage_ports.py's module docstring).
+Generates a grounded answer from a query and its retrieved chunks, citing
+the structural IDs (ADR-0002/0006) each part draws from. The model name is a
+constructor argument (no dedicated model comparison ran, unlike ADR-0005 for
+embeddings). Shares ragforge.adapters.gemini_retry with every Gemini
+adapter; an optional LLMCache (ADR-0004) and ProviderLimiter (ADR-0014)
+wrap the calls. Also captures ADR-0017 generation lineage via
+``drain_generation_lineage()`` - the one adapter that needs to, per the
+ADR's field scoping (see lineage_ports.py).
 """
 
 import json
@@ -95,13 +80,9 @@ class GeminiAnswerGenerator:
     ) -> None:
         """Create the client for ``model_name``.
 
-        Args:
-            model_name: The Gemini generation model id, e.g. "gemini-3.1-flash-lite".
-            api_key: Overrides GEMINI_API_KEY / GOOGLE_API_KEY from the environment.
-            cache: Optional LLMCache (ADR-0004). None (the default) disables
-                caching - every generate() call reaches the real API.
-            max_in_flight: Bounds concurrent generate_content calls to this
-                provider, process-wide (ADR-0014).
+        ``api_key`` overrides GEMINI_API_KEY / GOOGLE_API_KEY; ``cache=None``
+        disables ADR-0004 caching; ``max_in_flight`` bounds concurrent calls
+        (ADR-0014).
 
         Raises:
             GenerationError: If no API key is available or the client can't be created.
@@ -186,10 +167,8 @@ class GeminiAnswerGenerator:
     def drain_generation_lineage(self) -> list[GenerationLineage]:
         """Return every GenerationLineage produced since the last drain, then clear the buffer.
 
-        Same swap-and-clear pattern as
-        ``AuditingAnswerGenerator.drain_audit_results()`` - callers drain
-        after each strategy finishes, before the next one reuses this
-        instance.
+        Same swap-and-clear pattern as AuditingAnswerGenerator's audit buffer;
+        drained after each strategy finishes.
         """
         with self._lineage_lock:
             lineage, self._generation_lineage = self._generation_lineage, []

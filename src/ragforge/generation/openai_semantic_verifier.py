@@ -1,23 +1,12 @@
 """OpenAI-based semantic support verification for the post-generation citation audit (ADR-0016).
 
-Judges whether a claim's cited authoritative source text actually supports
-it - the one LLM-backed check the audit pipeline (citation_audit.py) runs,
-and only for claims whose citations have already passed every deterministic
-check ("prefer deterministic checks before LLM verification"). Independent
-from the Gemini answer generator, same spirit as the ADR-0018 judge -
-avoids correlating the generator's and the auditor's errors.
-
-Reuses ragas.llms.InstructorLLM purely as a structured-completion wrapper
-(not any RAGAS metric class): it already handles OpenAI reasoning models'
-parameter quirks (temperature=1.0, max_completion_tokens, no top_p) for
-free, the same way ragas_judge.py's abstention check does. "openai" and
-"ragas" are both already direct project dependencies since Increment 5 -
-no new dependency here.
-
-An optional LLMCache (ADR-0004) keys on the question, claim, and cited
-citations, so an identical (question, claim, citations) triple is never
-re-verified; a ProviderLimiter (ADR-0014) bounds concurrent in-flight calls
-process-wide, the same pattern every other adapter in this project follows.
+Judges whether a claim's cited source text actually supports it - the one
+LLM-backed check in citation_audit.py, run only for claims that passed every
+deterministic check. Provider-independent from the Gemini generator (same
+spirit as the ADR-0018 judge). Reuses ragas.llms.InstructorLLM purely as a
+structured-completion wrapper (no RAGAS metric class; no new dependency).
+An optional LLMCache (ADR-0004) keys on (question, claim, citations); a
+ProviderLimiter (ADR-0014) bounds concurrent calls.
 """
 
 import json
@@ -100,16 +89,11 @@ class OpenAISemanticSupportVerifier:
         cache: LLMCache | None = None,
         max_in_flight: int = _DEFAULT_MAX_IN_FLIGHT,
     ) -> None:
-        """Create the client for ``model_name``.
+        """Create the client for ``model_name`` (a dated OpenAI snapshot).
 
-        Args:
-            model_name: The dated OpenAI generation model snapshot used as the verifier.
-            reasoning_effort: Threaded into every underlying chat.completions.create() call.
-            api_key: Overrides OPENAI_API_KEY from the environment.
-            cache: Optional LLMCache (ADR-0004). None (the default) disables
-                caching - every verify() call reaches the real API.
-            max_in_flight: Bounds concurrent verify() calls to this provider,
-                process-wide (ADR-0014).
+        ``reasoning_effort`` is forwarded to every underlying call;
+        ``api_key`` overrides OPENAI_API_KEY; ``cache``/``max_in_flight``
+        wire ADR-0004/ADR-0014.
 
         Raises:
             GenerationError: If no API key is available or the client can't be created.

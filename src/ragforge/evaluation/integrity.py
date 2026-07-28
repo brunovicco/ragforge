@@ -1,17 +1,12 @@
 """Preflight integrity gate (ADR-0012): fail closed before indexing or evaluation.
 
-Three independent checks, each collecting every problem it finds rather than
-stopping at the first one, so a run that fails closed reports the complete
-list in one shot instead of a slow one-problem-per-rerun loop:
-
-- ``verify_source_integrity`` - every enabled manifest document exists and
-  matches its pinned hash. Cheap; runs before extraction.
-- ``verify_split_integrity`` - the split and the golden set agree on exactly
-  which questions are selected, with no duplicate or orphaned ID. Cheap;
-  runs before extraction.
-- ``verify_structural_references`` - every judged structural ID actually
-  resolves against the real indexed corpus. Requires the parsed/chunked
-  documents, so it runs after extraction but before indexing.
+Three independent checks, each collecting every problem it finds (one
+complete report, not one problem per rerun): ``verify_source_integrity``
+(manifest documents exist and match pinned hashes; pre-extraction),
+``verify_split_integrity`` (split and golden set select the same questions
+exactly once; pre-extraction), ``verify_structural_references`` (every
+judged structural ID resolves against the real chunked corpus;
+post-extraction, pre-indexing).
 """
 
 from collections import Counter
@@ -89,10 +84,9 @@ def verify_structural_references(
 ) -> None:
     """Fail unless every judged structural ID resolves against the real indexed corpus.
 
-    ``documents`` is the ``{norm_id: (full_text, chunks)}`` mapping of the
-    documents actually extracted and chunked this run - a reference to a
-    disabled or unknown norm fails here because it is simply absent from
-    this mapping.
+    ``documents`` maps ``{norm_id: (full_text, chunks)}`` for the documents
+    actually extracted this run - references to disabled or unknown norms
+    fail here by absence.
 
     Raises:
         IntegrityError: If one or more judged structural IDs do not resolve.
