@@ -150,6 +150,7 @@ prompt-template hash
 generation parameters
 input chunk IDs
 input source hashes
+exact ordered judge-context texts (full_local) or separately controlled content snapshots
 answer hash
 parsed citations
 token usage
@@ -262,6 +263,10 @@ public_benchmark
 ```
 
 Private institutional runs default to hashes and metrics plus separately controlled encrypted content storage.
+
+Judge calibration is available only when the exact ordered judge contexts are
+retained locally. Hash-only records can prove identity but cannot support a
+human comparison of the evidence, and citations are not a valid reconstruction.
 
 ### Verification
 

@@ -28,6 +28,7 @@ def _record(question_id: str, query_class: str, score: float) -> QuestionRecord:
         retrieved_structural_ids=(),
         answer_text="answer",
         answer_citations=(),
+        judge_contexts=("context",),
         metrics={"recall_at_k": score},
         errors=(),
     )

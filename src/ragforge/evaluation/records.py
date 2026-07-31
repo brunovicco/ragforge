@@ -35,6 +35,7 @@ class AnswerRecord:
     status: str
     answer_text: str | None
     answer_citations: tuple[str, ...]
+    judge_contexts: tuple[str, ...]
     metrics: dict[str, float]
     error: str | None = None
 
@@ -53,6 +54,7 @@ class QuestionRecord:
     retrieved_structural_ids: tuple[str, ...]
     answer_text: str | None
     answer_citations: tuple[str, ...]
+    judge_contexts: tuple[str, ...]
     metrics: dict[str, float]
     errors: tuple[str, ...]
 
@@ -69,6 +71,7 @@ class QuestionRecord:
             "retrieved_structural_ids": list(self.retrieved_structural_ids),
             "answer_text": self.answer_text,
             "answer_citations": list(self.answer_citations),
+            "judge_contexts": list(self.judge_contexts),
             "metrics": self.metrics,
             "errors": list(self.errors),
         }
@@ -105,6 +108,7 @@ def merge_question_records(
                 retrieved_structural_ids=retrieval.retrieved_structural_ids,
                 answer_text=answer.answer_text if answer is not None else None,
                 answer_citations=answer.answer_citations if answer is not None else (),
+                judge_contexts=answer.judge_contexts if answer is not None else (),
                 metrics={**retrieval.metrics, **(answer.metrics if answer is not None else {})},
                 errors=tuple(errors),
             )
@@ -175,6 +179,9 @@ def read_records_jsonl(path: Path) -> list[QuestionRecord]:
             ),
             answer_citations=tuple(
                 str(value) for value in cast(list[object], payload["answer_citations"])
+            ),
+            judge_contexts=tuple(
+                str(value) for value in cast(list[object], payload.get("judge_contexts", []))
             ),
             metrics=metrics,
             errors=tuple(str(value) for value in cast(list[object], payload["errors"])),
