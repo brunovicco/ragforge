@@ -34,6 +34,7 @@ def _answer(question_id: str, **overrides: Any) -> AnswerRecord:
         status="succeeded",
         answer_text="the answer",
         answer_citations=("NORM::art-1",),
+        judge_contexts=("authoritative context",),
         metrics={"citation_accuracy": 1.0},
         error=None,
     )
@@ -52,6 +53,7 @@ def test_merge_joins_retrieval_and_answer_records_by_question_id() -> None:
     assert record.generation_status == "succeeded"
     assert record.judge_status == "succeeded"
     assert record.answer_text == "the answer"
+    assert record.judge_contexts == ("authoritative context",)
     assert record.metrics == {"recall_at_k": 1.0, "citation_accuracy": 1.0}
     assert record.errors == ()
 
@@ -67,6 +69,7 @@ def test_merge_marks_generation_and_judge_not_applicable_when_no_answer_record_e
     assert record.judge_status == "not_applicable"
     assert record.answer_text is None
     assert record.answer_citations == ()
+    assert record.judge_contexts == ()
     assert record.metrics == {}
 
 
@@ -95,7 +98,21 @@ def test_append_records_jsonl_writes_one_json_line_per_record(tmp_path: Path) ->
     parsed = [json.loads(line) for line in lines]
     assert parsed[0]["strategy"] == "dense"
     assert parsed[1]["strategy"] == "sparse_bm25"
+    assert parsed[0]["judge_contexts"] == ["authoritative context"]
     assert parsed[0]["metrics"] == {"recall_at_k": 1.0, "citation_accuracy": 1.0}
+
+
+def test_read_records_jsonl_defaults_legacy_judge_contexts_to_empty(tmp_path: Path) -> None:
+    """Records written before exact judge-context persistence remain readable."""
+    path = tmp_path / "records.jsonl"
+    record = merge_question_records("dense", [_retrieval("q1")], [_answer("q1")])[0]
+    payload = record.to_json_dict()
+    del payload["judge_contexts"]
+    path.write_text(json.dumps(payload) + "\n", encoding="utf-8")
+
+    loaded = read_records_jsonl(path)
+
+    assert loaded[0].judge_contexts == ()
 
 
 def test_append_records_jsonl_is_idempotent_for_a_resumed_strategy(tmp_path: Path) -> None:

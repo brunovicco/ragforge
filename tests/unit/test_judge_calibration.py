@@ -1,8 +1,5 @@
 """Tests for judge calibration metrics (ADR-0007/ADR-0018)."""
 
-import json
-from pathlib import Path
-
 import pytest
 
 from ragforge.evaluation.judge_calibration import (
@@ -11,7 +8,6 @@ from ragforge.evaluation.judge_calibration import (
     compute_calibration_report,
     false_supported_rate,
     false_unsupported_rate,
-    load_calibration_samples,
     spearman_correlation,
     weighted_cohens_kappa,
 )
@@ -150,37 +146,19 @@ class TestComputeCalibrationReport:
         assert "spearman_correlation" not in report
         assert report["n"] == 1.0
 
+    def test_omits_spearman_when_one_score_sequence_is_constant(self) -> None:
+        """A constant reviewer sequence has undefined correlation but valid kappa."""
+        report = compute_calibration_report(
+            [
+                _sample("q1", "faithfulness", judge_score=0.0, human_score=1.0),
+                _sample("q2", "faithfulness", judge_score=1.0, human_score=1.0),
+            ]
+        )
+
+        assert "spearman_correlation" not in report
+        assert "weighted_kappa" in report
+
     def test_raises_for_an_empty_sample_list(self) -> None:
         """An empty calibration file is a caller error, not a silently meaningless report."""
         with pytest.raises(ValueError, match="must not be empty"):
             compute_calibration_report([])
-
-
-class TestLoadCalibrationSamples:
-    def test_loads_every_sample_from_a_json_file(self, tmp_path: Path) -> None:
-        """Every field in the documented JSON schema round-trips into a CalibrationSample."""
-        path = tmp_path / "calibration.json"
-        path.write_text(
-            json.dumps(
-                [
-                    {
-                        "sample_id": "q1-faithfulness",
-                        "dimension": "faithfulness",
-                        "judge_score": 0.8,
-                        "human_score": 1.0,
-                    }
-                ]
-            ),
-            encoding="utf-8",
-        )
-
-        samples = load_calibration_samples(path)
-
-        assert samples == [
-            CalibrationSample(
-                sample_id="q1-faithfulness",
-                dimension="faithfulness",
-                judge_score=0.8,
-                human_score=1.0,
-            )
-        ]

@@ -151,6 +151,14 @@ ADR-0007 remains mandatory.
 
 The calibration dataset SHALL contain at least 30 manually labeled samples and SHOULD grow to 50 before a public benchmark release.
 
+For Faithfulness, the human worksheet SHALL contain the exact ordered context
+texts passed to the judge for that answer. Reconstructing evidence from parsed
+citations or structural IDs is not equivalent: generated summaries and malformed
+or missing citations can change the material being evaluated. Citation-source
+resolution remains a separate diagnostic section and SHALL NOT replace judge
+contexts. Runs that did not persist exact judge contexts are ineligible for
+retrospective calibration and must be rerun.
+
 Stratify by:
 
 - all query classes;
@@ -170,6 +178,11 @@ Measure:
 - false-supported rate;
 - false-unsupported rate;
 - abstention agreement.
+
+Reports SHALL publish overall agreement and a breakdown per dimension. The
+minimum gate applies to the overall result and independently to Faithfulness
+and Answer Relevancy, so strong performance in one dimension cannot conceal a
+failure in another.
 
 Minimum acceptance:
 

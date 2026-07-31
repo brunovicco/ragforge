@@ -184,6 +184,7 @@ def test_evaluate_answer_quality_averages_citation_accuracy_across_judgments() -
     assert result.metrics["answer_errors"] == 0.0
     assert len(result.records) == 2
     assert all(record.status == "succeeded" for record in result.records)
+    assert all(record.judge_contexts == ("chunk text",) for record in result.records)
 
 
 def test_evaluate_answer_quality_still_scores_unanswerable_questions() -> None:
@@ -237,13 +238,14 @@ def test_evaluate_answer_quality_passes_retrieved_chunk_text_as_judge_contexts()
     generator = _FakeGenerator({"q1": Answer(text="answer", citations=(ART_1,))})
     judge = _FakeJudge({"faithfulness": 1.0, "answer_relevancy": 1.0})
 
-    evaluate_answer_quality(
+    result = evaluate_answer_quality(
         _FakeStrategy(), [_judgment("q1", ART_1)], generator, lambda: judge, k=5
     )
 
     assert judge.calls[0].question == "q1"
     assert judge.calls[0].contexts == ("chunk text",)
     assert judge.calls[0].answer == "answer"
+    assert result.records[0].judge_contexts == judge.calls[0].contexts
 
 
 def test_evaluate_answer_quality_raises_for_an_empty_judgment_list() -> None:

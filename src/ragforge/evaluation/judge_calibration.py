@@ -1,19 +1,17 @@
 """Judge calibration against human evaluation (ADR-0007/ADR-0018).
 
-Computes judge-vs-human agreement (weighted Cohen's kappa >= 0.60 gate)
-required before judge scores count as more than an unvalidated caveat. It
-cannot produce the ~30+ hand-labeled, stratified samples the exercise needs -
-that is human curation work; until a real calibration file goes through
-``compute_calibration_report``, RagasJudge scores remain unvalidated.
+Provides the low-level judge-vs-human agreement metrics required by the
+calibration gate. Sample validation, minimum size, evidence provenance, and
+per-dimension acceptance belong to ``calibration_workflow``; callers must use
+that canonical workflow before treating RagasJudge scores as validated.
 
 Continuous judge scores (0.0-1.0) are binned by ``_to_ordinal`` into three
 categories (0/0.5/1.0), matching ``RelevanceGrade``'s existing ordinal scale.
 """
 
-import json
 import statistics
+from contextlib import suppress
 from dataclasses import dataclass
-from pathlib import Path
 
 _ORDINAL_CATEGORIES = 3
 _BINARY_THRESHOLD = 0.5
@@ -149,9 +147,10 @@ def abstention_agreement(samples: list[CalibrationSample]) -> float:
 
 
 def compute_calibration_report(samples: list[CalibrationSample]) -> dict[str, float]:
-    """Aggregate every ADR-0007/ADR-0018 calibration metric across all dimensions.
+    """Aggregate ADR-0007/ADR-0018 metrics for an already validated sample group.
 
-    ``spearman_correlation`` is omitted (not raised) below 2 samples.
+    ``spearman_correlation`` is omitted when fewer than 2 samples are
+    available or either score sequence is constant.
 
     Raises:
         ValueError: If samples is empty.
@@ -172,25 +171,8 @@ def compute_calibration_report(samples: list[CalibrationSample]) -> dict[str, fl
     if len(samples) >= 2:
         judge_scores = [sample.judge_score for sample in samples]
         human_scores = [sample.human_score for sample in samples]
-        report["spearman_correlation"] = spearman_correlation(judge_scores, human_scores)
+        # Undefined when either reviewer assigns one constant score; kappa and
+        # the error rates remain meaningful.
+        with suppress(statistics.StatisticsError):
+            report["spearman_correlation"] = spearman_correlation(judge_scores, human_scores)
     return report
-
-
-def load_calibration_samples(path: Path) -> list[CalibrationSample]:
-    """Load calibration samples from a JSON file.
-
-    Expects a JSON array of objects with ``sample_id``, ``dimension``,
-    ``judge_score``, ``human_score``. No such file ships with the repository
-    (see module docstring) - this loader is ready for the moment a human
-    curator produces one.
-    """
-    payload = json.loads(path.read_text(encoding="utf-8"))
-    return [
-        CalibrationSample(
-            sample_id=entry["sample_id"],
-            dimension=entry["dimension"],
-            judge_score=entry["judge_score"],
-            human_score=entry["human_score"],
-        )
-        for entry in payload
-    ]

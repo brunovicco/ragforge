@@ -85,6 +85,7 @@ def evaluate_answer_quality(
                     status="skipped",
                     answer_text=None,
                     answer_citations=(),
+                    judge_contexts=(),
                     metrics={},
                     error="not attempted: strategy aborted after consecutive failures",
                 )
@@ -101,6 +102,7 @@ def evaluate_answer_quality(
                     status="failed",
                     answer_text=None,
                     answer_citations=(),
+                    judge_contexts=(),
                     metrics={},
                     error=str(exc),
                 )
@@ -193,6 +195,7 @@ def evaluate_answer_quality(
                         status=status,
                         answer_text=None,
                         answer_citations=(),
+                        judge_contexts=(),
                         metrics={},
                         error=str(outcome) or outcome.__class__.__name__,
                     )
@@ -210,6 +213,7 @@ def evaluate_answer_quality(
                     status="succeeded",
                     answer_text=answer.text,
                     answer_citations=answer.citations,
+                    judge_contexts=tuple(result.chunk.source_text for result in _results),
                     metrics=question_metrics,
                 )
             )
