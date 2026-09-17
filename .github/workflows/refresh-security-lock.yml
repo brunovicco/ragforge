@@ -1,0 +1,41 @@
+name: refresh-security-lock
+
+on:
+  push:
+    branches:
+      - hardening/portfolio-review-2026-09
+
+permissions:
+  contents: write
+
+jobs:
+  refresh-lock:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out feature branch
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: hardening/portfolio-review-2026-09
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: "0.11.28"
+
+      - name: Resolve constrained security updates
+        run: uv lock
+
+      - name: Commit refreshed lock file
+        run: |
+          if git diff --quiet -- uv.lock; then
+            echo "uv.lock already satisfies security floors"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add uv.lock
+          git commit -m "chore(deps): refresh lock for security advisories"
+          git push origin HEAD:hardening/portfolio-review-2026-09
