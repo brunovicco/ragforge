@@ -40,13 +40,18 @@ tracing = [
 # langchain-community 0.4 (the package's own "sunset" cut). Without this
 # constraint, `import ragas` fails outright. Not a ragforge dependency in its
 # own right; pinned only to satisfy ragas's actual (unstated) requirement.
+#
+# The remaining minimum versions are transitive dependency security floors.
+# They intentionally follow pip-audit's published fixed versions rather than
+# suppressing advisories that already have upstream patches.
 constraint-dependencies = [
     "langchain-community<0.4",
-    # streamlit pulls gitpython with no tight upper bound; 3.1.53 has three
-    # known CVEs (GHSA-fjr4-x663-mwxc, GHSA-6p8h-3wgx-97gf,
-    # GHSA-r9mr-m37c-5fr3), fixed in 3.1.54. Not a ragforge dependency in
-    # its own right; pinned only so pip-audit stays clean.
-    "gitpython>=3.1.54",
+    "aiohttp>=3.14.3",
+    "cryptography>=50.0.0",
+    "datasets>=5.0.1",
+    "gitpython>=3.1.59",
+    "pip>=26.2",
+    "transformers>=5.10.0",
 ]
 
 [dependency-groups]

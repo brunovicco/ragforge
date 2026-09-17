@@ -84,10 +84,19 @@ def configured_checks(root: Path) -> list[Check]:
     # Ignored advisories (no fixed release available yet; re-evaluate on dependency bumps):
     # - PYSEC-2026-2447: diskcache 5.6.3 (transitive). No fix published.
     # - PYSEC-2026-3046: ragas 0.4.3. No fix published; ragas is pinned by the eval harness.
+    # - PYSEC-2026-3804: accelerate 1.14.0 (transitive). No fixed release published.
     checks.append(
         Check(
             "dependencies",
-            ("pip-audit", "--ignore-vuln", "PYSEC-2026-2447", "--ignore-vuln", "PYSEC-2026-3046"),
+            (
+                "pip-audit",
+                "--ignore-vuln",
+                "PYSEC-2026-2447",
+                "--ignore-vuln",
+                "PYSEC-2026-3046",
+                "--ignore-vuln",
+                "PYSEC-2026-3804",
+            ),
         )
     )
     return checks

@@ -26,9 +26,16 @@ This document records that assessment and the controls that keep it true.
   via environment variables (`.env`, git-ignored), never committed; published
   read-only endpoints are intentionally unauthenticated because they serve
   only public benchmark aggregates.
-- **Encryption in transit:** all provider and infrastructure traffic over
-  TLS (HTTPS to Gemini/OpenAI/Langfuse; local Docker services are
-  loopback-bound in the development compose profile).
+- **Local infrastructure boundary:** the development Docker Compose profile
+  binds Postgres and OpenSearch to `127.0.0.1` only. OpenSearch authentication
+  is disabled in that local profile, so the compose file is explicitly not a
+  production deployment template. Any non-local deployment must enable
+  authentication, transport security, network policy, and secret-managed
+  credentials before use.
+- **Encryption in transit:** hosted provider traffic uses TLS (HTTPS to
+  Gemini/OpenAI/Langfuse). The loopback-only development database/search
+  services are local plaintext by design because they contain public benchmark
+  data only.
 - **Encryption at rest:** local development stores are unencrypted volumes on
   the operator's machine; acceptable because contents are public texts and
   synthetic artifacts. Re-assess before any deployment holding non-public

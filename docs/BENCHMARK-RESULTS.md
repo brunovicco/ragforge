@@ -42,10 +42,10 @@ abstention evaluation, so all answer metrics use 60 questions.
 
 All ten strategies completed without retrieval or answer-evaluation errors.
 
-## Recommendation
+## Interpretation
 
-SAC is the primary recommendation for this v0.1 sample. It has the strongest
-balanced profile rather than winning every individual metric:
+SAC had the strongest balanced profile in this v0.1 sample rather than winning
+every individual metric:
 
 - highest nDCG@5, MRR, and Citation Accuracy;
 - zero Document-Level Retrieval Mismatch;
@@ -53,21 +53,27 @@ balanced profile rather than winning every individual metric:
 - strong Faithfulness and Answer Relevancy without RAPTOR's synthetic-node
   evidence trade-off.
 
-RAPTOR is preferable when maximizing raw structural recall is the overriding
-goal, but its recursive summaries can enter answer-generation context. Dense
-remains a strong low-complexity baseline. Contextual produces the highest
-Faithfulness but adds one enrichment call per chunk. The current cross-encoder (`cross-encoder/ms-marco-MiniLM-L-6-v2`, an English-trained MS MARCO model - a likely cause of Reranked's weak PT-BR results) and the GraphRAG configuration should not be selected based on this
-run; a multilingual reranker (e.g. mMARCO or bge-reranker-v2-m3) is the obvious next experiment.
+RAPTOR produced the strongest raw structural recall in this sample, but its
+recursive summaries can enter answer-generation context. Dense remains a
+strong low-complexity baseline. Contextual produced the highest Faithfulness
+but adds one enrichment call per chunk. The current cross-encoder
+(`cross-encoder/ms-marco-MiniLM-L-6-v2`, an English-trained MS MARCO model - a
+likely cause of Reranked's weak PT-BR results) and the GraphRAG configuration
+need further experimentation before drawing broader conclusions; a multilingual
+reranker (for example mMARCO or bge-reranker-v2-m3) is an obvious next test.
 
-This recommendation is intentionally scoped to this deterministic sample. A
-future full-split run or a materially different corpus requires a new
-publication record and may change the recommendation.
+These interpretations are intentionally scoped to this deterministic sample. A
+future full-split run, calibrated judge, materially different corpus, or
+confidence-interval analysis may change the conclusions.
 
 ## Evidence and verification
 
 The versioned evidence bundle is under
 `artifacts/runs/20260726T185553Z/`. Aggregate results, per-question records, and
-the LLM replay cache are under `experiments/20260726T185553Z/`.
+captured write-through LLM calls are under `experiments/20260726T185553Z/`.
+Those captured calls support traceability and future replay work; the
+deterministic zero-provider replay executor described by ADR-0004/ADR-0020 is
+not implemented yet.
 
 Verify checksums, the event hash chain, and manifest references locally:
 
@@ -123,5 +129,7 @@ per-question model responses, or provider credentials.
 - The semantic citation audit was disabled to control cost.
 - LightRAG emitted warnings because no additional internal reranker was
   configured; GraphRAG proceeded without that optional reranking step.
+- Confidence intervals are not yet reported, so small metric differences should
+  not be read as statistically established wins.
 - The dashboard implements the ADR-0008 analytical view. The live Arena depends
   on the still-planned router and corrective workflow.

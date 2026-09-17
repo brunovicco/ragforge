@@ -12,7 +12,7 @@ RAGForge is being built to benchmark sparse, dense, hybrid, contextual, hierarch
 
 ## Why this exists
 
-Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 10 strategy configurations × 7 query classes, with an adaptive router meant to be evaluated against an **empirical oracle** and every published number reproducible bit-for-bit from a versioned LLM call cache.
+Most RAG comparisons are anecdotal. RAGForge treats the question "*which RAG strategy should I use?*" as an experiment: 10 strategy configurations × 7 query classes, with a planned adaptive router meant to be evaluated against an **empirical oracle** and every published number tied to versioned run evidence rather than copied from an ad-hoc notebook.
 
 ## Benchmarked strategies
 
@@ -48,10 +48,11 @@ is actually running today versus what the design targets - see the [PR history](
 | Post-generation citation/semantic-support audit + bounded rewrite (ADR-0016) | Implemented - off by default (`audit.enabled: false`) |
 | Auditable, tamper-evident run evidence directory (ADR-0017) | Implemented - `artifacts/runs/<run_id>/`, verified via `scripts/verify_run.py` |
 | Main benchmark runner (`make bench-live`, all 10 strategies + answer quality) | Implemented - live mode only |
+| Write-through per-run LLM call cache | Implemented for live calls |
+| Deterministic zero-provider replay (`make bench`, ADR-0004/0020) | Planned - replay executor + CI gate not built yet |
 | Adaptive Router, Corrective workflow | Planned |
 | RegRAG-BR golden set | 230 questions published: 36 validation/dev + 194 test |
 | API / dashboard apps | Published-results API and analytical dashboard implemented; live Arena planned |
-| `make bench` (cached, bit-for-bit replay, ADR-0004) | Planned - needs a versioned LLM call cache, not built yet |
 
 ## v0.1 benchmark result
 
@@ -61,11 +62,12 @@ Run [`20260726T185553Z`](experiments/20260726T185553Z/results.json) evaluates a
 `regrag-br-benchmark-sample-v1`; this is a cost-controlled v0.1 result, not a
 claim about the complete test split.
 
-**SAC is the recommended v0.1 strategy** for its balanced profile: the highest
+**SAC had the strongest balanced profile in the v0.1 sample**: the highest
 nDCG@5 (`0.963`), MRR (`0.991`), and Citation Accuracy (`0.689`) in this run,
 with zero Document-Level Retrieval Mismatch. RAPTOR achieved the highest
 Recall@5 (`1.000`) and Precision@5 (`0.611`), but its generated summary nodes
-carry a different evidence-quality trade-off.
+carry a different evidence-quality trade-off. These are sample-scoped results,
+not a universal strategy ranking.
 
 The full scorecard, methodology, limitations, and verification instructions
 are in [Benchmark results](docs/BENCHMARK-RESULTS.md).
@@ -81,7 +83,7 @@ make api                                           # read-only published-results
 make dashboard                                     # offline analytical benchmark dashboard
 ```
 
-`make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). `make bench` (deterministic, zero-cost replay from a versioned LLM cache) is the target design per [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), but that cache layer doesn't exist yet - only live mode is implemented. The replay layer and its CI gate ship together ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)).
+`make bench-live` calls real providers (embeddings, contextualization, RAPTOR summarization, GraphRAG entity extraction - see the strategy table above). Live calls can be captured in a per-run write-through LLM cache. The planned `make bench` mode (ADR-0004) is a different capability: it must replay captured calls deterministically at zero provider cost and fail closed on a cache miss. That replay executor and its CI gate do **not** exist yet; they ship together under [ADR-0020](docs/adr/0020-replay-cache-ci-gate.md).
 
 The canonical publishable matrix uses `gemini-embedding-001`, the provisional selection of the
 isolated PT-BR embedding comparison (ADR-0005) - marked `pending_revalidation` in
@@ -101,21 +103,23 @@ All non-obvious choices are recorded as [ADRs](docs/adr/README.md). The load-bea
 
 - [ADR-0002](docs/adr/0002-article-level-relevance-judgments.md) - relevance judgments at **norm-article level**, so retrieval metrics stay comparable across strategies that chunk differently (or don't return chunks at all).
 - [ADR-0003](docs/adr/0003-empirical-router-oracle.md) - the router is scored against an **empirical per-question oracle** (best strategy measured, not assumed), with a dev/test split preventing few-shot leakage.
-- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - `make bench` is specified to replay a versioned LLM cache for bit-for-bit reproduction at zero API cost; the replay layer and its CI gate ship together ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)) and are not built yet.
+- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - live calls may be captured today; the target `make bench` mode replays a versioned LLM call cache for bit-for-bit reproduction at zero API cost. The replay executor and its CI gate are not built yet and ship together under [ADR-0020](docs/adr/0020-replay-cache-ci-gate.md).
 - [ADR-0006](docs/adr/0006-legal-structural-chunker.md) - domain-aware chunking by legal hierarchy (Art./§/inciso) with stable structural IDs.
 - [ADR-0007](docs/adr/0007-llm-judge-calibration-ptbr.md) - the LLM judge must be calibrated against human evaluation in PT-BR, with the agreement published, before its scores count as validated; until then every judge metric carries that caveat.
 - [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md) - structural IDs that collide across amendment history/appended annexes are excluded from golden-set citations, not fixed at the chunker level.
 - [ADR-0016](docs/adr/0016-post-generation-citation-audit.md) - a semantic-support verifier and at most one bounded rewrite catch unsupported claims a citation-existence check alone would miss.
 - [ADR-0017](docs/adr/0017-auditable-evidence-lineage.md) - every published score traces back to a hash-chained, tamper-evident evidence directory per run - exact inputs, model identities, and retrieval candidates, not just the aggregate metric.
 
+RAG-specific attack surfaces and trust boundaries are documented separately in [Threat model](docs/THREAT-MODEL.md). In particular, answer generation treats retrieved evidence as untrusted data and keeps synthetic retrieval enrichment separate from authoritative `source_text` wherever the strategy permits it.
+
 ## Repository layout
 
-```
+```text
 apps/            # api/ (FastAPI) and dashboard/ (Streamlit: benchmark + Arena)
 src/ragforge/    # domain/ (framework-free core) · ingestion/ chunking/ embeddings/
                  # retrieval/ reranking/ routing/ generation/ evaluation/ governance/
 datasets/        # corpus/ (versioned snapshot) + regrag-br/ (golden set, CC-BY-4.0)
-experiments/     # versioned results + LLM cache per run-id
+experiments/     # versioned results + captured LLM calls per run-id
 configs/         # declarative experiment configs - every README number is born here
 docs/adr/        # architecture decision records
 ```
@@ -133,10 +137,12 @@ Published (`datasets/regrag-br/judgments.json`): 230 hand-curated questions, eac
 ```bash
 uv sync --all-groups
 uv run pytest
-uv run python scripts/quality_gate.py   # ruff, mypy, pytest (≥80% core), bandit, pip-audit, architecture guard
+uv run python scripts/quality_gate.py   # ruff, mypy, pytest (≥80% core), bandit, pip-audit, architecture/governance guards
 ```
 
-Scaffolded with [claude-python-engineering-harness](https://github.com/brunovicco/claude-python-engineering-harness) ([ADR-0009](docs/adr/0009-scaffold-via-engineering-harness.md)).
+The default quality workflow is credential-free. A separate CI integration job starts real loopback-bound pgvector and OpenSearch services and exercises their adapters. Hosted-provider integration tests remain opt-in.
+
+Scaffolded with [claude-python-engineering-harness](https://github.com/brunovicco/claude-python-engineering-harness) ([ADR-0009](docs/adr/0009-scaffold-via-engineering-harness.md)); project-specific architecture and security boundaries are documented in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md), and [`docs/PRIVACY.md`](docs/PRIVACY.md).
 
 ## License
 

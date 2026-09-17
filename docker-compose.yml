@@ -1,7 +1,12 @@
-# RAGForge infrastructure. Profiles:
+# RAGForge local development infrastructure. Profiles:
 #   core   -> Postgres 16 + pgvector (dense retrieval, catalog, experiments)
 #   search -> OpenSearch (BM25 with brazilian analyzer, hybrid)
 #   graph  -> reserved: LightRAG uses embedded storage in v0.1 (Neo4j is backlog)
+#
+# These services are intentionally development-only and loopback-bound. The
+# OpenSearch security plugin is disabled for local use; do not reuse this
+# profile as a production deployment configuration.
+#
 # Usage: docker compose --profile core --profile search up -d
 services:
   postgres:
@@ -12,7 +17,7 @@ services:
       POSTGRES_PASSWORD: ragforge
       POSTGRES_DB: ragforge
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -30,7 +35,7 @@ services:
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
       OPENSEARCH_INITIAL_ADMIN_PASSWORD: "RagForge!Dev1"
     ports:
-      - "9200:9200"
+      - "127.0.0.1:9200:9200"
     volumes:
       - osdata:/usr/share/opensearch/data
     healthcheck:
