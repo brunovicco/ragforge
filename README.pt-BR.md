@@ -12,7 +12,7 @@ O RAGForge está sendo construído para comparar estratégias sparse, dense, hyb
 
 ## Por que isso existe
 
-A maioria das comparações de RAG é anedótica. O RAGForge trata a pergunta "*qual estratégia de RAG eu deveria usar?*" como um experimento: 10 configurações de estratégia × 7 classes de pergunta, com um roteador adaptativo pensado para ser avaliado contra um **oráculo empírico**, e todo número publicado reproduzível bit a bit a partir de um cache versionado de chamadas de LLM.
+A maioria das comparações de RAG é anedótica. O RAGForge trata a pergunta "*qual estratégia de RAG eu deveria usar?*" como um experimento: 10 configurações de estratégia × 7 classes de pergunta, com um roteador adaptativo planejado para ser avaliado contra um **oráculo empírico** e cada número publicado ligado a evidência versionada da execução, em vez de copiado de um notebook ad-hoc.
 
 ## Estratégias avaliadas
 
@@ -48,10 +48,11 @@ está de fato rodando hoje versus o que é meta de design - veja o [histórico d
 | Auditoria de citação/suporte semântico pós-geração + reescrita limitada (ADR-0016) | Implementado - desligado por padrão (`audit.enabled: false`) |
 | Diretório de evidência auditável e à prova de adulteração por execução (ADR-0017) | Implementado - `artifacts/runs/<run_id>/`, verificado via `scripts/verify_run.py` |
 | Runner principal do benchmark (`make bench-live`, 10 estratégias + qualidade de resposta) | Implementado - apenas modo live |
+| Cache write-through de chamadas LLM por execução | Implementado para chamadas live |
+| Replay determinístico sem provedor (`make bench`, ADR-0004/0020) | Planejado - executor de replay + gate de CI ainda não construídos |
 | Roteador Adaptativo, Fluxo corretivo | Planejado |
 | Golden set RegRAG-BR | 230 perguntas: 36 validation/dev + 194 test |
 | Apps de API / dashboard | API de resultados publicados e dashboard analítico implementados; Arena ao vivo planejada |
-| `make bench` (replay determinístico, bit a bit, ADR-0004) | Planejado - precisa de um cache versionado de chamadas de LLM, ainda não construído |
 
 ## Resultado do benchmark v0.1
 
@@ -61,11 +62,12 @@ de teste com 194 perguntas. A seed é
 `regrag-br-benchmark-sample-v1`; este é um resultado da v0.1 com custo
 controlado, não uma afirmação sobre o split de teste completo.
 
-**SAC é a estratégia recomendada para a v0.1** pelo melhor equilíbrio: maior
-nDCG@5 (`0,963`), MRR (`0,991`) e Citation Accuracy (`0,689`) neste run, com
+**SAC apresentou o perfil mais equilibrado na amostra v0.1**: maior nDCG@5
+(`0,963`), MRR (`0,991`) e Citation Accuracy (`0,689`) neste run, com
 Document-Level Retrieval Mismatch igual a zero. RAPTOR obteve o maior Recall@5
 (`1,000`) e Precision@5 (`0,611`), mas seus nós de resumo gerados apresentam
-outro compromisso de qualidade da evidência.
+outro compromisso de qualidade da evidência. Esses resultados são específicos
+desta amostra, não um ranking universal de estratégias.
 
 O scorecard completo, metodologia, limitações e instruções de verificação estão
 em [Resultados do benchmark](docs/BENCHMARK-RESULTS.md).
@@ -81,7 +83,7 @@ make api                                           # API read-only de resultados
 make dashboard                                     # dashboard analítico offline
 ```
 
-`make bench-live` chama provedores reais (embeddings, contextualização, sumarização do RAPTOR, extração de entidades do GraphRAG - ver a tabela de estratégias acima). `make bench` (replay determinístico e sem custo a partir de um cache versionado de LLM) é o design-alvo segundo a [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md), mas essa camada de cache ainda não existe - apenas o modo live está implementado. A camada de replay e sua verificação no CI são entregues juntas ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)).
+`make bench-live` chama provedores reais (embeddings, contextualização, sumarização do RAPTOR, extração de entidades do GraphRAG - ver a tabela de estratégias acima). As chamadas live podem ser capturadas em um cache write-through por execução. O modo `make bench` planejado (ADR-0004) é uma capacidade diferente: ele deve reproduzir as chamadas capturadas de forma determinística, sem custo de provedor, e falhar de forma fechada em cache miss. Esse executor de replay e seu gate de CI **ainda não existem**; serão entregues juntos conforme a [ADR-0020](docs/adr/0020-replay-cache-ci-gate.md).
 
 A matriz canônica e publicável usa `gemini-embedding-001`, seleção provisória da
 comparação isolada de embeddings em PT-BR (ADR-0005) - marcada como
@@ -103,21 +105,23 @@ Todas as escolhas não óbvias são registradas como [ADRs](docs/adr/README.md).
 
 - [ADR-0002](docs/adr/0002-article-level-relevance-judgments.md) - julgamentos de relevância no **nível de artigo da norma**, para que as métricas de recuperação continuem comparáveis entre estratégias que fragmentam o texto de formas diferentes (ou nem retornam chunks).
 - [ADR-0003](docs/adr/0003-empirical-router-oracle.md) - o roteador é avaliado contra um **oráculo empírico por pergunta** (melhor estratégia medida, não presumida), com uma divisão dev/test que evita vazamento de few-shot.
-- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - o `make bench` é especificado para reproduzir a partir de um cache versionado de LLM, bit a bit e com custo zero de API; a camada de replay e sua verificação no CI são entregues juntas ([ADR-0020](docs/adr/0020-replay-cache-ci-gate.md)) e ainda não existem.
+- [ADR-0004](docs/adr/0004-benchmark-reproducibility-policy.md) - chamadas live já podem ser capturadas; o `make bench` alvo reproduzirá um cache versionado de chamadas LLM de forma determinística e com custo zero de API. O executor de replay e seu gate de CI ainda não existem e serão entregues juntos pela [ADR-0020](docs/adr/0020-replay-cache-ci-gate.md).
 - [ADR-0006](docs/adr/0006-legal-structural-chunker.md) - chunking sensível ao domínio pela hierarquia jurídica (Art./§/inciso), com IDs estruturais estáveis.
 - [ADR-0007](docs/adr/0007-llm-judge-calibration-ptbr.md) - o judge de LLM precisa ser calibrado contra avaliação humana em PT-BR, com a concordância publicada, antes que suas notas contem como validadas; até lá, toda métrica do judge carrega essa ressalva.
 - [ADR-0011](docs/adr/0011-structural-id-collision-in-amended-norms.md) - IDs estruturais que colidem entre histórico de emendas/anexos anexados são excluídos das citações do golden set, não corrigidos no nível do chunker.
 - [ADR-0016](docs/adr/0016-post-generation-citation-audit.md) - um verificador de suporte semântico e no máximo uma reescrita limitada capturam alegações sem suporte que uma checagem de mera existência da citação deixaria passar.
 - [ADR-0017](docs/adr/0017-auditable-evidence-lineage.md) - todo score publicado é rastreável até um diretório de evidência encadeado por hash e à prova de adulteração, por execução - entradas exatas, identidades de modelo e candidatos de recuperação, não só a métrica agregada.
 
+As superfícies de ataque específicas de RAG e os limites de confiança estão documentados em [Threat model](docs/THREAT-MODEL.md). Em particular, a geração trata evidência recuperada como dado não confiável e mantém enriquecimento sintético de retrieval separado de `source_text` autoritativo sempre que a estratégia permite.
+
 ## Estrutura do repositório
 
-```
+```text
 apps/            # api/ (FastAPI) e dashboard/ (Streamlit: benchmark + Arena)
 src/ragforge/    # domain/ (núcleo livre de framework) · ingestion/ chunking/ embeddings/
                  # retrieval/ reranking/ routing/ generation/ evaluation/ governance/
 datasets/        # corpus/ (snapshot versionado) + regrag-br/ (golden set, CC-BY-4.0)
-experiments/     # resultados versionados + cache de LLM por run-id
+experiments/     # resultados versionados + chamadas LLM capturadas por run-id
 configs/         # configs declarativas de experimentos - todo número do README nasce aqui
 docs/adr/        # architecture decision records
 ```
@@ -135,10 +139,12 @@ Publicado (`datasets/regrag-br/judgments.json`): 230 perguntas curadas manualmen
 ```bash
 uv sync --all-groups
 uv run pytest
-uv run python scripts/quality_gate.py   # ruff, mypy, pytest (≥80% do core), bandit, pip-audit, guarda de arquitetura
+uv run python scripts/quality_gate.py   # ruff, mypy, pytest (≥80% do core), bandit, pip-audit, guards de arquitetura/governança
 ```
 
-Estruturado com [claude-python-engineering-harness](https://github.com/brunovicco/claude-python-engineering-harness) ([ADR-0009](docs/adr/0009-scaffold-via-engineering-harness.md)).
+O workflow padrão de qualidade não usa credenciais. Um job separado de integração sobe pgvector e OpenSearch reais, limitados a loopback, e exercita seus adapters. Testes que chamam provedores hospedados continuam opt-in.
+
+Estruturado com [claude-python-engineering-harness](https://github.com/brunovicco/claude-python-engineering-harness) ([ADR-0009](docs/adr/0009-scaffold-via-engineering-harness.md)); arquitetura e limites de segurança específicos do projeto estão documentados em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/THREAT-MODEL.md`](docs/THREAT-MODEL.md) e [`docs/PRIVACY.md`](docs/PRIVACY.md).
 
 ## Licença
 
