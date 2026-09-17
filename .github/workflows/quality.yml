@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Install uv
         uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
@@ -32,10 +32,49 @@ jobs:
       - name: Project quality gate
         run: uv run python scripts/quality_gate.py
 
+  integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@08807647e7069bb48b6ef5acd8ec9567f424441b # v8.1.0
+        with:
+          version: "0.11.28"
+          enable-cache: true
+
+      - name: Install Python
+        run: uv python install
+
+      - name: Install dependencies
+        run: uv sync --frozen --all-groups
+
+      - name: Start retrieval infrastructure
+        run: docker compose --profile core --profile search up -d --wait
+
+      - name: Enable pgvector extension
+        run: >-
+          docker compose exec -T postgres
+          psql -U ragforge -d ragforge
+          -c 'CREATE EXTENSION IF NOT EXISTS vector;'
+
+      - name: Run infrastructure integration tests
+        run: >-
+          uv run pytest
+          -o addopts="--strict-config --strict-markers"
+          -m integration
+          tests/integration/test_dense_chunk_store.py
+          tests/integration/test_sparse_chunk_store.py
+
+      - name: Stop retrieval infrastructure
+        if: always()
+        run: docker compose --profile core --profile search down -v
+
   # A `bench-replay` job belongs here and is deliberately absent (ADR-0020).
-  # ADR-0004's `make bench` replays a versioned LLM call cache; that replay
-  # layer does not exist yet, so `make bench` fails closed and a job invoking
-  # it today would only assert the absence of the feature. The job ships in
-  # the same change as the replay implementation, and must run without
-  # provider credentials in its environment so a cache miss cannot silently
-  # fall through to a live call.
+  # Live runs already capture write-through LLM cache artifacts, but ADR-0004's
+  # deterministic `make bench` replay engine is not implemented yet. The replay
+  # job ships in the same change as that engine and must run without provider
+  # credentials so a cache miss can never silently fall through to a live call.
